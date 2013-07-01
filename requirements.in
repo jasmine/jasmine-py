@@ -1,0 +1,2 @@
+# use pip-compile from https://github.com/nvie/pip-tools/tree/future
+pytest

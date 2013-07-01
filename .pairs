@@ -1,0 +1,10 @@
+# .pairs - configuration for 'git pair'
+pairs:
+  # <initials>: <Firstname> <Lastname>[; <email-id>]
+  jr: JR Boyens; jboyens
+  gc: Greg Cobb; gcobb
+email:
+  prefix: pair
+  domain: pivotallabs.com
+  # no_solo_prefix: true
+#global: true
