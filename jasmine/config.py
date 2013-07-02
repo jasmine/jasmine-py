@@ -4,7 +4,11 @@ try:
 except ImportError:
     from yaml import Loader, Dumper
 
-from collections import OrderedDict
+try:
+    from collections import OrderedDict
+except ImportError:
+    from ordereddict import OrderedDict
+
 from .utils import iglob
 import os
 
