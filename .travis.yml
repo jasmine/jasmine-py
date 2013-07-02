@@ -9,4 +9,4 @@ env: PYTHONPATH=.
 python:
   - "2.7"
   - "2.6"
-  - "3.2"
+  - "3.3"
