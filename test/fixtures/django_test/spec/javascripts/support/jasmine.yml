@@ -1,0 +1,4 @@
+src_files:
+  - "**/*.js"
+
+src_dir: static/js

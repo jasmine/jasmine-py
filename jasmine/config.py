@@ -1,3 +1,4 @@
+from django.conf import settings
 from yaml import load, dump
 try:
     from yaml import CLoader as Loader, CDumper as Dumper
@@ -14,7 +15,7 @@ import os
 
 
 class Config(object):
-    _src_dir = '/'
+    _src_dir = settings.PROJECT_PATH
     _spec_dir = 'spec/javascripts'
 
     def __init__(self, yaml_file):
@@ -42,7 +43,10 @@ class Config(object):
         return self._glob_paths(self.yaml.get('stylesheets') or [])
 
     def helpers(self):
-        return self._glob_paths(self.yaml.get('helpers') or ['helpers/**/*.js'])
+        helpers_paths = self.yaml.get('helpers') or ['helpers/**/*.js']
+        helpers_paths = [os.path.join(self.spec_dir, helpers_path) for helpers_path in helpers_paths]
+
+        return self._glob_paths(helpers_paths)
 
     def spec_files(self):
         spec_paths = self.yaml.get('spec_files') or ["**/*[sS]pec.js"]
