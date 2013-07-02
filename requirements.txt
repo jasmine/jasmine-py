@@ -1,4 +1,6 @@
-pytest==2.3.5
-jasmine==2.0
+pytest
+#jasmine==2.0
 PyYAML==3.10
 mockfs==1.0.1
+
+git+git://github.com/pivotal/jasmine@python-magics
