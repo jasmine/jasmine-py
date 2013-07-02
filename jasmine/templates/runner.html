@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content="text/html;charset=UTF-8" http-equiv="Content-Type"/>
+  <title>Jasmine suite</title>
+  <link rel="shortcut icon" type="image/png" href="/__JASMINE_ROOT__/images/jasmine_favicon.png"/>
+  {% for css_file in css_files %}
+      <link rel="stylesheet" href="{{ css_file }}" type="text/css" media="screen"/>
+  {% endfor %}
+  {% for js_file in js_files %}
+      <script src="{{ js_file }}" type="text/javascript"></script>
+  {% endfor %}
+
+</head>
+<body>
+<div id="jasmine_content"></div>
+</body>
+</html>
