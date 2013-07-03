@@ -14,8 +14,8 @@ class JasmineRunner(TemplateView):
 
         self.config.reload()
 
-        project_src_dir = os.path.join(settings.PROJECT_PATH, self.config.src_dir)
-        project_spec_dir = os.path.join(settings.PROJECT_PATH, self.config.spec_dir)
+        project_src_dir = os.path.join(settings.PROJECT_PATH, self.config.src_dir())
+        project_spec_dir = os.path.join(settings.PROJECT_PATH, self.config.spec_dir())
 
         js_files = \
             ["core/{0}".format(core_js) for core_js in Core.js_files()] +\

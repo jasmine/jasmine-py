@@ -74,9 +74,8 @@ def test_spec_files_default(config):
 
 @pytest.mark.usefixtures("fs")
 def test_src_dir_spec_dir(config):
-    config.src_dir = 'src'
-    config.spec_dir = 'spec'
-
+    config.yaml['src_dir'] = 'src'
+    config.yaml['spec_dir'] = 'spec'
     config.yaml['src_files'] = ['**/*.js', 'player.js', 'vendor/test.js', 'vendor/**/*.{js,coffee}']
 
     assert sorted(config.src_files()) == [

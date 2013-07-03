@@ -20,8 +20,8 @@ def config():
     mock_config.spec_files.return_value = ["/specs/file1_spec.js", "/specs/file2_spec.js"]
     mock_config.helpers.return_value = ["/specs/helpers/spec_helper.js"]
     mock_config.stylesheets.return_value = ["/src/css/user.css"]
-    mock_config.src_dir = "src"
-    mock_config.spec_dir = "specs"
+    mock_config.src_dir.return_value = "src"
+    mock_config.spec_dir.return_value = "specs"
 
     return mock_config
 
