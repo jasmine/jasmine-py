@@ -13,7 +13,7 @@ def _config_file():
 
     return settings.JASMINE_YAML if hasattr(settings, 'JASMINE_YAML') else default_location
 
-config = Config(_config_file())
+config = Config(_config_file(), project_path=settings.PROJECT_PATH)
 spec_dir = os.path.abspath(os.path.join(settings.PROJECT_PATH, config.spec_dir()))
 src_dir = os.path.abspath(os.path.join(settings.PROJECT_PATH, config.src_dir()))
 

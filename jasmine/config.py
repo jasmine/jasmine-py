@@ -1,4 +1,3 @@
-from django.conf import settings
 from yaml import load, dump
 try:
     from yaml import CLoader as Loader, CDumper as Dumper
@@ -15,8 +14,9 @@ import os
 
 
 class Config(object):
-    def __init__(self, yaml_file):
+    def __init__(self, yaml_file, project_path=os.getcwd()):
         self.yaml_file = yaml_file
+        self.project_path = project_path
         self._load()
 
     def _uniq(self, items):
@@ -59,7 +59,7 @@ class Config(object):
         return self._glob_paths(spec_paths)
 
     def src_dir(self):
-        return self.yaml.get("src_dir") or settings.PROJECT_PATH
+        return self.yaml.get("src_dir") or self.project_path
 
     def spec_dir(self):
         return self.yaml.get("spec_dir") or 'spec/javascripts'
