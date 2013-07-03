@@ -33,8 +33,8 @@ def response(rf, config):
 
 
 def test_js_files(config, response):
-    core_js_files = ["core/{}".format(f) for f in Core.js_files()]
-    boot_js_files = ["boot/{}".format(f) for f in Core.boot_files()]
+    core_js_files = ["core/{0}".format(f) for f in Core.js_files()]
+    boot_js_files = ["boot/{0}".format(f) for f in Core.boot_files()]
 
     user_files = config.lists['src_files'] + config.lists['helpers'] + config.lists['spec_files']
 
@@ -42,7 +42,7 @@ def test_js_files(config, response):
 
 
 def test_css_files(config, response):
-    core_css_files = ["core/{}".format(css) for css in Core.css_files()]
+    core_css_files = ["core/{0}".format(css) for css in Core.css_files()]
     user_css_files = config.lists['stylesheets']
 
     assert response.context_data['css_files'] == core_css_files + [f[1:] for f in user_css_files]

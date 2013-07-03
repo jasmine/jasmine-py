@@ -44,12 +44,12 @@ def config(fs):
 
 @pytest.mark.usefixtures("fs")
 def test_src_files(config):
-    assert config.src_files() == [
-        '/src/player.js',
+    assert sorted(config.src_files()) == [
         '/src/mixer/mixer.js',
+        '/src/player.js',
         '/src/tuner/fm/fm_tuner.js',
+        '/vendor/pants.coffee',
         '/vendor/test.js',
-        '/vendor/pants.coffee'
     ]
 
 
@@ -65,9 +65,9 @@ def test_helpers_default(config):
 
 @pytest.mark.usefixtures("fs")
 def test_spec_files_default(config):
-    assert config.spec_files() == [
-        '/spec/javascripts/player_spec.js',
+    assert sorted(config.spec_files()) == [
         '/spec/javascripts/mixer/mixer_spec.js',
+        '/spec/javascripts/player_spec.js',
         '/spec/javascripts/tuner/am/AMSpec.js',
         '/spec/javascripts/tuner/fm/fm_tuner_spec.js',
     ]
@@ -79,15 +79,15 @@ def test_src_dir_spec_dir(config):
 
     config.yaml['src_files'] = ['**/*.js', 'player.js', 'vendor/test.js', 'vendor/**/*.{js,coffee}']
 
-    assert config.src_files() == [
-        '/src/player.js',
+    assert sorted(config.src_files()) == [
         '/src/mixer/mixer.js',
-        '/src/tuner/fm/fm_tuner.js'
+        '/src/player.js',
+        '/src/tuner/fm/fm_tuner.js',
     ]
 
-    assert config.spec_files() == [
-        "/spec/javascripts/player_spec.js",
+    assert sorted(config.spec_files()) == [
         "/spec/javascripts/mixer/mixer_spec.js",
+        "/spec/javascripts/player_spec.js",
         "/spec/javascripts/tuner/am/AMSpec.js",
         "/spec/javascripts/tuner/fm/fm_tuner_spec.js",
     ]
