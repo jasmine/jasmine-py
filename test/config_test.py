@@ -91,3 +91,16 @@ def test_src_dir_spec_dir(config):
         "/spec/javascripts/tuner/am/AMSpec.js",
         "/spec/javascripts/tuner/fm/fm_tuner_spec.js",
     ]
+
+
+def test_reload(fs, config):
+    fs.add_entries({
+        "jasmine.yml": """
+            src_files:
+              - pants
+            """
+     })
+
+    config.reload()
+
+    assert config.yaml['src_files'] == ['pants']

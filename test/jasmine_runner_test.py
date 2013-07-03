@@ -1,26 +1,29 @@
 from jasmine_core import Core
 import pytest
+from mock import Mock
 
-class DummyConfig(object):
-    src_dir = "src"
-    spec_dir = "specs"
 
-    lists = {
+@pytest.fixture
+def config():
+    from jasmine import Config
+
+    mock_config = Mock(spec=Config, autospec=True)
+
+    mock_config.lists = {
         "src_files": ["/src/file1.js", "/src/file2.js"],
         "spec_files": ["/specs/file1_spec.js", "/specs/file2_spec.js"],
         "helpers": ['/specs/helpers/spec_helper.js'],
         "stylesheets": ['/src/css/user.css']
     }
 
-    def __getattr__(self, name):
-        def _missing():
-            return self.lists.get(name, [])
-        return _missing
+    mock_config.src_files.return_value = ["/src/file1.js", "/src/file2.js"]
+    mock_config.spec_files.return_value = ["/specs/file1_spec.js", "/specs/file2_spec.js"]
+    mock_config.helpers.return_value = ["/specs/helpers/spec_helper.js"]
+    mock_config.stylesheets.return_value = ["/src/css/user.css"]
+    mock_config.src_dir = "src"
+    mock_config.spec_dir = "specs"
 
-
-@pytest.fixture
-def config():
-    return DummyConfig()
+    return mock_config
 
 
 @pytest.fixture
@@ -46,3 +49,7 @@ def test_css_files(config, response):
     user_css_files = config.lists['stylesheets']
 
     assert response.context_data['css_files'] == core_css_files + [f[1:] for f in user_css_files]
+
+
+def test_reload_on_each_request(config, response):
+    config.reload.assert_called_once_with()

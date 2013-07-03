@@ -19,8 +19,8 @@ class Config(object):
     _spec_dir = 'spec/javascripts'
 
     def __init__(self, yaml_file):
-        with open(yaml_file, 'rU') as f:
-            self.yaml = load(f, Loader=Loader) or {}
+        self.yaml_file = yaml_file
+        self._load()
 
     def _uniq(self, items):
         return list(OrderedDict.fromkeys(items))
@@ -32,6 +32,13 @@ class Config(object):
             files.extend([os.path.abspath(x) for x in iglob(src_glob)])
 
         return self._uniq(files)
+
+    def _load(self):
+        with open(self.yaml_file, 'rU') as f:
+            self.yaml = load(f, Loader=Loader) or {}
+
+    def reload(self):
+        self._load()
 
     def src_files(self):
         src_paths = self.yaml.get('src_files') or []

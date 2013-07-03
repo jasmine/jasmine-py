@@ -12,6 +12,8 @@ class JasmineRunner(TemplateView):
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
 
+        self.config.reload()
+
         project_src_dir = os.path.join(settings.PROJECT_PATH, self.config.src_dir)
         project_spec_dir = os.path.join(settings.PROJECT_PATH, self.config.spec_dir)
 
