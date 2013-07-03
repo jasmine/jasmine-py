@@ -1,10 +1,9 @@
 pytest
-#jasmine==2.0
 PyYAML==3.10
-#mockfs==1.0.1
+#jasmine==2.0
+mockfs==1.0.1
 ordereddict
 Django>=1.5
 pytest-django
 
-git+git://github.com/pivotal/jasmine@python-magics
-git+git://github.com/mockfs/mockfs
+http://github.com/pivotal/jasmine/tarball/python-magics#egg=jasmine
