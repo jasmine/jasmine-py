@@ -3,6 +3,7 @@ pytest
 PyYAML==3.10
 #mockfs==1.0.1
 ordereddict
+pytest-django
 
 git+git://github.com/pivotal/jasmine@python-magics
 git+git://github.com/mockfs/mockfs

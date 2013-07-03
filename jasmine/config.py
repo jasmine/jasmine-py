@@ -20,7 +20,7 @@ class Config(object):
 
     def __init__(self, yaml_file):
         with open(yaml_file, 'rU') as f:
-            self.yaml = load(f, Loader=Loader)
+            self.yaml = load(f, Loader=Loader) or {}
 
     def _uniq(self, items):
         return list(OrderedDict.fromkeys(items))
