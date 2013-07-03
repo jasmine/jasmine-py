@@ -24,5 +24,7 @@ setup(
 
     install_requires=requirements,
 
+    include_package_data=True,
+
     dependency_links=non_pypi_requirements
 )

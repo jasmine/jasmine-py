@@ -17,8 +17,6 @@ config = Config(_config_file())
 spec_dir = os.path.abspath(os.path.join(settings.PROJECT_PATH, config.spec_dir))
 src_dir = os.path.abspath(os.path.join(settings.PROJECT_PATH, config.src_dir))
 
-print spec_dir
-
 urlpatterns = patterns(
     '',
     url(r'^specs/(?P<path>.*)$', 'django.views.static.serve', {'document_root': spec_dir, }, name='jasmine_specs'),
