@@ -27,7 +27,7 @@ class Config(object):
 
         relpaths = [os.path.relpath(absolute, relative_to) for absolute in self._glob_paths(paths)]
 
-        #fix py26 relpath from root bug
+        #fix py26 relpath from root bug http://bugs.python.org/issue5117
         return [relpath[3:] if relpath.startswith("../") else relpath for relpath in relpaths]
 
     def _glob_paths(self, paths):

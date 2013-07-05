@@ -14,14 +14,20 @@ def _config_file():
     return settings.JASMINE_YAML if hasattr(settings, 'JASMINE_YAML') else default_location
 
 config = Config(_config_file(), project_path=settings.PROJECT_PATH)
-spec_dir = os.path.abspath(os.path.join(settings.PROJECT_PATH, config.spec_dir()))
-src_dir = os.path.abspath(os.path.join(settings.PROJECT_PATH, config.src_dir()))
+
+# filetype_mapping = {
+#     'jasmine': Core.path,
+#     'boot': Core.boot_dir,
+#     'src': config.src_dir,
+#     'spec': config.spec_dir
+# }
 
 urlpatterns = patterns(
     '',
-    url(r'^specs/(?P<path>.*)$', 'django.views.static.serve', {'document_root': spec_dir, }, name='jasmine_specs'),
-    url(r'^src/(?P<path>.*)$', 'django.views.static.serve', {'document_root': src_dir, }, name='jasmine_src'),
-    url(r'^boot/(?P<path>.*)$', 'django.views.static.serve', {'document_root': Core.boot_dir(), }, name='jasmine_boot'),
-    url(r'^core/(?P<path>.*)$', 'django.views.static.serve', {'document_root': Core.path(), }, name='jasmine_core'),
+    # url(r'^__(.*)__/(?P<path>.*)$'), 'django.views.static.serve', {'document_root': filetype_mapping[]}
+    url(r'^__spec__/(?P<path>.*)$', 'django.views.static.serve', {'document_root': config.spec_dir(), }, name='jasmine_specs'),
+    url(r'^__src__/(?P<path>.*)$', 'django.views.static.serve', {'document_root': config.src_dir(), }, name='jasmine_src'),
+    url(r'^__boot__/(?P<path>.*)$', 'django.views.static.serve', {'document_root': Core.boot_dir(), }, name='jasmine_boot'),
+    url(r'^__jasmine__/(?P<path>.*)$', 'django.views.static.serve', {'document_root': Core.path(), }, name='jasmine_core'),
     url(r'^$', JasmineRunner.as_view(template_name="runner.html", config=config)),
 )
