@@ -15,16 +15,8 @@ def _config_file():
 
 config = Config(_config_file(), project_path=settings.PROJECT_PATH)
 
-# filetype_mapping = {
-#     'jasmine': Core.path,
-#     'boot': Core.boot_dir,
-#     'src': config.src_dir,
-#     'spec': config.spec_dir
-# }
-
 urlpatterns = patterns(
     '',
-    # url(r'^__(.*)__/(?P<path>.*)$'), 'django.views.static.serve', {'document_root': filetype_mapping[]}
     url(r'^__spec__/(?P<path>.*)$', 'django.views.static.serve', {'document_root': config.spec_dir(), }, name='jasmine_specs'),
     url(r'^__src__/(?P<path>.*)$', 'django.views.static.serve', {'document_root': config.src_dir(), }, name='jasmine_src'),
     url(r'^__boot__/(?P<path>.*)$', 'django.views.static.serve', {'document_root': Core.boot_dir(), }, name='jasmine_boot'),
