@@ -12,8 +12,8 @@ def config():
     mock_config.lists = {
         "src_files": ["file1.js", "file2.js"],
         "spec_files": ["file1_spec.js", "file2_spec.js"],
-        "helpers": ['spec_helper.js'],
-        "stylesheets": ['user.css']
+        "helpers": ['helpers/spec1_helpers/spec_helper.js'],
+        "stylesheets": ['css/user.css']
     }
 
     mock_config.src_files.return_value = ["src/file1.js", "src/file2.js"]
@@ -30,10 +30,10 @@ def config():
                                             "__src__/file2.js",
                                             "__spec__/file1_spec.js",
                                             "__spec__/file2_spec.js",
-                                            "__spec__/spec_helper.js",
+                                            "__spec__/helpers/spec1_helpers/spec_helper.js",
                                             ]
     mock_config.stylesheet_urls.return_value = ["__jasmine__/jasmine.css",
-                                                "__src__/user.css",
+                                                "__src__/css/user.css",
                                                 ]
     return mock_config
 

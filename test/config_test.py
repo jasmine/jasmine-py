@@ -72,6 +72,7 @@ def test_spec_files_default(config):
         'tuner/fm/fm_tuner_spec.js',
     ]
 
+
 @pytest.mark.usefixtures("fs")
 def test_src_dir_spec_dir(config):
     config.yaml['src_dir'] = 'src'
