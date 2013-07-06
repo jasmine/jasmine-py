@@ -21,5 +21,7 @@ urlpatterns = patterns(
     url(r'^__src__/(?P<path>.*)$', 'django.views.static.serve', {'document_root': config.src_dir(), }, name='jasmine_src'),
     url(r'^__boot__/(?P<path>.*)$', 'django.views.static.serve', {'document_root': Core.boot_dir(), }, name='jasmine_boot'),
     url(r'^__jasmine__/(?P<path>.*)$', 'django.views.static.serve', {'document_root': Core.path(), }, name='jasmine_core'),
+    url(r'^(?P<path>.ico)$', 'django.views.static.serve', {'document_root': Core.favicon_path()[:-19]},),
     url(r'^$', JasmineRunner.as_view(template_name="runner.html", config=config)),
+
 )

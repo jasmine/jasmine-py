@@ -2,7 +2,7 @@ import os
 import re
 
 from flask import Flask
-from flask import render_template, make_response
+from flask import render_template, make_response, send_file
 
 from jasmine_core import Core
 from jasmine import Config
@@ -45,6 +45,10 @@ def run():
     }
 
     return render_template('runner.html', **context)
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_file(Core.favicon_path(), mimetype='image/vnd.microsoft.icon')
 
 if __name__ == "__main__":
     app.run(port=8888, debug=True)
