@@ -17,7 +17,6 @@ class JasmineRunner(TemplateView):
         context.update({
             'css_files': css_files,
             'js_files': js_files,
-            'debug': Core.favicon_path()[:-19],
         })
 
         return self.render_to_response(context)

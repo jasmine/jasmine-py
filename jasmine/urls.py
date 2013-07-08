@@ -14,6 +14,7 @@ def _config_file():
     return settings.JASMINE_YAML if hasattr(settings, 'JASMINE_YAML') else default_location
 
 config = Config(_config_file(), project_path=settings.PROJECT_PATH)
+favicon_path = os.path.dirname(Core.favicon_path())
 
 urlpatterns = patterns(
     '',
@@ -21,7 +22,7 @@ urlpatterns = patterns(
     url(r'^__src__/(?P<path>.*)$', 'django.views.static.serve', {'document_root': config.src_dir(), }, name='jasmine_src'),
     url(r'^__boot__/(?P<path>.*)$', 'django.views.static.serve', {'document_root': Core.boot_dir(), }, name='jasmine_boot'),
     url(r'^__jasmine__/(?P<path>.*)$', 'django.views.static.serve', {'document_root': Core.path(), }, name='jasmine_core'),
-    url(r'^(?P<path>.ico)$', 'django.views.static.serve', {'document_root': Core.favicon_path()[:-19]},),
+    url(r'^(?P<path>.*\.png)$', 'django.views.static.serve', {'document_root': favicon_path},),
     url(r'^$', JasmineRunner.as_view(template_name="runner.html", config=config)),
 
 )
