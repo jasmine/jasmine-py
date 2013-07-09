@@ -33,7 +33,7 @@ def results():
 def test_format_progress(results):
     formatter = Formatter(results, colors=False)
 
-    assert formatter.format_progress() == ".X.?"
+    assert formatter.format_progress() == ".X.*"
 
 
 def test_format_summary(results):
@@ -62,12 +62,12 @@ def test_format_failures():
     formatter = Formatter(results, colors=False)
 
     assert formatter.format_failures() ==\
-        "Context is this test fails\n"+\
-            "Error: Expected 'Batman' to equal 'PANTS'.\n"+\
-            "        at http://localhost:8888/__spec__/global_spec.js:3\n"+\
-        "Context is this test also fails\n"+\
-            "Error: Expected 'Batman' to equal 'Superman'.\n"+\
-            "        at http://localhost:8888/__spec__/global_spec.js:6\n"
+        "Context is this test fails\n" +\
+        "Error: Expected 'Batman' to equal 'PANTS'.\n" +\
+        "        at http://localhost:8888/__spec__/global_spec.js:3\n" +\
+        "Context is this test also fails\n" +\
+        "Error: Expected 'Batman' to equal 'Superman'.\n" +\
+        "        at http://localhost:8888/__spec__/global_spec.js:6\n"
 
 
 def test_clean_stack():

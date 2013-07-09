@@ -10,6 +10,7 @@ except ImportError:
 
 from operator import itemgetter
 
+
 class Formatter(object):
     COLORS = {
         'red': "\033[0;31m",
@@ -54,7 +55,7 @@ class Formatter(object):
             elif result.status == "failed":
                 output += self.colorize('red', 'X')
             else:
-                output += self.colorize('yellow', '?')
+                output += self.colorize('yellow', '*')
 
         return output
 
@@ -70,15 +71,16 @@ class Formatter(object):
     def format_failures(self):
         output = ""
         for failure in self.results.failed():
-            output += self.colorize('red', failure.fullName) + "\n" + self.clean_stack(failure.failedExpectations[0]['stack']) + "\n"
+            output += self.colorize('red', failure.fullName) + "\n" +\
+                self.clean_stack(failure.failedExpectations[0]['stack']) + "\n"
 
         return output
 
     def clean_stack(self, stack):
-        def dirty(stackline):
-            return "__jasmine__" in stackline or "__boot__" in stackline
+        def dirty(stack_line):
+            return "__jasmine__" in stack_line or "__boot__" in stack_line
 
-        return "\n".join([stackline for stackline in stack.split("\n") if not dirty(stackline)])
+        return "\n".join([stack_line for stack_line in stack.split("\n") if not dirty(stack_line)])
 
     def format_pending(self):
         output = ""
