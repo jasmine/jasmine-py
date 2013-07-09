@@ -2,7 +2,12 @@ try:
     from collections import OrderedDict
 except ImportError:
     from ordereddict import OrderedDict
-from itertools import ifilter
+
+try:
+    from future_builtins import filter
+except ImportError:
+    pass
+
 from operator import itemgetter
 
 class Formatter(object):
@@ -54,11 +59,11 @@ class Formatter(object):
         return output
 
     def format_summary(self):
-        output = "{} specs, {} failed".format(len(self.results), len(list(self.results.failed())))
+        output = "{0} specs, {1} failed".format(len(self.results), len(list(self.results.failed())))
 
         pending = list(self.results.pending())
         if pending:
-            output += ", {} pending".format(len(pending))
+            output += ", {0} pending".format(len(pending))
 
         return output
 
@@ -87,7 +92,7 @@ class ResultList(list):
         return self._filter_status('pending')
 
     def _filter_status(self, status):
-        return ifilter(lambda x: x.status == status, self)
+        return filter(lambda x: x.status == status, self)
 
 
 class Parser(object):

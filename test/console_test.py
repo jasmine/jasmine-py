@@ -1,5 +1,5 @@
 import pytest
-from jasmine.console import Parser, Formatter
+from jasmine.console import Parser, Formatter, ResultList
 
 
 def test_parser_should_return_a_list_of_result_objects():
@@ -35,10 +35,12 @@ def test_format_progress(results):
 
     assert formatter.format_progress() == ".X.?"
 
+
 def test_format_summary(results):
     formatter = Formatter(results, colors=False)
 
     assert formatter.format_summary() == "4 specs, 1 failed, 1 pending"
+
 
 def test_format_failures():
     parser = Parser()
