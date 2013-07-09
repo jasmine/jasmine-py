@@ -109,42 +109,9 @@ class Parser(object):
 
 
 class Result(tuple):
-    """Result(status, fullName, failedExpectations, id, description)"""
 
-    __slots__ = ()
-
-    _fields = ('status', 'fullName', 'failedExpectations', 'id', 'description')
-
-    def __new__(_cls, status=None, fullName=None, failedExpectations=[], id=None, description=None):
-        """Create new instance of Result(status, fullName, failedExpectations, id, description)"""
-        return tuple.__new__(_cls, (status, fullName, failedExpectations, id, description))
-
-    @classmethod
-    def _make(cls, iterable, new=tuple.__new__, len=len):
-        """Make a new Result object from a sequence or iterable"""
-        result = new(cls, iterable)
-        if len(result) != 5:
-            raise TypeError('Expected 5 arguments, got %d' % len(result))
-        return result
-
-    def __repr__(self):
-        """Return a nicely formatted representation string"""
-        return 'Result(status=%r, fullName=%r, failedExpectations=%r, id=%r, description=%r)' % self
-
-    def _asdict(self):
-        """Return a new OrderedDict which maps field names to their values"""
-        return OrderedDict(zip(self._fields, self))
-
-    def _replace(_self, **kwds):
-        """Return a new Result object replacing specified fields with new values"""
-        result = _self._make(map(kwds.pop, ('status', 'fullName', 'failedExpectations', 'id', 'description'), _self))
-        if kwds:
-            raise ValueError('Got unexpected field names: %r' % kwds.keys())
-        return result
-
-    def __getnewargs__(self):
-        """Return self as a plain tuple.  Used by copy and pickle."""
-        return tuple(self)
+    def __new__(cls, status=None, fullName=None, failedExpectations=[], id=None, description=None):
+        return tuple.__new__(cls, (status, fullName, failedExpectations, id, description))
 
     status = property(itemgetter(0), doc='Alias for field number 0')
     fullName = property(itemgetter(1), doc='Alias for field number 1')

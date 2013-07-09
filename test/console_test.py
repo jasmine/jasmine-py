@@ -1,22 +1,28 @@
 import pytest
-from jasmine.console import Parser, Formatter, ResultList
+from jasmine.console import Parser, Formatter
 
 
-def test_parser_should_return_a_list_of_result_objects():
+def test_parser_should_return_a_correct_results_list():
     parser = Parser()
 
     results = parser.parse([
-        {u'status': u'failed', u'fullName': u'Globals refer to the most holy.', u'failedExpectations': [
-            {u'actual': u'Batman', u'matcherName': u'toEqual', u'passed': False, u'expected': u'PANTS',
-             u'message': u"Expected 'Batman' to equal 'PANTS'.",
-             u'stack': u"Error: Expected 'Batman' to equal 'PANTS'.\n    at stack (http://localhost:8888/__jasmine__/jasmine.js:1110)\n    at buildExpectationResult (http://localhost:8888/__jasmine__/jasmine.js:1087)\n    at http://localhost:8888/__jasmine__/jasmine.js:396\n    at http://localhost:8888/__jasmine__/jasmine.js:215\n    at addExpectationResult (http://localhost:8888/__jasmine__/jasmine.js:354)\n    at http://localhost:8888/__jasmine__/jasmine.js:1033\n    at http://localhost:8888/__spec__/global_spec.js:3\n    at http://localhost:8888/__jasmine__/jasmine.js:1308\n    at attempt (http://localhost:8888/__jasmine__/jasmine.js:1314)\n    at http://localhost:8888/__jasmine__/jasmine.js:1308\n    at http://localhost:8888/__jasmine__/jasmine.js:430\n    at http://localhost:8888/__jasmine__/jasmine.js:252\n    at http://localhost:8888/__jasmine__/jasmine.js:1548\n    at http://localhost:8888/__jasmine__/jasmine.js:1306\n    at attempt (http://localhost:8888/__jasmine__/jasmine.js:1314)\n    at http://localhost:8888/__jasmine__/jasmine.js:1306\n    at http://localhost:8888/__jasmine__/jasmine.js:430\n    at http://localhost:8888/__jasmine__/jasmine.js:1535\n    at http://localhost:8888/__jasmine__/jasmine.js:1548\n    at http://localhost:8888/__jasmine__/jasmine.js:1306\n    at attempt (http://localhost:8888/__jasmine__/jasmine.js:1314)\n    at http://localhost:8888/__jasmine__/jasmine.js:1306\n    at http://localhost:8888/__jasmine__/jasmine.js:430\n    at http://localhost:8888/__jasmine__/jasmine.js:1535\n    at http://localhost:8888/__jasmine__/jasmine.js:507\n    at http://localhost:8888/__boot__/boot.js:99"}],
-         u'id': 0, u'description': u'refer to the most holy'}
+        {u'status': u'failed',
+         u'fullName': u'Globals refer to the most holy.',
+         u'failedExpectations': [{u'actual': u'Batman',
+                                  u'matcherName': u'toEqual',
+                                  u'passed': False,
+                                  u'expected': u'PANTS',
+                                  u'message': u"Expected 'Batman' to equal 'PANTS'.",
+                                  u'stack': u"stack\n    stack\n    stack"}],
+         u'id': 0,
+         u'description': u'refer to the most holy'}
     ])
 
     assert len(results) == 1
     assert results[0].status == 'failed'
     assert results[0].fullName == 'Globals refer to the most holy.'
     assert len(results[0].failedExpectations) == 1
+    assert results[0].failedExpectations[0]['stack'] == "stack\n    stack\n    stack"
 
 
 @pytest.fixture
@@ -56,7 +62,8 @@ def test_format_failures():
     results = parser.parse([
         {u'status': u'passed', u'fullName': u'Context is this test passes'},
         {u'status': u'failed', u'fullName': u'Context is this test fails', u'failedExpectations': [{u'stack': stack1}]},
-        {u'status': u'failed', u'fullName': u'Context is this test also fails', u'failedExpectations': [{u'stack': stack2}]},
+        {u'status': u'failed', u'fullName': u'Context is this test also fails',
+            u'failedExpectations': [{u'stack': stack2}]},
     ])
 
     formatter = Formatter(results, colors=False)
