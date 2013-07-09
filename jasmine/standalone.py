@@ -1,5 +1,7 @@
 import os
 import re
+import sys
+import getopt
 
 from flask import Flask
 from flask import render_template, make_response, send_file
@@ -55,4 +57,17 @@ def favicon():
     return send_file(Core.favicon_path(), mimetype='image/vnd.microsoft.icon')
 
 if __name__ == "__main__":
-    app.run(port=8888, debug=True)
+    port_arg = None
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "p:", ["port="])
+    except getopt.GetoptError:
+        sys.stdout.write('python jasmine/standalone.py -p <port>')
+        sys.exit(2)
+    for opt, arg in opts:
+        if opt in ['-p', '--port']:
+            try:
+                port_arg = int(arg)
+            except ValueError:
+                pass
+    port = port_arg if (port_arg and 8000 <= port_arg <= 8999) else 8888
+    app.run(port=port, debug=True)
