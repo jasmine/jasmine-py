@@ -4,6 +4,7 @@ PyYAML==3.10
 ordereddict
 Django>=1.5
 pytest-django
+Flask
 
 http://github.com/pivotal/jasmine/tarball/python-magics#egg=jasmine
 http://github.com/mockfs/mockfs/tarball/master#egg=mockfs

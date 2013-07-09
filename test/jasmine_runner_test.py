@@ -1,4 +1,3 @@
-from jasmine_core import Core
 import pytest
 from mock import Mock
 
@@ -16,7 +15,7 @@ def config():
 
 @pytest.fixture
 def response(rf, config):
-    from jasmine.views import JasmineRunner
+    from jasmine.django.views import JasmineRunner
 
     request = rf.get("")
 

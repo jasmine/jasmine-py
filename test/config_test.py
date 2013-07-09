@@ -1,7 +1,9 @@
-import mockfs
-import pytest
 import os
 import glob
+
+import mockfs
+import pytest
+
 
 @pytest.fixture
 def fs():

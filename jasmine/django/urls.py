@@ -4,8 +4,8 @@ from django.conf import settings
 from django.conf.urls import patterns, url
 from jasmine_core import Core
 
-from jasmine import Config
-from .views import JasmineRunner
+from jasmine.standalone import Config
+from .jasmine.django.views import JasmineRunner
 
 
 def _config_file():
@@ -23,6 +23,6 @@ urlpatterns = patterns(
     url(r'^__boot__/(?P<path>.*)$', 'django.views.static.serve', {'document_root': Core.boot_dir(), }, name='jasmine_boot'),
     url(r'^__jasmine__/(?P<path>.*)$', 'django.views.static.serve', {'document_root': Core.path(), }, name='jasmine_core'),
     url(r'^(?P<path>.*\.png)$', 'django.views.static.serve', {'document_root': favicon_path},),
-    url(r'^$', JasmineRunner.as_view(template_name="runner.html", config=config)),
+    url(r'^$', JasmineRunner.as_view(template_name="runner.html", config=config), name='jasmine_runner'),
 
 )
