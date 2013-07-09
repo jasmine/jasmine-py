@@ -18,9 +18,18 @@ class Formatter(object):
         'none': "\033[0m"
     }
 
+    JASMINE_HEADER = """
+      _                     _
+     | |                   (_)
+     | | __ _ ___ _ __ ___  _ _ __   ___
+ _   | |/ _` / __| '_ ` _ \| | '_ \ / _ \\
+| |__| | (_| \__ \ | | | | | | | | |  __/
+ \____/ \__,_|___/_| |_| |_|_|_| |_|\___|
+
+"""
+
     def __init__(self, results, **kwargs):
         self.colors = kwargs.get('colors', True)
-        self.output = ''
         self.results = results
 
     def colorize(self, color, text):
@@ -30,20 +39,11 @@ class Formatter(object):
         return self.COLORS[color] + text + self.COLORS['none']
 
     def format(self):
-        self.output += """
-      _                     _
-     | |                   (_)
-     | | __ _ ___ _ __ ___  _ _ __   ___
- _   | |/ _` / __| '_ ` _ \| | '_ \ / _ \\
-| |__| | (_| \__ \ | | | | | | | | |  __/
- \____/ \__,_|___/_| |_| |_|_|_| |_|\___|
-
-"""
-        self.output += self.format_progress() + "\n\n"
-        self.output += self.format_summary() + "\n\n"
-        self.output += self.format_failures()
-
-        return self.output
+        return self.JASMINE_HEADER +\
+            self.format_progress() + "\n\n" +\
+            self.format_summary() + "\n\n" +\
+            self.format_failures() +\
+            self.format_pending()
 
     def format_progress(self):
         output = ""
@@ -79,6 +79,12 @@ class Formatter(object):
             return "__jasmine__" in stackline or "__boot__" in stackline
 
         return "\n".join([stackline for stackline in stack.split("\n") if not dirty(stackline)])
+
+    def format_pending(self):
+        output = ""
+        for pending in self.results.pending():
+            output += self.colorize('yellow', pending.fullName) + "\n"
+        return output
 
 
 class ResultList(list):

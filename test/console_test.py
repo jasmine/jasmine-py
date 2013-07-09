@@ -26,7 +26,7 @@ def results():
         {u'status': u'passed'},
         {u'status': u'failed'},
         {u'status': u'passed'},
-        {u'status': u'pending'},
+        {u'status': u'pending', u'fullName': u'Context is this test is pending'},
     ])
 
 
@@ -79,3 +79,9 @@ def test_clean_stack():
 
     assert formatter.clean_stack(dirty_stack) == """Error: Expected 'Batman' to equal 'PANTS'.
         at http://localhost:8888/__spec__/global_spec.js:3"""
+
+
+def test_pending_stack(results):
+    formatter = Formatter(results, colors=False)
+
+    assert formatter.format_pending() == "Context is this test is pending\n"
