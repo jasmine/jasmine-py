@@ -12,18 +12,18 @@ This package contains:
 
 You can get all of this by: `pip install jasmine-py` or by adding Jasmine to your `requirements.txt`.
 
-## __init___ A Project
+## __init__ A Project
 
 To initialize a project for Jasmine, it depends on your web framework
 
 For Django support,
 
 * Add 'jasmine.django' to INSTALLED_APPS in your setting.py
-* To display test results within your application, add a route to your urls.py.  You can use any url you like, but we suggest `url(r'^jasmine/', include('jasmine.urls', namespace='jasmine'))`
+* To display test results within your application, add a route to your urls.py: `url(r'^jasmine/', include('jasmine.urls', namespace='jasmine'))`. Test results are not visible at your.django.app/jasmine
 
-For any other project (Pylons, Flask, or something we don't yet know about)
+For any other project (Pylons, Flask, etc)
 
-* **[[Do something]]**
+* **[[Do something?]]**
 
 ## Usage
 
@@ -42,6 +42,10 @@ Point your browser to `localhost:1337`.
 For Continuous Integration environments, add this task to the project build steps:
 
 `python ci.py`
+
+if you are using Django, you can also run:
+
+`./manage.py run_jasmine`
 
 This uses Selenium to launch a browser and run the Jasmine suite. Then it extracts the results from the Jasmine reporter and **[[write them to your build log]]**. The browser used by selenium can be changed by **[[Doing something]]** (this might require additional webdriver dependencies).
 
