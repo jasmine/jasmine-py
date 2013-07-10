@@ -61,20 +61,22 @@ class CIRunner(object):
                 lambda driver: driver.execute_script("return window.jsApiReporter.finished;")
             )
 
-            index = 0
-            batch_size = 0
             spec_results = []
+            index = 0
+            batch_size = 50
 
-            while index == batch_size:
-                results = browser.evaluate_script("window.jsApiReporter.specResults({}, 50)".format(index))
+            while True:
+                results = browser.evaluate_script("window.jsApiReporter.specResults({0}, {1})".format(index, batch_size))
                 spec_results.extend(results)
-                index += len(results)
+                index = len(results)
+
+                if not index == batch_size:
+                    break
 
             results = Parser().parse(spec_results)
             formatter = Formatter(results)
 
             sys.stdout.write(formatter.format())
-
         finally:
             browser.quit()
             test_server.join()
