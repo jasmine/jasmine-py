@@ -5,7 +5,7 @@ from django.conf.urls import patterns, url
 from jasmine_core import Core
 
 from jasmine.standalone import Config
-from .jasmine.django.views import JasmineRunner
+from jasmine.django.views import JasmineRunner
 
 
 def _config_file():

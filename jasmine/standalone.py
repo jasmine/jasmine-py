@@ -2,6 +2,7 @@ import os
 import re
 import sys
 import getopt
+import socket
 
 from flask import Flask
 from flask import render_template, make_response, send_file
@@ -69,5 +70,8 @@ if __name__ == "__main__":
                 port_arg = int(arg)
             except ValueError:
                 pass
-    port = port_arg if (port_arg and 8000 <= port_arg <= 8999) else 8888
-    app.run(port=port, debug=True)
+    port = port_arg if port_arg and 0 <= port_arg <= 65535 else 8888
+    try:
+        app.run(port=port, debug=True)
+    except socket.error:
+        sys.stdout.write('Socket unavailable')

@@ -19,7 +19,7 @@ To initialize a project for Jasmine, it depends on your web framework
 For Django support,
 
 * Add 'jasmine.django' to INSTALLED_APPS in your setting.py
-* To display test results within your application, add a route to your urls.py: `url(r'^jasmine/', include('jasmine.urls', namespace='jasmine'))`. Test results are not visible at your.django.app/jasmine
+* To display test results within your application, add a route to your urls.py: `url(r'^jasmine/', include('jasmine.django.urls', namespace='jasmine'))`. Test results are not visible at your.django.app/jasmine
 
 For any other project (Pylons, Flask, etc)
 
@@ -35,7 +35,7 @@ Point your browser to `localhost:8888`. The suite will run every time this page 
 
 Start Jasmine on a different port:
 
-**[[To be implemented]]**
+`python jasmine/standalone.py -p 1337`
 
 Point your browser to `localhost:1337`.
 
@@ -47,7 +47,7 @@ if you are using Django, you can also run:
 
 `./manage.py run_jasmine`
 
-This uses Selenium to launch a browser and run the Jasmine suite. Then it extracts the results from the Jasmine reporter and **[[write them to your build log]]**. The browser used by selenium can be changed by **[[Doing something]]** (this might require additional webdriver dependencies).
+This uses Selenium to launch a browser and run the Jasmine suite. Then it extracts the results from the Jasmine reporter and **[[write them to your build log?]]**. The browser used by selenium can be changed by **[[Doing something]]** (this might require additional webdriver dependencies).
 
 ## Configuration
 
