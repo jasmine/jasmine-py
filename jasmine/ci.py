@@ -1,8 +1,8 @@
 import threading
 import sys
 
+from selenium.webdriver.firefox import webdriver
 from selenium.webdriver.support.wait import WebDriverWait
-from splinter import Browser
 
 from cherrypy import wsgiserver
 
@@ -71,7 +71,7 @@ class CIRunner(object):
         for suite in suites:
             fullNames.update(self._buildFullNames(suite['name'], suite['children']))
 
-        for index, result in results.iteritems():
+        for index, result in results.items():
             pr = {
                 'status': result['result'],
                 'fullName': fullNames[int(index)]
@@ -94,16 +94,14 @@ class CIRunner(object):
             test_server = self.TestServerThread()
             test_server.start()
 
-            browser = Browser('firefox')
-            browser.visit("http://localhost:{}/".format(test_server.port))
+            self.browser = webdriver.WebDriver()
+            self.browser.get("http://localhost:{}/".format(test_server.port))
 
-
-
-            WebDriverWait(browser.driver, 100).until(
+            WebDriverWait(self.browser, 100).until(
                 lambda driver: driver.execute_script("return window.jsApiReporter.finished;")
             )
 
-            browser.execute_script("""
+            self.browser.execute_script("""
                 for (k in jsApiReporter.results()) {
                     var result = jsApiReporter.results()[k];
                     var messages = result.messages;
@@ -116,8 +114,8 @@ class CIRunner(object):
                 }
             """)
 
-            results = browser.evaluate_script("window.jsApiReporter.results()")
-            suites = browser.evaluate_script("window.jsApiReporter.suites()")
+            results = self.browser.execute_script("return window.jsApiReporter.results()")
+            suites = self.browser.execute_script("return window.jsApiReporter.suites()")
 
             spec_results = self._process_results(suites, results)
 
@@ -126,8 +124,10 @@ class CIRunner(object):
 
             sys.stdout.write(formatter.format())
         finally:
-            browser.quit()
-            test_server.join()
+            if hasattr(self, 'browser'):
+                self.browser.close()
+            if hasattr(self, 'test_server'):
+                self.test_server.join()
 
 if __name__ == "__main__":
     CIRunner().run()
