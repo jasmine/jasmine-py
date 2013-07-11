@@ -1,13 +1,15 @@
 import threading
 import sys
 
-from gevent.wsgi import WSGIServer, socket
 from selenium.webdriver.support.wait import WebDriverWait
 from splinter import Browser
-from gevent import monkey
+
+from cherrypy import wsgiserver
 
 from jasmine import App
 from jasmine.console import Parser, Formatter
+
+import socket
 
 
 class CIRunner(object):
@@ -17,14 +19,15 @@ class CIRunner(object):
 
             for index, port in enumerate(ports):
                 try:
-                    self.server = WSGIServer(('localhost', port), application=App, log=None)
+                    self.server = wsgiserver.CherryPyWSGIServer(('localhost', port), App)
                     self.port = port
-                    self.server.serve_forever()
+                    self.server.start()
+                    break
                 except socket.error:
                     continue
 
-        def join(self):
-            self.server.kill()
+        def join(self, timeout=None):
+            self.server.stop()
 
         def possible_ports(self, specified_address):
             possible_ports = []
@@ -47,31 +50,76 @@ class CIRunner(object):
 
             return possible_ports
 
+    def _buildFullNames(self, leadin, children):
+        fullNames = {}
+
+        for child in children:
+            name = " ".join([leadin, child['name']])
+
+            if child['type'] == "spec":
+                fullNames[child['id']] = name
+            else:
+                fullNames.update(self._buildFullNames(name, child['children']))
+
+        return fullNames
+
+    def _process_results(self, suites, results):
+        processed = []
+
+        fullNames = {}
+
+        for suite in suites:
+            fullNames.update(self._buildFullNames(suite['name'], suite['children']))
+
+        for index, result in results.iteritems():
+            pr = {
+                'status': result['result'],
+                'fullName': fullNames[int(index)]
+            }
+
+            failed_expectations = []
+            for message in result['messages']:
+                if 'stack' in message:
+                    failed_expectations.append({'stack': message['stack']})
+
+            if failed_expectations:
+                pr.update(failedExpectations=failed_expectations)
+
+            processed.append(pr)
+
+        return processed
+
     def run(self):
         try:
-            monkey.patch_all()
-
             test_server = self.TestServerThread()
             test_server.start()
 
-            browser = Browser('phantomjs')
+            browser = Browser('firefox')
             browser.visit("http://localhost:{}/".format(test_server.port))
+
+
 
             WebDriverWait(browser.driver, 100).until(
                 lambda driver: driver.execute_script("return window.jsApiReporter.finished;")
             )
 
-            spec_results = []
-            index = 0
-            batch_size = 50
+            browser.execute_script("""
+                for (k in jsApiReporter.results()) {
+                    var result = jsApiReporter.results()[k];
+                    var messages = result.messages;
 
-            while True:
-                results = browser.evaluate_script("window.jsApiReporter.specResults({0}, {1})".format(index, batch_size))
-                spec_results.extend(results)
-                index = len(results)
+                    for (var i = 0; i < messages.length; i++) {
+                        if (result.result === 'failed') {
+                            messages[i].stack = messages[i].trace.stack;
+                        }
+                    }
+                }
+            """)
 
-                if not index == batch_size:
-                    break
+            results = browser.evaluate_script("window.jsApiReporter.results()")
+            suites = browser.evaluate_script("window.jsApiReporter.suites()")
+
+            spec_results = self._process_results(suites, results)
 
             results = Parser().parse(spec_results)
             formatter = Formatter(results)

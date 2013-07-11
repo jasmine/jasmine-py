@@ -77,6 +77,9 @@ class Formatter(object):
         return output
 
     def clean_stack(self, stack):
+        if not stack:
+            return ""
+
         def dirty(stack_line):
             return "__jasmine__" in stack_line or "__boot__" in stack_line
 

@@ -5,6 +5,8 @@ ordereddict
 Django>=1.5
 pytest-django
 Flask
+CherryPy
+splinter
 
 http://github.com/pivotal/jasmine/tarball/python-magics-1.3#egg=jasmine
 http://github.com/mockfs/mockfs/tarball/master#egg=mockfs
