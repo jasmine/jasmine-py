@@ -6,7 +6,7 @@ import pytest
 
 
 @pytest.fixture
-def fs():
+def fs(request):
     mfs = mockfs.replace_builtins()
 
     os.path.lexists = mfs.exists
@@ -15,8 +15,8 @@ def fs():
     mfs.add_entries({
         "jasmine.yml": """
             src_files:
-              - src/**/*.js
               - src/player.js
+              - src/**/*.js
               - vendor/test.js
               - vendor/**/*.{js,coffee}
             """,
@@ -34,6 +34,8 @@ def fs():
         "/vendor_spec/pantsSpec.js": '',
     })
 
+    request.addfinalizer(lambda: mockfs.restore_builtins())
+
     return mfs
 
 
@@ -46,12 +48,12 @@ def config(fs):
 
 @pytest.mark.usefixtures("fs")
 def test_src_files(config):
-    assert sorted(config.src_files()) == [
-        'src/mixer/mixer.js',
+    assert config.src_files() == [
         'src/player.js',
+        'src/mixer/mixer.js',
         'src/tuner/fm/fm_tuner.js',
-        'vendor/pants.coffee',
         'vendor/test.js',
+        'vendor/pants.coffee',
     ]
 
 
@@ -67,9 +69,9 @@ def test_helpers_default(config):
 
 @pytest.mark.usefixtures("fs")
 def test_spec_files_default(config):
-    assert sorted(config.spec_files()) == [
-        'mixer/mixer_spec.js',
+    assert config.spec_files() == [
         'player_spec.js',
+        'mixer/mixer_spec.js',
         'tuner/am/AMSpec.js',
         'tuner/fm/fm_tuner_spec.js',
     ]
@@ -81,15 +83,15 @@ def test_src_dir_spec_dir(config):
     config.yaml['spec_dir'] = 'spec'
     config.yaml['src_files'] = ['**/*.js', 'player.js', 'vendor/test.js', 'vendor/**/*.{js,coffee}']
 
-    assert sorted(config.src_files()) == [
-        'mixer/mixer.js',
+    assert config.src_files() == [
         'player.js',
+        'mixer/mixer.js',
         'tuner/fm/fm_tuner.js',
     ]
 
-    assert sorted(config.spec_files()) == [
-        "javascripts/mixer/mixer_spec.js",
+    assert config.spec_files() == [
         "javascripts/player_spec.js",
+        "javascripts/mixer/mixer_spec.js",
         "javascripts/tuner/am/AMSpec.js",
         "javascripts/tuner/fm/fm_tuner_spec.js",
     ]

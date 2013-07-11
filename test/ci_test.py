@@ -34,7 +34,7 @@ def suites():
 
 @pytest.fixture
 def results():
-    return OrderedDict({
+    return {
         "0": {
             "messages": [
                 {
@@ -65,29 +65,29 @@ def results():
             ],
             "result": "passed"
         }
-    })
+    }
 
 
 def test_process_results__status(suites, results):
     processed = CIRunner()._process_results(suites, results)
 
     # Python is going to reverse the order of the above OrderedDict
-    assert processed[0]['status'] == "passed"
-    assert processed[1]['status'] == "failed"
+    assert processed[0]['status'] == "failed"
+    assert processed[1]['status'] == "passed"
 
 
 def test_process_results__stack(suites, results):
     processed = CIRunner()._process_results(suites, results)
 
-    assert processed[0]['status'] == 'passed'
-    assert processed[1]['status'] == 'failed'
+    assert processed[0]['status'] == 'failed'
+    assert processed[1]['status'] == 'passed'
 
-    assert 'failedExpectations' not in processed[0]
-    assert processed[1]['failedExpectations'][0]['stack'] == "Totally the one you want"
+    assert processed[0]['failedExpectations'][0]['stack'] == "Totally the one you want"
+    assert 'failedExpectations' not in processed[1]
 
 
 def test_process_results__fullName(suites, results):
     processed = CIRunner()._process_results(suites, results)
 
-    assert processed[0]['fullName'] == "datepicker icon triggers the datepicker"
-    assert processed[1]['fullName'] == "datepicker calls the datepicker constructor"
+    assert processed[0]['fullName'] == "datepicker calls the datepicker constructor"
+    assert processed[1]['fullName'] == "datepicker icon triggers the datepicker"

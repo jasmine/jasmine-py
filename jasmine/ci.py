@@ -71,10 +71,12 @@ class CIRunner(object):
         for suite in suites:
             fullNames.update(self._buildFullNames(suite['name'], suite['children']))
 
-        for index, result in results.items():
+        for spec_id in sorted(results.keys(), key=lambda x: int(x)):
+            result = results[spec_id]
+
             pr = {
                 'status': result['result'],
-                'fullName': fullNames[int(index)]
+                'fullName': fullNames[int(spec_id)]
             }
 
             failed_expectations = []
