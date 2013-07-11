@@ -130,6 +130,3 @@ class CIRunner(object):
                 self.browser.close()
             if hasattr(self, 'test_server'):
                 self.test_server.join()
-
-if __name__ == "__main__":
-    CIRunner().run()

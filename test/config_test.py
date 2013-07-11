@@ -48,13 +48,16 @@ def config(fs):
 
 @pytest.mark.usefixtures("fs")
 def test_src_files(config):
-    assert config.src_files() == [
-        'src/player.js',
-        'src/mixer/mixer.js',
-        'src/tuner/fm/fm_tuner.js',
-        'vendor/test.js',
-        'vendor/pants.coffee',
-    ]
+    src_files = config.src_files()
+
+    assert len(src_files) == 5
+
+    assert src_files[0] == "src/player.js"
+    assert src_files.index("vendor/test.js") < src_files.index("vendor/pants.coffee")
+
+    assert 'src/mixer/mixer.js' in src_files
+    assert 'src/tuner/fm/fm_tuner.js' in src_files
+    assert 'vendor/pants.coffee' in src_files
 
 
 @pytest.mark.usefixtures("fs")
@@ -69,9 +72,10 @@ def test_helpers_default(config):
 
 @pytest.mark.usefixtures("fs")
 def test_spec_files_default(config):
-    assert config.spec_files() == [
-        'player_spec.js',
+    # sort because all of the specified paths are globs, order does not matter
+    assert sorted(config.spec_files()) == [
         'mixer/mixer_spec.js',
+        'player_spec.js',
         'tuner/am/AMSpec.js',
         'tuner/fm/fm_tuner_spec.js',
     ]
@@ -83,18 +87,18 @@ def test_src_dir_spec_dir(config):
     config.yaml['spec_dir'] = 'spec'
     config.yaml['src_files'] = ['**/*.js', 'player.js', 'vendor/test.js', 'vendor/**/*.{js,coffee}']
 
-    assert config.src_files() == [
-        'player.js',
-        'mixer/mixer.js',
-        'tuner/fm/fm_tuner.js',
-    ]
+    src_files = config.src_files()
 
-    assert config.spec_files() == [
+    assert 'player.js' in src_files
+    assert 'mixer/mixer.js' in src_files
+    assert 'tuner/fm/fm_tuner.js' in src_files
+
+    assert set(config.spec_files()) == set([
         "javascripts/player_spec.js",
         "javascripts/mixer/mixer_spec.js",
         "javascripts/tuner/am/AMSpec.js",
         "javascripts/tuner/fm/fm_tuner_spec.js",
-    ]
+    ])
 
 
 def test_reload(fs, config):

@@ -51,7 +51,7 @@ class Config(object):
         for src_glob in paths:
             files.extend([os.path.abspath(x) for x in iglob(src_glob)])
 
-        return list(self._uniq(files, lambda x: x.lower()))
+        return list(self._uniq(files))
 
     def _load(self):
         with open(self.yaml_file, 'rU') as f:

@@ -47,7 +47,7 @@ setup(
         'Topic :: Software Development :: Quality Assurance',
         'Topic :: Software Development :: Testing',
     ],
-    scripts=['jasmine/standalone.py', 'jasmine/ci.py'],
+    scripts=['jasmine/bin/jasmine.py', 'jasmine/bin/jasmine-ci.py'],
 
     packages=find_packages(),
 

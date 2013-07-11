@@ -1,8 +1,5 @@
 import os
 import re
-import sys
-import getopt
-import socket
 
 from flask import Flask
 from flask import render_template, make_response, send_file
@@ -56,22 +53,3 @@ def run():
 @app.route('/favicon.ico')
 def favicon():
     return send_file(Core.favicon_path(), mimetype='image/vnd.microsoft.icon')
-
-if __name__ == "__main__":
-    port_arg = None
-    try:
-        opts, args = getopt.getopt(sys.argv[1:], "p:", ["port="])
-    except getopt.GetoptError:
-        sys.stdout.write('python jasmine/standalone.py -p <port>')
-        sys.exit(2)
-    for opt, arg in opts:
-        if opt in ['-p', '--port']:
-            try:
-                port_arg = int(arg)
-            except ValueError:
-                pass
-    port = port_arg if port_arg and 0 <= port_arg <= 65535 else 8888
-    try:
-        app.run(port=port, debug=True)
-    except socket.error:
-        sys.stdout.write('Socket unavailable')
