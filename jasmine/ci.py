@@ -91,19 +91,18 @@ class CIRunner(object):
 
         return processed
 
-    def run(self):
+    def run(self, browser=None):
         try:
             test_server = self.TestServerThread()
             test_server.start()
 
-            driver = os.environ.get('JASMINE_BROWSER', 'firefox')
+            driver = browser if browser else os.environ.get('JASMINE_BROWSER', 'firefox')
 
             try:
                 webdriver = __import__("selenium.webdriver.{0}.webdriver".format(driver), globals(), locals(), ['object'], -1)
 
                 self.browser = webdriver.WebDriver()
             except ImportError as e:
-                print e
                 print("Browser {0} not found".format(driver))
 
             self.browser.get("http://localhost:{}/".format(test_server.port))

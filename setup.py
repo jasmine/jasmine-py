@@ -52,7 +52,8 @@ setup(
     entry_points={
         'console_scripts': [
             'jasmine = jasmine:standalone',
-            'jasmine-ci = jasmine:continuous_integration'
+            'jasmine-ci = jasmine:continuous_integration',
+            'jasmine-install = jasmine:install'
         ]
     },
 

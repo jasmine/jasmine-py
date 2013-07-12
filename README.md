@@ -62,9 +62,9 @@ The browser used by selenium can be changed by exporting `JASMINE_BROWSER`
     $ export JASMINE_BROWSER=chrome
     $ jasmine-ci
 
-or adding `--browser=` to `jasmine-ci`
+or adding `--browser` to `jasmine-ci`
 
-    $ jasmine-ci --browser=firefox
+    $ jasmine-ci --browser firefox
 
 
 ## Support
