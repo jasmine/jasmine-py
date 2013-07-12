@@ -16,6 +16,9 @@ def init():
 
     config_file = os.path.join(project_path, "spec/javascripts/support/jasmine.yml")
 
+    if not os.path.exists(config_file):
+        print("Could not find your config file at {0}".format(config_file))
+
     app.jasmine_config = Config(config_file, project_path=project_path)
 
     app.filetype_mapping = {

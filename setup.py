@@ -47,7 +47,14 @@ setup(
         'Topic :: Software Development :: Quality Assurance',
         'Topic :: Software Development :: Testing',
     ],
-    scripts=['jasmine/bin/jasmine.py', 'jasmine/bin/jasmine-ci.py'],
+    #scripts=['jasmine/bin/jasmine.py', 'jasmine/bin/jasmine-ci.py'],
+
+    entry_points={
+        'console_scripts': [
+            'jasmine = jasmine:standalone',
+            'jasmine-ci = jasmine:continuous_integration'
+        ]
+    },
 
     packages=find_packages(),
 
