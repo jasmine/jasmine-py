@@ -1,11 +1,11 @@
 import os
 import re
+import pkg_resources
 
-from flask import Flask
-from flask import render_template, make_response, send_file
+from flask import Flask, render_template_string, make_response, send_file
 
-from jasmine_core import Core
-from jasmine import Config
+from jasmine.core import Core
+from jasmine.config import Config
 
 app = Flask(__name__, template_folder='django/templates')
 
@@ -31,12 +31,16 @@ def init():
 
 @app.route("/__<filetype>__/<path:filename>")
 def serve(filetype, filename):
-    path = os.path.join(os.getcwd(), app.filetype_mapping[filetype](), filename)
+    if filetype == 'jasmine':
+        contents = pkg_resources.resource_string('jasmine.core', filename)
+    else:
+        path = os.path.join(os.getcwd(), app.filetype_mapping[filetype](), filename)
+        contents = open(path, 'r').read()
 
-    response = make_response(open(path, 'r').read())
-    if re.match(r'^.*\.js$', path):
+    response = make_response(contents)
+    if re.match(r'^.*\.js$', filename):
         response.mimetype = 'application/javascript'
-    elif re.match(r'^.*\.css$', path):
+    elif re.match(r'^.*\.css$', filename):
         response.mimetype = 'text/css'
     else:
         response.mimetype = 'application/octet-stream'
@@ -51,8 +55,10 @@ def run():
         'js_files': app.jasmine_config.script_urls()
     }
 
-    return render_template('runner.html', **context)
+    template = pkg_resources.resource_string('jasmine.django.templates', 'runner.html')
 
-@app.route('/favicon.ico')
+    return render_template_string(template, **context)
+
+@app.route('/favicon.png')
 def favicon():
-    return send_file(Core.favicon_path(), mimetype='image/vnd.microsoft.icon')
+    return send_file(pkg_resources.resource_stream('jasmine.core.images', 'jasmine_favicon.png'), mimetype='image/png')

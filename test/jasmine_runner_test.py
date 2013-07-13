@@ -4,7 +4,7 @@ from mock import Mock
 
 @pytest.fixture
 def config():
-    from jasmine import Config
+    from jasmine.config import Config
 
     mock_config = Mock(spec=Config, autospec=True)
     mock_config.script_urls.return_value = ["__jasmine__/jasmine.js", "__boot__/boot.js"]

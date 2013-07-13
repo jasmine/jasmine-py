@@ -7,8 +7,9 @@ except ImportError:
 
 from .utils import iglob
 import os
+import pkg_resources
 
-from jasmine_core import Core
+from jasmine.core import Core
 
 
 class Config(object):
@@ -83,14 +84,18 @@ class Config(object):
         return self.yaml.get("spec_dir") or 'spec/javascripts'
 
     def script_urls(self):
+        js_files = filter(lambda name: '.js' in name, pkg_resources.resource_listdir("jasmine.core", '.'))
+
         return \
-            ["__jasmine__/{0}".format(core_js) for core_js in Core.js_files()] + \
+            ["__jasmine__/{0}".format(core_js) for core_js in js_files] + \
             ["__boot__/{0}".format(boot_file) for boot_file in Core.boot_files()] + \
             ["__src__/{0}".format(src_file) for src_file in self.src_files()] + \
             ["__spec__/{0}".format(helper) for helper in self.helpers()] + \
             ["__spec__/{0}".format(spec_file) for spec_file in self.spec_files()]
 
     def stylesheet_urls(self):
+        css_files = filter(lambda name: '.css' in name, pkg_resources.resource_listdir("jasmine.core", '.'))
+
         return \
-            ["__jasmine__/{0}".format(core_css) for core_css in Core.css_files()] + \
+            ["__jasmine__/{0}".format(core_css) for core_css in css_files] + \
             ["__src__/{0}".format(css_file) for css_file in self.stylesheets()]

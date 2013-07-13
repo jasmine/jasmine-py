@@ -1,5 +1,4 @@
 from django.views.generic.base import TemplateView
-from jasmine_core import Core
 
 
 class JasmineRunner(TemplateView):

@@ -59,12 +59,13 @@ if you are using Django, you can also run:
 
 The browser used by selenium can be changed by exporting `JASMINE_BROWSER` 
 
-    $ export JASMINE_BROWSER=chrome
+    $ export JAS
+    MINE_BROWSER=chrome
     $ jasmine-ci
 
-or adding `--browser` to `jasmine-ci`
+or adding `--browser` to `jasmine-c        $ jasmine-ci --browser fir    i`
 
-    $ jasmine-ci --browser firefox
+efox
 
 
 ## Support

@@ -6,7 +6,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 from cherrypy import wsgiserver
 
-from jasmine import App
+from jasmine.standalone import app as App
 from jasmine.console import Parser, Formatter
 
 import socket

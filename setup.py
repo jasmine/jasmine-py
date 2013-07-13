@@ -47,21 +47,21 @@ setup(
         'Topic :: Software Development :: Quality Assurance',
         'Topic :: Software Development :: Testing',
     ],
-    #scripts=['jasmine/bin/jasmine.py', 'jasmine/bin/jasmine-ci.py'],
+
+    namespace_packages=['jasmine'],
+    packages=find_packages(),
+    package_data={'jasmine.django.templates': ['*.html']},
+    include_package_data=True,
 
     entry_points={
         'console_scripts': [
-            'jasmine = jasmine:standalone',
-            'jasmine-ci = jasmine:continuous_integration',
-            'jasmine-install = jasmine:install'
+            'jasmine = jasmine.entry_points:standalone',
+            'jasmine-ci = jasmine.entry_points:continuous_integration',
+            'jasmine-install = jasmine.entry_points:install'
         ]
     },
 
-    packages=find_packages(),
-
     install_requires=requirements,
-
-    include_package_data=True,
 
     dependency_links=non_pypi_requirements
 )

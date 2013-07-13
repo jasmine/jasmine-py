@@ -7,6 +7,10 @@ except ImportError:
     from ordereddict import OrderedDict
 
 
+def test_possible_ports():
+    ports = CIRunner.TestServerThread().possible_ports("localhost:80,8000-8002")
+    assert ports == [80, 8000, 8001, 8002]
+
 @pytest.fixture
 def suites():
     return [
