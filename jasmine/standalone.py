@@ -7,7 +7,8 @@ from flask import Flask, render_template_string, make_response, send_file
 from jasmine.core import Core
 from jasmine.config import Config
 
-app = Flask(__name__, template_folder='django/templates')
+app = Flask(__name__, instance_path=os.getcwd())
+app.debug = False
 
 
 @app.before_first_request

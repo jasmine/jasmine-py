@@ -49,7 +49,12 @@ def _query(question):
 
     while True:
         sys.stdout.write(question + prompt)
-        choice = raw_input().lower()
+        
+        try:
+            choice = raw_input().lower()
+        except NameError:
+            choice = input().lower()
+
         if choice == '':
             return True
         elif choice in valid:

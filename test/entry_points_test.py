@@ -67,7 +67,7 @@ def test_standalone__port_invalid(monkeypatch):
 
 
 def test__query__yes(capsys, monkeypatch):
-    monkeypatch.setattr(builtins, 'raw_input', lambda: "Y")
+    input_string(monkeypatch, "Y")
 
     choice = _query("Would you like to play a game?")
 
@@ -78,7 +78,7 @@ def test__query__yes(capsys, monkeypatch):
 
 
 def test__query__no(capsys, monkeypatch):
-    monkeypatch.setattr(builtins, 'raw_input', lambda: "N")
+    input_string(monkeypatch, "N")
 
     choice = _query("Would you like to hear some cat facts?")
 
@@ -89,7 +89,7 @@ def test__query__no(capsys, monkeypatch):
 
 
 def test__query__default(capsys, monkeypatch):
-    monkeypatch.setattr(builtins, 'raw_input', lambda: "")
+    input_string(monkeypatch, "")
 
     choice = _query("Would you like to blindly accept my defaults?")
 
@@ -120,3 +120,10 @@ def test__mkdir_p(mockfs, monkeypatch):
     })
 
     mkdir_p("/pants/a/b/c")
+
+
+def input_string(monkeypatch, string=""):
+    try:
+        monkeypatch.setattr(builtins, 'raw_input', lambda: string)
+    except AttributeError:
+        monkeypatch.setattr(builtins, 'input', lambda: string)
