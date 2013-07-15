@@ -2,7 +2,7 @@ import os
 
 from django.conf import settings
 from django.conf.urls import patterns, url
-from jasmine.core import Core
+from jasmine_core import Core
 
 from jasmine.config import Config
 from jasmine.django.views import JasmineRunner

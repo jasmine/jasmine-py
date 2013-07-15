@@ -49,7 +49,7 @@ def _query(question):
 
     while True:
         sys.stdout.write(question + prompt)
-        
+
         try:
             choice = raw_input().lower()
         except NameError:
@@ -79,12 +79,16 @@ def install():
     yaml_file_path = os.path.join(yaml_dir, 'jasmine.yml')
 
     print(("*" * 80) + '\n\nConfig yaml')
-    if _query("About to create {0}... is this okay?".format(yaml_file_path)):
-        print('making {0}'.format(yaml_dir))
-        mkdir_p(yaml_dir)
-        print('making {0}'.format(yaml_file_path))
 
-        if not os.path.exists(yaml_file_path):
+    if os.path.exists(yaml_file_path):
+        print('found existing {0}, not overwriting'.format(yaml_file_path))
+    else:
+        if _query("About to create {0}... is this okay?".format(yaml_file_path)):
+            print('making {0}'.format(yaml_dir))
+
+            mkdir_p(yaml_dir)
+
+            print('making {0}'.format(yaml_file_path))
             try:
                 with open(yaml_file_path, 'w') as f:
                     f.write(YAML_TEMPLATE)

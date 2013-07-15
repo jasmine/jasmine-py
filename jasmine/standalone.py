@@ -4,9 +4,10 @@ import pkg_resources
 
 from flask import Flask, render_template_string, make_response, send_file
 
-from jasmine.core import Core
+from jasmine_core import Core
 from jasmine.config import Config
 
+# instance_path set to work around: https://bitbucket.org/hpk42/pytest/issue/317
 app = Flask(__name__, instance_path=os.getcwd())
 app.debug = False
 
@@ -23,8 +24,6 @@ def init():
     app.jasmine_config = Config(config_file, project_path=project_path)
 
     app.filetype_mapping = {
-        'jasmine': Core.path,
-        'boot': Core.boot_dir,
         'src': app.jasmine_config.src_dir,
         'spec': app.jasmine_config.spec_dir
     }
@@ -33,7 +32,7 @@ def init():
 @app.route("/__<filetype>__/<path:filename>")
 def serve(filetype, filename):
     if filetype == 'jasmine':
-        contents = pkg_resources.resource_string('jasmine.core', filename)
+        contents = pkg_resources.resource_string('jasmine_core', filename)
     else:
         path = os.path.join(os.getcwd(), app.filetype_mapping[filetype](), filename)
         contents = open(path, 'r').read()
@@ -62,4 +61,4 @@ def run():
 
 @app.route('/favicon.png')
 def favicon():
-    return send_file(pkg_resources.resource_stream('jasmine.core.images', 'jasmine_favicon.png'), mimetype='image/png')
+    return send_file(pkg_resources.resource_stream('jasmine_core.images', 'jasmine_favicon.png'), mimetype='image/png')

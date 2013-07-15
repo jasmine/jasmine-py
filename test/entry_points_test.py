@@ -1,19 +1,20 @@
 try:
-    import builtins
-except ImportError:
     import __builtin__ as builtins
+except ImportError:
+    pass
+
 import os
 import errno
-import mockfs
-from mockfs import replace_builtins, restore_builtins
-import pytest
-from jasmine.entry_points import continuous_integration, _query, standalone, mkdir_p
-
 import sys
-from mock import MagicMock, Mock
-import jasmine
-from jasmine.ci import CIRunner
 
+from mockfs import replace_builtins, restore_builtins
+from mock import MagicMock
+import pytest
+
+from yaml import load
+
+from jasmine.entry_points import continuous_integration, _query, standalone, mkdir_p, install
+from jasmine.ci import CIRunner
 from jasmine.standalone import app as App
 
 
@@ -41,6 +42,7 @@ def test_continuous_integration__browser_default(monkeypatch):
 
     CIRunner.run.assert_called_once_with(browser=None)
 
+
 def test_standalone__set_port(monkeypatch):
     monkeypatch.setattr(sys, 'argv', ["test.py", "-p", "1337"])
     App.run = MagicMock(name='run')
@@ -49,6 +51,7 @@ def test_standalone__set_port(monkeypatch):
 
     App.run.assert_called_once_with(port=1337, debug=True)
 
+
 def test_standalone__port_default(monkeypatch):
     monkeypatch.setattr(sys, 'argv', ["test.py"])
     App.run = MagicMock(name='run')
@@ -56,6 +59,7 @@ def test_standalone__port_default(monkeypatch):
     standalone()
 
     App.run.assert_called_once_with(port=8888, debug=True)
+
 
 def test_standalone__port_invalid(monkeypatch):
     monkeypatch.setattr(sys, 'argv', ["test.py", "-p", "pants"])
@@ -127,3 +131,60 @@ def input_string(monkeypatch, string=""):
         monkeypatch.setattr(builtins, 'raw_input', lambda: string)
     except AttributeError:
         monkeypatch.setattr(builtins, 'input', lambda: string)
+
+
+def test_install__yes(mockfs, monkeypatch):
+    # Should create spec/javascripts/support
+    # Should create a spec/javascripts/support/jasmine.yml
+    spec_dir = "spec/javascripts/support"
+    yaml_file = os.path.join(spec_dir, "jasmine.yml")
+
+    input_string(monkeypatch, "Y")
+
+    install()
+
+    assert os.path.isdir(spec_dir)
+    assert os.path.isfile(yaml_file)
+
+    yaml = load(open(yaml_file))
+
+    assert yaml['spec_files'] == ["**/*[Ss]pec.js"]
+
+
+def test_install__yes__existing_yaml(mockfs, monkeypatch):
+    # Should create spec/javascripts/support
+    # Should NOT overwrite spec/javascripts/support/jasmine.yml
+    spec_dir = "spec/javascripts/support"
+    yaml_file = os.path.join(spec_dir, "jasmine.yml")
+
+    mockfs.add_entries({
+        '/spec/javascripts/support/jasmine.yml': """
+        spec_files:
+            - "**/pants.*"
+        """
+    })
+
+    input_string(monkeypatch, "Y")
+
+    install()
+
+    assert os.path.isdir(spec_dir)
+    assert os.path.isfile(yaml_file)
+
+    yaml = load(open(yaml_file))
+
+    assert yaml['spec_files'] == ["**/pants.*"]
+
+
+def test_install__no(mockfs, monkeypatch):
+    # Should NOT create spec/javascripts/support
+    # Should NOT create a spec/javascripts/support/jasmine.yml
+    spec_dir = "spec/javascripts/support"
+    yaml_file = os.path.join(spec_dir, "jasmine.yml")
+
+    input_string(monkeypatch, "N")
+
+    install()
+
+    assert not os.path.isdir(spec_dir)
+    assert not os.path.isfile(yaml_file)
