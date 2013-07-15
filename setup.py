@@ -22,8 +22,9 @@ setup(
     url="http://pivotal.github.io/jasmine/",
     author="Pivotal Labs",
     author_email="jasmine-js@googlegroups.com",
-    description=('A high-level Python Web framework that encourages '
-                 'rapid development and clean, pragmatic design.'),
+    description=('Jasmine is a Behavior Driven Development testing framework for JavaScript. It does not rely on '+
+                 'browsers, DOM, or any JavaScript framework. Thus it\'s suited for websites, '+
+                 'Node.js (http://nodejs.org) projects, or anywhere that JavaScript can run.'),
     license='MIT',
     classifiers=[
         'Development Status :: 4 - Beta',
