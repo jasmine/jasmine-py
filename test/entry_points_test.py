@@ -1,7 +1,7 @@
 try:
-    import __builtin__ as builtins
+    import builtins
 except ImportError:
-    pass
+    import __builtin__ as builtins
 
 import os
 import errno

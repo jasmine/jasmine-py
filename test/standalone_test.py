@@ -7,7 +7,11 @@ import jasmine.standalone
 
 @pytest.fixture
 def app():
-    reload(jasmine.standalone)
+    try:
+        reload(jasmine.standalone)
+    except NameError:
+        import imp
+        imp.reload(jasmine.standalone)
 
     from jasmine.standalone import app
     app.testing = True
@@ -79,7 +83,7 @@ def test__serve(mockfs, monkeypatch, app):
 
 def test__run(template, mockfs, monkeypatch, app):
     monkeypatch.setattr(pkg_resources, 'resource_listdir', lambda package, dir: ['jasmine.js'])
-    monkeypatch.setattr(pkg_resources, 'resource_string', lambda package, filename: template)
+    monkeypatch.setattr(pkg_resources, 'resource_string', lambda package, filename: str(template))
 
     monkeypatch.setattr(Config, 'src_files', lambda self: ['main.js', 'main_spec.js'])
     monkeypatch.setattr(Config, 'stylesheets', lambda self: ['main.css'])
