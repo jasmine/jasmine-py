@@ -49,7 +49,6 @@ setup(
         'Topic :: Software Development :: Testing',
     ],
 
-    namespace_packages=['jasmine'],
     packages=find_packages(),
     package_data={'jasmine.django.templates': ['*.html']},
     include_package_data=True,
