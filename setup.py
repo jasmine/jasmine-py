@@ -17,7 +17,7 @@ with open("requirements.txt", 'r') as f:
             requirements.append(requirement)
 
 setup(
-    name="jasmine-py",
+    name="jasmine",
     version="1.3.1",
     url="http://pivotal.github.io/jasmine/",
     author="Pivotal Labs",
