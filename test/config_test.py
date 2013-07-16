@@ -110,9 +110,9 @@ def test_script_urls(config, monkeypatch):
     script_urls = config.script_urls()
 
     assert script_urls[:4] == [
-        "__jasmine__/json2.js",
         "__jasmine__/jasmine.js",
         "__jasmine__/jasmine-html.js",
+        "__jasmine__/json2.js",
         "__src__/src/player.js"
     ]
 
@@ -124,6 +124,7 @@ def test_script_urls(config, monkeypatch):
 def test_stylesheet_urls(fs, config, monkeypatch):
     monkeypatch.setattr(pkg_resources, 'resource_listdir',
                         lambda package, directory: ['json2.js', 'jasmine.js', 'jasmine-html.js', 'jasmine.css'])
+
     config.yaml['stylesheets'] = ['**/*.css']
 
     fs.add_entries({

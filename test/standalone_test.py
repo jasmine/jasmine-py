@@ -40,7 +40,7 @@ def test__favicon(mockfs, monkeypatch, app):
     monkeypatch.setattr(pkg_resources, 'resource_stream', lambda package, filename: [])
 
     with app.test_client() as client:
-        rv = client.get("/favicon.png")
+        rv = client.get("/jasmine_favicon.png")
 
         assert rv.status_code == 200
 
@@ -51,7 +51,7 @@ def test__before_first_request(mockfs, monkeypatch, app):
     assert not hasattr(app, 'jasmine_config')
 
     with app.test_client() as client:
-        rv = client.get("/favicon.png")
+        rv = client.get("/jasmine_favicon.png")
         assert rv.status_code == 200
 
     assert app.jasmine_config is not None

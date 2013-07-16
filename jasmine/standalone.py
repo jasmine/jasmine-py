@@ -59,6 +59,6 @@ def run():
 
     return render_template_string(template, **context)
 
-@app.route('/favicon.png')
+@app.route('/jasmine_favicon.png')
 def favicon():
     return send_file(pkg_resources.resource_stream('jasmine_core.images', 'jasmine_favicon.png'), mimetype='image/png')
