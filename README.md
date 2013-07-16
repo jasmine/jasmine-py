@@ -10,7 +10,7 @@ This package contains:
 * A small server that builds and executes a Jasmine suite for a project
 * A command line script to run your tests (handy for continuous integration)
 
-You can get all of this by: `pip install jasmine-py` or by adding `jasmine-py` to your `requirements.txt`.
+You can get all of this by: `pip install jasmine` or by adding `jasmine` to your `requirements.txt`.
 
 ## \__init__ A Project
 
