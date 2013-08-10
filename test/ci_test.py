@@ -1,11 +1,51 @@
+import sys
+try:
+    from io import StringIO
+except ImportError:
+    from StringIO import StringIO
+
+from mock import MagicMock, Mock
 import pytest
-from jasmine.ci import CIRunner
+
+from jasmine.ci import CIRunner, TestServerThread
 
 try:
     from collections import OrderedDict
 except ImportError:
     from ordereddict import OrderedDict
 
+
+def test_possible_ports():
+    ports = TestServerThread().possible_ports("localhost:80,8000-8002")
+    assert ports == [80, 8000, 8001, 8002]
+
+@pytest.fixture
+def stdout(monkeypatch):
+    buf = StringIO()
+    monkeypatch.setattr(sys, 'stdout', buf)
+    return buf
+
+@pytest.fixture
+def sysexit(monkeypatch):
+    mock_exit = MagicMock()
+    monkeypatch.setattr(sys, 'exit', mock_exit)
+    return mock_exit
+
+@pytest.fixture
+def test_server(monkeypatch):
+    import jasmine.ci
+    server = MagicMock()
+    server.port = 80
+    monkeypatch.setattr(jasmine.ci, 'TestServerThread', server)
+    return server
+
+@pytest.fixture
+def firefox_driver(monkeypatch):
+    import selenium.webdriver.firefox.webdriver
+    driver = MagicMock()
+    driver_class = lambda: driver
+    monkeypatch.setattr(selenium.webdriver.firefox.webdriver, 'WebDriver', driver_class)
+    return driver
 
 @pytest.fixture
 def suites():
@@ -91,3 +131,37 @@ def test_process_results__fullName(suites, results):
 
     assert processed[0]['fullName'] == "datepicker calls the datepicker constructor"
     assert processed[1]['fullName'] == "datepicker icon triggers the datepicker"
+
+def test_run_exits_with_zero_on_success(suites, results, stdout, sysexit, firefox_driver, test_server):
+    results['0'] = results['1']
+    del results['1']
+    def execute_script(js):
+        if 'jsApiReporter.finished' in js:
+            return True
+        if 'jsApiReporter.results()' in js:
+            return results
+        if 'jsApiReporter.suites()' in js:
+            return suites
+        return None
+
+    firefox_driver.execute_script = execute_script
+
+    CIRunner().run()
+
+    assert not sysexit.called
+
+def test_run_exits_with_nonzero_on_failure(suites, results, stdout, sysexit, firefox_driver, test_server):
+    def execute_script(js):
+        if 'jsApiReporter.finished' in js:
+            return True
+        if 'jsApiReporter.results()' in js:
+            return results
+        if 'jsApiReporter.suites()' in js:
+            return suites
+        return None
+
+    firefox_driver.execute_script = execute_script
+
+    CIRunner().run()
+
+    sysexit.assert_called_with(1)

@@ -51,7 +51,7 @@ class Config(object):
         for src_glob in paths:
             files.extend([os.path.abspath(x) for x in iglob(src_glob)])
 
-        return list(self._uniq(files, lambda x: x.lower()))
+        return list(self._uniq(files))
 
     def _load(self):
         with open(self.yaml_file, 'rU') as f:
@@ -85,7 +85,6 @@ class Config(object):
     def script_urls(self):
         return \
             ["__jasmine__/{0}".format(core_js) for core_js in Core.js_files()] + \
-            ["__boot__/{0}".format(boot_file) for boot_file in Core.boot_files()] + \
             ["__src__/{0}".format(src_file) for src_file in self.src_files()] + \
             ["__spec__/{0}".format(helper) for helper in self.helpers()] + \
             ["__spec__/{0}".format(spec_file) for spec_file in self.spec_files()]

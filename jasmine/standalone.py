@@ -1,16 +1,15 @@
 import os
 import re
-import sys
-import getopt
-import socket
+import pkg_resources
 
-from flask import Flask
-from flask import render_template, make_response, send_file
+from flask import Flask, render_template_string, make_response, send_file
 
 from jasmine_core import Core
-from jasmine import Config
+from jasmine.config import Config
 
-app = Flask(__name__, template_folder='django/templates')
+# instance_path set to work around: https://bitbucket.org/hpk42/pytest/issue/317
+app = Flask(__name__, instance_path=os.getcwd())
+app.debug = False
 
 
 @app.before_first_request
@@ -19,11 +18,12 @@ def init():
 
     config_file = os.path.join(project_path, "spec/javascripts/support/jasmine.yml")
 
+    if not os.path.exists(config_file):
+        print("Could not find your config file at {0}".format(config_file))
+
     app.jasmine_config = Config(config_file, project_path=project_path)
 
     app.filetype_mapping = {
-        'jasmine': Core.path,
-        'boot': Core.boot_dir,
         'src': app.jasmine_config.src_dir,
         'spec': app.jasmine_config.spec_dir
     }
@@ -31,12 +31,16 @@ def init():
 
 @app.route("/__<filetype>__/<path:filename>")
 def serve(filetype, filename):
-    path = os.path.join(os.getcwd(), app.filetype_mapping[filetype](), filename)
+    if filetype == 'jasmine':
+        contents = pkg_resources.resource_string('jasmine_core', filename)
+    else:
+        path = os.path.join(os.getcwd(), app.filetype_mapping[filetype](), filename)
+        contents = open(path, 'r').read()
 
-    response = make_response(open(path, 'r').read())
-    if re.match(r'^.*\.js$', path):
+    response = make_response(contents)
+    if re.match(r'^.*\.js$', filename):
         response.mimetype = 'application/javascript'
-    elif re.match(r'^.*\.css$', path):
+    elif re.match(r'^.*\.css$', filename):
         response.mimetype = 'text/css'
     else:
         response.mimetype = 'application/octet-stream'
@@ -51,27 +55,10 @@ def run():
         'js_files': app.jasmine_config.script_urls()
     }
 
-    return render_template('runner.html', **context)
+    template = pkg_resources.resource_string('jasmine.django.templates', 'runner.html')
 
-@app.route('/favicon.ico')
+    return render_template_string(template, **context)
+
+@app.route('/jasmine_favicon.png')
 def favicon():
-    return send_file(Core.favicon_path(), mimetype='image/vnd.microsoft.icon')
-
-if __name__ == "__main__":
-    port_arg = None
-    try:
-        opts, args = getopt.getopt(sys.argv[1:], "p:", ["port="])
-    except getopt.GetoptError:
-        sys.stdout.write('python jasmine/standalone.py -p <port>')
-        sys.exit(2)
-    for opt, arg in opts:
-        if opt in ['-p', '--port']:
-            try:
-                port_arg = int(arg)
-            except ValueError:
-                pass
-    port = port_arg if port_arg and 0 <= port_arg <= 65535 else 8888
-    try:
-        app.run(port=port, debug=True)
-    except socket.error:
-        sys.stdout.write('Socket unavailable')
+    return send_file(pkg_resources.resource_stream('jasmine_core.images', 'jasmine_favicon.png'), mimetype='image/png')

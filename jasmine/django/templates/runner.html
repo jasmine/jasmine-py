@@ -11,39 +11,6 @@
   {% for js_file in js_files %}
       <script src="{{ js_file }}" type="text/javascript"></script>
   {% endfor %}
-
-  <script>
-      (function() {
-          var jasmineEnv = jasmine.getEnv();
-          jasmineEnv.updateInterval = 1000;
-
-          var htmlReporter = new jasmine.HtmlReporter();
-          var jsApiReporter = new jasmine.JsApiReporter();
-
-          window.jsApiReporter = jsApiReporter;
-
-          jasmineEnv.addReporter(htmlReporter);
-          jasmineEnv.addReporter(jsApiReporter);
-
-          jasmineEnv.specFilter = function(spec) {
-              return htmlReporter.specFilter(spec);
-          };
-
-          var currentWindowOnload = window.onload;
-
-          window.onload = function() {
-              if (currentWindowOnload) {
-                  currentWindowOnload();
-              }
-              execJasmine();
-          };
-
-          function execJasmine() {
-              jasmineEnv.execute();
-          }
-
-      })();
-    </script>
 </head>
 <body>
     <div id="jasmine_content"></div>

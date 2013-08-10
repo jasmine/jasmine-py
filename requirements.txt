@@ -8,6 +8,9 @@ Flask
 CherryPy
 selenium
 pytest-cov
-
-http://github.com/pivotal/jasmine/tarball/python-magics#egg=jasmine
+argparse
+Jinja2>=2.7
+six
+lettuce
+http://github.com/pivotal/jasmine/tarball/python_2#egg=jasmine-core
 http://github.com/mockfs/mockfs/tarball/master#egg=mockfs

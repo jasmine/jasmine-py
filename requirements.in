@@ -1,9 +1,0 @@
-# use pip-compile from https://github.com/nvie/pip-tools/tree/future
-pytest
-#jasmine==2.0
-PyYAML==3.10
-#mockfs==1.0.1
-pytest-django
-
-git+git://github.com/pivotal/jasmine@python-magics
-git+git://github.com/mockfs/mockfs

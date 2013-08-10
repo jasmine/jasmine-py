@@ -1,55 +1,55 @@
+import os
 import threading
 import sys
 
-from selenium.webdriver.firefox import webdriver
 from selenium.webdriver.support.wait import WebDriverWait
 
 from cherrypy import wsgiserver
 
-from jasmine import App
+from jasmine.standalone import app as App
 from jasmine.console import Parser, Formatter
 
 import socket
 
+class TestServerThread(threading.Thread):
+    def run(self):
+        ports = self.possible_ports("localhost:80,8889-9999")
+
+        for index, port in enumerate(ports):
+            try:
+                self.server = wsgiserver.CherryPyWSGIServer(('localhost', port), App)
+                self.port = port
+                self.server.start()
+                break
+            except socket.error:
+                continue
+
+    def join(self, timeout=None):
+        self.server.stop()
+
+    def possible_ports(self, specified_address):
+        possible_ports = []
+
+        try:
+            host, port_ranges = specified_address.split(':')
+            for port_range in port_ranges.split(','):
+                # A port range can be of either form: '8000' or '8000-8010'.
+                extremes = list(map(int, port_range.split('-')))
+                assert len(extremes) in [1, 2]
+                if len(extremes) == 1:
+                    # Port range of the form '8000'
+                    possible_ports.append(extremes[0])
+                else:
+                    # Port range of the form '8000-8010'
+                    for port in range(extremes[0], extremes[1] + 1):
+                        possible_ports.append(port)
+        except Exception:
+            raise 'Invalid address ("{}") for live server.'.format(specified_address)
+
+        return possible_ports
+
 
 class CIRunner(object):
-    class TestServerThread(threading.Thread):
-        def run(self):
-            ports = self.possible_ports("localhost:80,8889-9999")
-
-            for index, port in enumerate(ports):
-                try:
-                    self.server = wsgiserver.CherryPyWSGIServer(('localhost', port), App)
-                    self.port = port
-                    self.server.start()
-                    break
-                except socket.error:
-                    continue
-
-        def join(self, timeout=None):
-            self.server.stop()
-
-        def possible_ports(self, specified_address):
-            possible_ports = []
-
-            try:
-                host, port_ranges = specified_address.split(':')
-                for port_range in port_ranges.split(','):
-                    # A port range can be of either form: '8000' or '8000-8010'.
-                    extremes = list(map(int, port_range.split('-')))
-                    assert len(extremes) in [1, 2]
-                    if len(extremes) == 1:
-                        # Port range of the form '8000'
-                        possible_ports.append(extremes[0])
-                    else:
-                        # Port range of the form '8000-8010'
-                        for port in range(extremes[0], extremes[1] + 1):
-                            possible_ports.append(port)
-            except Exception:
-                raise 'Invalid address ("{}") for live server.'.format(specified_address)
-
-            return possible_ports
-
     def _buildFullNames(self, leadin, children):
         fullNames = {}
 
@@ -91,45 +91,45 @@ class CIRunner(object):
 
         return processed
 
-    def run(self):
+    def run(self, browser=None):
         try:
-            test_server = self.TestServerThread()
+            test_server = TestServerThread()
             test_server.start()
 
-            self.browser = webdriver.WebDriver()
-            self.browser.get("http://localhost:{}/".format(test_server.port))
+            driver = browser if browser else os.environ.get('JASMINE_BROWSER', 'firefox')
+
+            try:
+                webdriver = __import__("selenium.webdriver.{0}.webdriver".format(driver), globals(), locals(), ['object'], 0)
+
+                self.browser = webdriver.WebDriver()
+            except ImportError as e:
+                print("Browser {0} not found".format(driver))
+
+            self.browser.get("http://localhost:{0}/".format(test_server.port))
 
             WebDriverWait(self.browser, 100).until(
                 lambda driver: driver.execute_script("return window.jsApiReporter.finished;")
             )
 
-            self.browser.execute_script("""
-                for (k in jsApiReporter.results()) {
-                    var result = jsApiReporter.results()[k];
-                    var messages = result.messages;
+            spec_results = []
+            index = 0
+            batch_size = 50
 
-                    for (var i = 0; i < messages.length; i++) {
-                        if (result.result === 'failed') {
-                            messages[i].stack = messages[i].trace.stack;
-                        }
-                    }
-                }
-            """)
+            while True:
+                results = browser.evaluate_script("window.jsApiReporter.specResults({0}, {1})".format(index, batch_size))
+                spec_results.extend(results)
+                index = len(results)
 
-            results = self.browser.execute_script("return window.jsApiReporter.results()")
-            suites = self.browser.execute_script("return window.jsApiReporter.suites()")
+                if not index == batch_size:
+                    break
 
-            spec_results = self._process_results(suites, results)
-
-            results = Parser().parse(spec_results)
-            formatter = Formatter(results)
+            formatter = Formatter(spec_results)
 
             sys.stdout.write(formatter.format())
+            if list(results.failed()):
+                sys.exit(1)
         finally:
             if hasattr(self, 'browser'):
                 self.browser.close()
             if hasattr(self, 'test_server'):
                 self.test_server.join()
-
-if __name__ == "__main__":
-    CIRunner().run()

@@ -17,13 +17,14 @@ with open("requirements.txt", 'r') as f:
             requirements.append(requirement)
 
 setup(
-    name="jasmine-py",
-    version="2.0",
+    name="jasmine",
+    version="2.0.0",
     url="http://pivotal.github.io/jasmine/",
     author="Pivotal Labs",
     author_email="jasmine-js@googlegroups.com",
-    description=('A high-level Python Web framework that encourages '
-                 'rapid development and clean, pragmatic design.'),
+    description=('Jasmine is a Behavior Driven Development testing framework for JavaScript. It does not rely on '+
+                 'browsers, DOM, or any JavaScript framework. Thus it\'s suited for websites, '+
+                 'Node.js (http://nodejs.org) projects, or anywhere that JavaScript can run.'),
     license='MIT',
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -47,13 +48,20 @@ setup(
         'Topic :: Software Development :: Quality Assurance',
         'Topic :: Software Development :: Testing',
     ],
-    scripts=['jasmine/standalone.py', 'jasmine/ci.py'],
 
     packages=find_packages(),
+    package_data={'jasmine.django.templates': ['*.html']},
+    include_package_data=True,
+
+    entry_points={
+        'console_scripts': [
+            'jasmine = jasmine.entry_points:standalone',
+            'jasmine-ci = jasmine.entry_points:continuous_integration',
+            'jasmine-install = jasmine.entry_points:install'
+        ]
+    },
 
     install_requires=requirements,
-
-    include_package_data=True,
 
     dependency_links=non_pypi_requirements
 )
