@@ -2,7 +2,7 @@ language: python
 
 install: "pip install -r requirements.txt --use-mirrors"
 
-script: py.test
+script: py.test test
 
 env: PYTHONPATH=.
 

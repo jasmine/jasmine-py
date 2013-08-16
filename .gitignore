@@ -32,6 +32,7 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+env
 
 htmlcov
 *.swp
