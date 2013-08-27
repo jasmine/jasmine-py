@@ -116,7 +116,7 @@ class CIRunner(object):
             batch_size = 50
 
             while True:
-                results = browser.evaluate_script("window.jsApiReporter.specResults({0}, {1})".format(index, batch_size))
+                results = self.browser.execute_script("return window.jsApiReporter.specResults({0}, {1})".format(index, batch_size))
                 spec_results.extend(results)
                 index = len(results)
 
@@ -126,7 +126,7 @@ class CIRunner(object):
             formatter = Formatter(spec_results)
 
             sys.stdout.write(formatter.format())
-            if list(results.failed()):
+            if formatter.failed:
                 sys.exit(1)
         finally:
             if hasattr(self, 'browser'):
