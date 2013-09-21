@@ -130,7 +130,7 @@ class CIRunner(object):
             spec_results = self._process_results(suites, results)
 
             results = Parser().parse(spec_results)
-            formatter = Formatter(results)
+            formatter = Formatter(results, browser_logs=self.browser.get_log('browser'))
 
             sys.stdout.write(formatter.format())
             if list(results.failed()):

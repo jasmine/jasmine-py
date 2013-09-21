@@ -1,3 +1,5 @@
+import datetime
+import time
 import sys
 try:
     from io import StringIO
@@ -18,12 +20,6 @@ except ImportError:
 def test_possible_ports():
     ports = TestServerThread().possible_ports("localhost:80,8000-8002")
     assert ports == [80, 8000, 8001, 8002]
-
-@pytest.fixture
-def stdout(monkeypatch):
-    buf = StringIO()
-    monkeypatch.setattr(sys, 'stdout', buf)
-    return buf
 
 @pytest.fixture
 def sysexit(monkeypatch):
@@ -132,7 +128,7 @@ def test_process_results__fullName(suites, results):
     assert processed[0]['fullName'] == "datepicker calls the datepicker constructor"
     assert processed[1]['fullName'] == "datepicker icon triggers the datepicker"
 
-def test_run_exits_with_zero_on_success(suites, results, stdout, sysexit, firefox_driver, test_server):
+def test_run_exits_with_zero_on_success(suites, results, capsys, sysexit, firefox_driver, test_server):
     results['0'] = results['1']
     del results['1']
     def execute_script(js):
@@ -144,13 +140,22 @@ def test_run_exits_with_zero_on_success(suites, results, stdout, sysexit, firefo
             return suites
         return None
 
+    def get_log(type):
+        return [dict(timestamp=0, level='INFO', message='hello')]
+
     firefox_driver.execute_script = execute_script
+    firefox_driver.get_log = get_log
 
     CIRunner().run()
+    stdout, _stderr = capsys.readouterr()
 
     assert not sysexit.called
+    stdout, _stderr = capsys.readouterr()
 
-def test_run_exits_with_nonzero_on_failure(suites, results, stdout, sysexit, firefox_driver, test_server):
+    dt = datetime.datetime.fromtimestamp(0)
+    assert '[{0} - INFO] hello\n'.format(dt) not in stdout
+
+def test_run_exits_with_nonzero_on_failure(suites, results, capsys, sysexit, firefox_driver, test_server):
     def execute_script(js):
         if 'jsApiReporter.finished' in js:
             return True
@@ -160,8 +165,24 @@ def test_run_exits_with_nonzero_on_failure(suites, results, stdout, sysexit, fir
             return suites
         return None
 
+    timestamp = time.time() * 1000
+    def get_log(type):
+        assert type == 'browser'
+        return [
+            dict(timestamp=timestamp, level='INFO', message='hello'),
+            dict(timestamp=timestamp + 1, level='WARNING', message='world'),
+        ]
+
     firefox_driver.execute_script = execute_script
+    firefox_driver.get_log = get_log
 
     CIRunner().run()
 
     sysexit.assert_called_with(1)
+    stdout, _stderr = capsys.readouterr()
+
+    dt = datetime.datetime.fromtimestamp(timestamp / 1000.0)
+    assert '[{0} - INFO] hello\n'.format(dt) in stdout
+
+    dt = datetime.datetime.fromtimestamp((timestamp + 1) / 1000.0)
+    assert '[{0} - WARNING] world\n'.format(dt) in stdout
