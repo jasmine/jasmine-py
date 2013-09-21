@@ -84,7 +84,7 @@ class Formatter(object):
                     log['level'],
                     log['message']
                 )
-            output += "\n\n"
+            output += "\n"
         return output
 
     def format_failures(self):
