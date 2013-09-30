@@ -1,3 +1,4 @@
+import datetime
 import pytest
 from jasmine.console import Parser, Formatter
 
@@ -35,6 +36,23 @@ def results():
         {u'status': u'pending', u'fullName': u'Context is this test is pending'},
     ])
 
+@pytest.fixture
+def passing_results():
+    parser = Parser()
+    return parser.parse([
+        {u'status': u'passed'},
+        {u'status': u'passed'},
+        {u'status': u'pending', u'fullName': u'Context is this test is pending'},
+    ])
+
+@pytest.fixture
+def browser_logs():
+    return [
+        {u'timestamp': 0, 'level': 'INFO', 'message': 'hi'},
+        {u'timestamp': 1000, 'level': 'WARNING', 'message': 'lo'},
+        {u'timestamp': 2000, 'level': 'INFO', 'message': 'bye'},
+    ]
+
 
 def test_format_progress(results):
     formatter = Formatter(results, colors=False)
@@ -47,6 +65,22 @@ def test_format_summary(results):
 
     assert formatter.format_summary() == "4 specs, 1 failed, 1 pending"
 
+def test_format_browser_logs(results, browser_logs):
+    formatter = Formatter(results, colors=False, browser_logs=browser_logs)
+
+    dt1, dt2, dt3 = map(datetime.datetime.fromtimestamp, range(3))
+    assert formatter.format_browser_logs() == (
+        "Browser Session Logs:\n" +
+        "  [{0} - INFO] hi\n".format(dt1) +
+        "  [{0} - WARNING] lo\n".format(dt2) +
+        "  [{0} - INFO] bye\n".format(dt3) +
+        "\n"
+    )
+
+def test_format_browser_logs_with_no_failures(passing_results, browser_logs):
+    formatter = Formatter(passing_results, colors=False, browser_logs=browser_logs)
+
+    assert formatter.format_browser_logs() == ""
 
 def test_format_failures():
     parser = Parser()
