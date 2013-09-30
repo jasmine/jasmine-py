@@ -17,7 +17,7 @@ class TestServerThread(threading.Thread):
 
         for index, port in enumerate(ports):
             try:
-                self.server = wsgiserver.CherryPyWSGIServer(('localhost', port), App)
+                self.server = wsgiserver.CherryPyWSGIServer(('localhost', port), App, request_queue_size=2048)
                 self.port = port
                 self.server.start()
                 break
