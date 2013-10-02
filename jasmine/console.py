@@ -1,3 +1,5 @@
+import datetime
+from collections import namedtuple
 try:
     from collections import OrderedDict
 except ImportError:
@@ -30,6 +32,7 @@ class Formatter(object):
 
     def __init__(self, results, **kwargs):
         self.colors = kwargs.get('colors', True)
+        self.browser_logs = kwargs.get('browser_logs', [])
         self.results = results
         self.failed = []
         self.pending = []
@@ -41,12 +44,14 @@ class Formatter(object):
         return self.COLORS[color] + text + self.COLORS['none']
 
     def format(self):
-
-        return self.JASMINE_HEADER +\
-            self.format_progress() + "\n\n" +\
-            self.format_summary() + "\n\n" +\
-            self.format_failures() +\
+        return (
+            self.JASMINE_HEADER +
+            self.format_progress() + "\n\n" +
+            self.format_summary() + "\n\n" +
+            self.format_browser_logs() +
+            self.format_failures() +
             self.format_pending()
+        )
 
     def format_progress(self):
         output = ""
@@ -70,6 +75,19 @@ class Formatter(object):
         if self.pending:
             output += ", {0} pending".format(len(self.pending))
 
+        return output
+
+    def format_browser_logs(self):
+        output = ""
+        if list(self.results.failed()):
+            output = "Browser Session Logs:\n"
+            for log in self.browser_logs:
+                output += "  [{0} - {1}] {2}\n".format(
+                    datetime.datetime.fromtimestamp(log['timestamp'] / 1000.0),
+                    log['level'],
+                    log['message']
+                )
+            output += "\n"
         return output
 
     def format_failures(self):
@@ -115,13 +133,7 @@ class Parser(object):
         return ResultList([Result(**item) for item in items])
 
 
-class Result(tuple):
-
+class Result(namedtuple('Result', 'status fullName failedExpectations id description')):
     def __new__(cls, status=None, fullName=None, failedExpectations=[], id=None, description=None):
-        return tuple.__new__(cls, (status, fullName, failedExpectations, id, description))
+        return super(Result, cls).__new__(cls, status, fullName, failedExpectations, id, description)
 
-    status = property(itemgetter(0), doc='Alias for field number 0')
-    fullName = property(itemgetter(1), doc='Alias for field number 1')
-    failedExpectations = property(itemgetter(2), doc='Alias for field number 2')
-    id = property(itemgetter(3), doc='Alias for field number 3')
-    description = property(itemgetter(4), doc='Alias for field number 4')
