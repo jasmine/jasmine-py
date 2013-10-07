@@ -50,47 +50,6 @@ class TestServerThread(threading.Thread):
 
 
 class CIRunner(object):
-    def _buildFullNames(self, leadin, children):
-        fullNames = {}
-
-        for child in children:
-            name = " ".join([leadin, child['name']])
-
-            if child['type'] == "spec":
-                fullNames[child['id']] = name
-            else:
-                fullNames.update(self._buildFullNames(name, child['children']))
-
-        return fullNames
-
-    def _process_results(self, suites, results):
-        processed = []
-
-        fullNames = {}
-
-        for suite in suites:
-            fullNames.update(self._buildFullNames(suite['name'], suite['children']))
-
-        for spec_id in sorted(results.keys(), key=lambda x: int(x)):
-            result = results[spec_id]
-
-            pr = {
-                'status': result['result'],
-                'fullName': fullNames[int(spec_id)]
-            }
-
-            failed_expectations = []
-            for message in result['messages']:
-                if 'stack' in message:
-                    failed_expectations.append({'stack': message['stack']})
-
-            if failed_expectations:
-                pr.update(failedExpectations=failed_expectations)
-
-            processed.append(pr)
-
-        return processed
-
     def run(self, browser=None):
         try:
             test_server = TestServerThread()
@@ -108,25 +67,31 @@ class CIRunner(object):
             self.browser.get("http://localhost:{0}/".format(test_server.port))
 
             WebDriverWait(self.browser, 100).until(
-                lambda driver: driver.execute_script("return window.jsApiReporter.finished;")
+                lambda driver: driver.execute_script("return jsApiReporter.finished;")
             )
 
             spec_results = []
             index = 0
             batch_size = 50
 
+            parser = Parser()
+
+
             while True:
-                results = self.browser.execute_script("return window.jsApiReporter.specResults({0}, {1})".format(index, batch_size))
+                results = self.browser.execute_script("return jsApiReporter.specResults({0}, {1})".format(index, batch_size))
+
+                results = parser.parse(results)
+
                 spec_results.extend(results)
                 index = len(results)
 
                 if not index == batch_size:
                     break
 
-            formatter = Formatter(spec_results)
+            formatter = Formatter(spec_results, browser_logs=self.browser.get_log('browser'))
 
             sys.stdout.write(formatter.format())
-            if formatter.failed:
+            if len(list(formatter.results.failed())):
                 sys.exit(1)
         finally:
             if hasattr(self, 'browser'):

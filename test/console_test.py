@@ -111,7 +111,7 @@ def test_format_failures():
         "        at http://localhost:8888/__spec__/global_spec.js:6\n"
 
 
-def test_clean_stack():
+def test_clean_stack(results):
     formatter = Formatter(results, colors=False)
 
     dirty_stack = u"""Error: Expected 'Batman' to equal 'PANTS'.
@@ -123,6 +123,7 @@ def test_clean_stack():
 
 
 def test_pending_stack(results):
+    print results
     formatter = Formatter(results, colors=False)
 
     assert formatter.format_pending() == "Context is this test is pending\n"

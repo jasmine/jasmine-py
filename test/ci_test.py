@@ -70,74 +70,44 @@ def suites():
 
 @pytest.fixture
 def results():
-    return {
-        "0": {
-            "messages": [
+    return [
+        {
+            "id": "spec0",
+            "description": "",
+            "fullName": "",
+            "status": "failed",
+            'failedExpectations': [
                 {
-                    "type": "expect",
                     "matcherName": "toHaveBeenCalledWith",
-                    "passed_": False,
                     "expected": {
                         "format": "yyy-mm-dd"
                     },
+                    "actual": {},
                     "message": "Expected spy datepicker to have been called with [ { format : 'yyy-mm-dd' } ] but actual calls were [ { format : 'yyyy-mm-dd' } ]",
                     "stack": "Totally the one you want",
-                    "trace": {
-                        "stack": "Stack would be here"
-                    }
+                    "passed": False
                 }
-            ],
-            "result": "failed"
+
+            ]
         },
-        "1": {
-            "messages": [
-                {
-                    "type": "expect",
-                    "matcherName": "toHaveBeenCalled",
-                    "passed_": True,
-                    "message": "Passed.",
-                    "trace": ""
-                }
-            ],
-            "result": "passed"
+        {
+            "id": "spec1",
+            "description": "",
+            "fullName": "",
+            "status": "passed",
+            "failedExpectations": []
         }
-    }
-
-
-def test_process_results__status(suites, results):
-    processed = CIRunner()._process_results(suites, results)
-
-    # Python is going to reverse the order of the above OrderedDict
-    assert processed[0]['status'] == "failed"
-    assert processed[1]['status'] == "passed"
-
-
-def test_process_results__stack(suites, results):
-    processed = CIRunner()._process_results(suites, results)
-
-    assert processed[0]['status'] == 'failed'
-    assert processed[1]['status'] == 'passed'
-
-    assert processed[0]['failedExpectations'][0]['stack'] == "Totally the one you want"
-    assert 'failedExpectations' not in processed[1]
-
-
-def test_process_results__fullName(suites, results):
-    processed = CIRunner()._process_results(suites, results)
-
-    assert processed[0]['fullName'] == "datepicker calls the datepicker constructor"
-    assert processed[1]['fullName'] == "datepicker icon triggers the datepicker"
+    ]
 
 def test_run_exits_with_zero_on_success(suites, results, capsys, sysexit, firefox_driver, test_server):
-    results['0'] = results['1']
-    del results['1']
+    results[0] = results[1]
+    del results[1]
+
     def execute_script(js):
         if 'jsApiReporter.finished' in js:
             return True
-        if 'jsApiReporter.results()' in js:
+        if 'jsApiReporter.specResults' in js:
             return results
-        if 'jsApiReporter.suites()' in js:
-            return suites
         return None
 
     def get_log(type):
@@ -155,17 +125,17 @@ def test_run_exits_with_zero_on_success(suites, results, capsys, sysexit, firefo
     dt = datetime.datetime.fromtimestamp(0)
     assert '[{0} - INFO] hello\n'.format(dt) not in stdout
 
+
 def test_run_exits_with_nonzero_on_failure(suites, results, capsys, sysexit, firefox_driver, test_server):
     def execute_script(js):
         if 'jsApiReporter.finished' in js:
             return True
-        if 'jsApiReporter.results()' in js:
+        if 'jsApiReporter.specResults' in js:
             return results
-        if 'jsApiReporter.suites()' in js:
-            return suites
         return None
 
     timestamp = time.time() * 1000
+
     def get_log(type):
         assert type == 'browser'
         return [
@@ -180,6 +150,8 @@ def test_run_exits_with_nonzero_on_failure(suites, results, capsys, sysexit, fir
 
     sysexit.assert_called_with(1)
     stdout, _stderr = capsys.readouterr()
+
+    print stdout
 
     dt = datetime.datetime.fromtimestamp(timestamp / 1000.0)
     assert '[{0} - INFO] hello\n'.format(dt) in stdout

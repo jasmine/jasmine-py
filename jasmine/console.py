@@ -10,7 +10,6 @@ try:
 except ImportError:
     pass
 
-from operator import itemgetter
 
 class Formatter(object):
     COLORS = {
@@ -33,9 +32,7 @@ class Formatter(object):
     def __init__(self, results, **kwargs):
         self.colors = kwargs.get('colors', True)
         self.browser_logs = kwargs.get('browser_logs', [])
-        self.results = results
-        self.failed = []
-        self.pending = []
+        self.results = ResultList(results)
 
     def colorize(self, color, text):
         if not self.colors:
@@ -57,23 +54,20 @@ class Formatter(object):
         output = ""
 
         for result in self.results:
-
-            if result["status"] == "passed":
+            if result.status == "passed":
                 output += self.colorize('green', '.')
-            elif result["status"] == "failed":
+            elif result.status == "failed":
                 output += self.colorize('red', 'X')
-                self.failed.extend([result])
             else:
                 output += self.colorize('yellow', '*')
-                self.pending.extend([result])
 
         return output
 
     def format_summary(self):
-        output = "{0} specs, {1} failed".format(len(self.results), len(self.failed))
+        output = "{0} specs, {1} failed".format(len(self.results), len(list(self.results.failed())))
 
-        if self.pending:
-            output += ", {0} pending".format(len(self.pending))
+        if self.results.pending():
+            output += ", {0} pending".format(len(list(self.results.pending())))
 
         return output
 
@@ -92,9 +86,9 @@ class Formatter(object):
 
     def format_failures(self):
         output = ""
-        for failure in self.failed:
-            output += self.colorize('red', failure['fullName']) + "\n" +\
-                self.clean_stack(failure['failedExpectations'][0]['stack']) + "\n"
+        for failure in self.results.failed():
+            output += self.colorize('red', failure.fullName) + "\n" +\
+                self.clean_stack(failure.failedExpectations[0]['stack']) + "\n"
 
         return output
 
@@ -109,8 +103,9 @@ class Formatter(object):
 
     def format_pending(self):
         output = ""
-        for pending in self.pending:
-            output += self.colorize('yellow', pending['failedExpectations'][0]['fullName'] + "\n")
+
+        for pending in self.results.pending():
+            output += self.colorize('yellow', pending.fullName + "\n")
         return output
 
 
