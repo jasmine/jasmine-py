@@ -151,8 +151,6 @@ def test_run_exits_with_nonzero_on_failure(suites, results, capsys, sysexit, fir
     sysexit.assert_called_with(1)
     stdout, _stderr = capsys.readouterr()
 
-    print stdout
-
     dt = datetime.datetime.fromtimestamp(timestamp / 1000.0)
     assert '[{0} - INFO] hello\n'.format(dt) in stdout
 

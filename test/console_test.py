@@ -123,7 +123,6 @@ def test_clean_stack(results):
 
 
 def test_pending_stack(results):
-    print results
     formatter = Formatter(results, colors=False)
 
     assert formatter.format_pending() == "Context is this test is pending\n"
