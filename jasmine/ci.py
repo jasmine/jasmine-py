@@ -2,6 +2,7 @@ import os
 import threading
 import sys
 
+from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.support.wait import WebDriverWait
 
 from cherrypy import wsgiserver
@@ -83,12 +84,17 @@ class CIRunner(object):
                 results = parser.parse(results)
 
                 spec_results.extend(results)
-                index = len(results)
+                index += len(results)
 
-                if not index == batch_size:
+                if not len(results) == batch_size:
                     break
 
-            formatter = Formatter(spec_results, browser_logs=self.browser.get_log('browser'))
+            try:
+                log = self.browser.get_log('browser')
+            except WebDriverException:
+                log = []
+
+            formatter = Formatter(spec_results, browser_logs=log)
 
             sys.stdout.write(formatter.format())
             if len(list(formatter.results.failed())):
