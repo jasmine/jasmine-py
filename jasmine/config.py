@@ -38,12 +38,14 @@ class Config(object):
 
     def _glob_filelist(self, filelist, relative_to, default=[]):
         paths = self.yaml.get(filelist) or default
-        paths = [os.path.abspath(os.path.join(self.project_path, relative_to, path)) for path in paths]
+        if relative_to:
+            paths = [os.path.abspath(os.path.join(self.project_path, relative_to, path)) for path in paths]
 
-        relpaths = [os.path.relpath(absolute, relative_to) for absolute in self._glob_paths(paths)]
+            relpaths = [os.path.relpath(absolute, relative_to) for absolute in self._glob_paths(paths)]
 
-        #fix py26 relpath from root bug http://bugs.python.org/issue5117
-        return [relpath[3:] if relpath.startswith("../") else relpath for relpath in relpaths]
+            #fix py26 relpath from root bug http://bugs.python.org/issue5117
+            return [relpath[3:] if relpath.startswith("../") else relpath for relpath in relpaths]
+        return paths
 
     def _glob_paths(self, paths):
         files = []
@@ -59,6 +61,9 @@ class Config(object):
 
     def reload(self):
         self._load()
+
+    def vendors(self):
+        return self._glob_filelist('vendors', None)
 
     def src_files(self):
         return self._glob_filelist('src_files', self.src_dir())
@@ -85,6 +90,7 @@ class Config(object):
     def script_urls(self):
         return \
             ["__jasmine__/{0}".format(core_js) for core_js in Core.js_files()] + \
+            self.vendors() + \
             ["__src__/{0}".format(src_file) for src_file in self.src_files()] + \
             ["__spec__/{0}".format(helper) for helper in self.helpers()] + \
             ["__spec__/{0}".format(spec_file) for spec_file in self.spec_files()]
