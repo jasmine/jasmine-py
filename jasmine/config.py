@@ -38,12 +38,28 @@ class Config(object):
 
     def _glob_filelist(self, filelist, relative_to, default=[]):
         paths = self.yaml.get(filelist) or default
-        paths = [os.path.abspath(os.path.join(self.project_path, relative_to, path)) for path in paths]
 
-        relpaths = [os.path.relpath(absolute, relative_to) for absolute in self._glob_paths(paths)]
+        paths = [self._make_absolute(path, relative_to) for path in paths]
+        paths = [self._expland_globs(path) for path in paths]
+        paths = sum(paths, [])
+        relpaths = [self._make_relative(path, relative_to) for path in paths]
 
         #fix py26 relpath from root bug http://bugs.python.org/issue5117
         return [relpath[3:] if relpath.startswith("../") else relpath for relpath in relpaths]
+
+    def _make_absolute(self, path, relative_to):
+        return (path if path.startswith('http')
+        else 
+          os.path.abspath(os.path.join(self.project_path, relative_to, path)) )
+
+    def _expland_globs(self, path):
+        return ([path] if path.startswith('http')
+        else 
+          self._glob_paths([path]))
+
+    def _make_relative(self, path, relative_to):
+        return (path if path.startswith('http')
+        else os.path.relpath(path, relative_to) )
 
     def _glob_paths(self, paths):
         files = []
@@ -52,6 +68,11 @@ class Config(object):
             files.extend([os.path.abspath(x) for x in iglob(src_glob)])
 
         return list(self._uniq(files))
+
+    def _extract_urls(self, filelist):
+      local_files = [x for x in filelist if 'http' not in x]
+      urls = [x for x in filelist if 'http' in x]
+      return local_files, urls
 
     def _load(self):
         with open(self.yaml_file, 'rU') as f:
@@ -82,10 +103,15 @@ class Config(object):
     def spec_dir(self):
         return self.yaml.get("spec_dir") or 'spec/javascripts'
 
+    def _prefix_src_underscored(self, path):
+      return (path if path.startswith('http')
+          else "__src__/{0}".format(path)
+      )
+
     def script_urls(self):
         return \
             ["__jasmine__/{0}".format(core_js) for core_js in Core.js_files()] + \
-            ["__src__/{0}".format(src_file) for src_file in self.src_files()] + \
+            [self._prefix_src_underscored(src_file) for src_file in self.src_files()] + \
             ["__spec__/{0}".format(helper) for helper in self.helpers()] + \
             ["__spec__/{0}".format(spec_file) for spec_file in self.spec_files()]
 

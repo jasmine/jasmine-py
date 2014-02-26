@@ -18,6 +18,7 @@ def fs(request):
             src_files:
               - src/player.js
               - src/**/*.js
+              - http://cdn.jquery.com/jquery.js
               - vendor/test.js
               - vendor/**/*.{js,coffee}
             """,
@@ -51,11 +52,10 @@ def config(fs):
 def test_src_files(config):
     src_files = config.src_files()
 
-    assert len(src_files) == 5
-
     assert src_files[0] == "src/player.js"
     assert src_files.index("vendor/test.js") < src_files.index("vendor/pants.coffee")
 
+    assert 'http://cdn.jquery.com/jquery.js' in src_files
     assert 'src/mixer/mixer.js' in src_files
     assert 'src/tuner/fm/fm_tuner.js' in src_files
     assert 'vendor/pants.coffee' in src_files
@@ -115,7 +115,8 @@ def test_script_urls(config, monkeypatch):
         "__jasmine__/json2.js",
         "__src__/src/player.js"
     ]
-
+    
+    assert 'http://cdn.jquery.com/jquery.js' in script_urls
     assert '__src__/src/mixer/mixer.js' in script_urls
     assert '__src__/src/tuner/fm/fm_tuner.js' in script_urls
     assert '__src__/vendor/pants.coffee' in script_urls
