@@ -5,7 +5,6 @@ ordereddict
 Django>=1.5
 pytest-django
 Flask
-CherryPy
 selenium
 pytest-cov
 argparse
@@ -14,3 +13,4 @@ six
 lettuce
 http://github.com/pivotal/jasmine/tarball/python_2#egg=jasmine-core
 http://github.com/mockfs/mockfs/tarball/master#egg=mockfs
+https://bitbucket.org/cherrypy/cherrypy/get/default.tar.gz#egg=CherryPy

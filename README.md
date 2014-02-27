@@ -67,6 +67,18 @@ or adding `--browser` to `jasmine-ci`
 	$ jasmine-ci --browser firefox
 
 
+## Contributing
+
+1. Get a python 2.7, 2.6, 3.3, and pypy
+1. Get pip: http://www.pip-installer.org/en/latest/installing.html
+1. Get virtualenvwrapper: http://virtualenvwrapper.readthedocs.org/en/latest/
+1. `git clone` this repo
+1. Make an environment: `mkvirtualenv jasminePy`
+1. Use that environment: `workon jasminePy`
+1. Install dependencies: `pip install -r requirements.txt`
+1. Run specs: `detox`
+
+
 ## Support
 
 Jasmine Mailing list: [jasmine-js@googlegroups.com](mailto:jasmine-js@googlegroups.com)
