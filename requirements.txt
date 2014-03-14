@@ -2,6 +2,7 @@ mock
 pytest
 PyYAML==3.10
 ordereddict
+Django>=1.5
 pytest-django
 Flask
 selenium
