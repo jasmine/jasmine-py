@@ -83,7 +83,7 @@ def test__serve(mockfs, monkeypatch, app):
 
 def test__run(template, mockfs, monkeypatch, app):
     monkeypatch.setattr(pkg_resources, 'resource_listdir', lambda package, dir: ['jasmine.js', 'boot.js'])
-    monkeypatch.setattr(pkg_resources, 'resource_string', lambda package, filename: str(template))
+    monkeypatch.setattr(pkg_resources, 'resource_string', lambda package, filename: template)
 
     monkeypatch.setattr(Config, 'src_files', lambda self: ['main.js', 'main_spec.js'])
     monkeypatch.setattr(Config, 'stylesheets', lambda self: ['main.css'])
