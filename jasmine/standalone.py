@@ -57,7 +57,7 @@ def run():
 
     template = pkg_resources.resource_string('jasmine.django.templates', 'runner.html')
 
-    return render_template_string(template.decode(encoding='utf-8'), **context)
+    return render_template_string(template.decode(), **context)
 
 @app.route('/jasmine_favicon.png')
 def favicon():
