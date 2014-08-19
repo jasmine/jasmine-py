@@ -1,3 +1,4 @@
+detox
 mock
 pytest
 PyYAML==3.10
