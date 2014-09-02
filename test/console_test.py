@@ -15,6 +15,13 @@ def test_parser_should_return_a_correct_results_list():
                                   u'expected': u'PANTS',
                                   u'message': u"Expected 'Batman' to equal 'PANTS'.",
                                   u'stack': u"stack\n    stack\n    stack"}],
+
+         u'passedExpectations': [{u'matcherName': u'toBeTruthy',
+                                  u'expected': [],
+                                  u'actual': True,
+                                  u'message': u'Passed.',
+                                  u'stack': u'',
+                                  u'passed': True}],
          u'id': 0,
          u'description': u'refer to the most holy'}
     ])

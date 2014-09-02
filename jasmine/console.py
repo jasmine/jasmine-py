@@ -128,7 +128,7 @@ class Parser(object):
         return ResultList([Result(**item) for item in items])
 
 
-class Result(namedtuple('Result', 'status fullName failedExpectations id description')):
-    def __new__(cls, status=None, fullName=None, failedExpectations=[], id=None, description=None):
-        return super(Result, cls).__new__(cls, status, fullName, failedExpectations, id, description)
+class Result(namedtuple('Result', 'status fullName failedExpectations passedExpectations id description')):
+    def __new__(cls, status=None, fullName=None, failedExpectations=[], passedExpectations=[], id=None, description=None):
+        return super(Result, cls).__new__(cls, status, fullName, failedExpectations, passedExpectations, id, description)
 
