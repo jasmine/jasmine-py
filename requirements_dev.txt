@@ -1,0 +1,9 @@
+-r requirements.txt
+detox
+mock
+pytest
+pytest-django
+selenium
+pytest-cov
+lettuce
+http://github.com/mockfs/mockfs/tarball/master#egg=mockfs

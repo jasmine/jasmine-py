@@ -1,17 +1,9 @@
-detox
-mock
-pytest
 PyYAML==3.10
 ordereddict
 Django==1.6.5
-pytest-django
 Flask
-selenium
-pytest-cov
 argparse
 Jinja2>=2.7
 six
-lettuce
 jasmine-core>=2.0
-http://github.com/mockfs/mockfs/tarball/master#egg=mockfs
 https://bitbucket.org/cherrypy/cherrypy/get/default.tar.gz#egg=CherryPy
