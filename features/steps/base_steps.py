@@ -1,5 +1,4 @@
 from lettuce import *
-import subprocess
 from subprocess import check_output
 import os
 import tempfile
