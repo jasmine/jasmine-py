@@ -28,14 +28,16 @@ def install_dependency(name, path=None):
 @step("I install the jasmine distribution")
 def install_jasmine(step):
     install_dependency('jasmine', path=os.path.abspath(os.getcwd()))
-
-    check_output("cd {0} && jasmine-install".format(world.project_dir), shell=True)
+    check_output("cd {0} && printf 'Y\nY\n' | jasmine-install".format(world.project_dir), shell=True)
 
     with open("{0}/spec/javascripts/test_spec.js".format(world.project_dir), 'w') as f:
         f.writelines("""
 describe("Pants", function() {
     it("should prove the truth", function() {
         expect(true).toBeTruthy();
+    });
+    it("should prove numbers", function() {
+        expect(1).toBe(1);
     });
 });
 """)
@@ -48,4 +50,4 @@ def run_jasmine(step):
 
 @step("Then I should see my tests run")
 def check_test_run(step):
-    assert "5 specs, 0 failed" in world.test_output
+    assert "2 specs, 0 failed" in world.test_output
