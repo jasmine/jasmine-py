@@ -6,3 +6,4 @@ pytest-django
 selenium
 pytest-cov
 http://github.com/mockfs/mockfs/tarball/master#egg=mockfs
+Django==1.6.5

@@ -1,6 +1,5 @@
 PyYAML==3.10
 ordereddict
-Django==1.6.5
 Flask
 argparse
 Jinja2>=2.7
