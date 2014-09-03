@@ -4,7 +4,7 @@ import os
 def test_end_to_end(tmpdir):
     install_jasmine(tmpdir)
     output = run_jasmine(tmpdir)
-    assert "2 specs, 0 failed" in output
+    assert "2 specs, 0 failed" in str(output)
 
 def install_dependency(name, path=None):
     location = path if path else name
