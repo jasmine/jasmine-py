@@ -1,9 +1,24 @@
 from lettuce import *
-from subprocess import check_output
+import subprocess
 import os
 import tempfile
 import shutil
 
+def check_output(*popenargs, **kwargs):
+    if hasattr(subprocess, 'check_output'):
+        return subprocess.check_output(*popenargs, **kwargs)
+
+    if 'stdout' in kwargs:
+        raise ValueError('stdout argument not allowed, it will be overridden.')
+    process = subprocess.Popen(*popenargs, stdout=subprocess.PIPE, **kwargs)
+    output, unused_err = process.communicate()
+    retcode = process.poll()
+    if retcode:
+        cmd = kwargs.get("args")
+        if cmd is None:
+            cmd = popenargs[0]
+        raise subprocess.CalledProcessError(retcode, cmd, output=output)
+    return output
 
 @after.all
 def cleanup_project_dir(total_results):
