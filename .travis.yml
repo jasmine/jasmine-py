@@ -4,7 +4,7 @@ before_script:
   - "sh -e /etc/init.d/xvfb start"
 install: "pip install -r requirements_dev.txt --use-mirrors"
 
-script: py.test test && lettuce
+script: py.test test && py.test features
 
 env: PYTHONPATH=.
 
