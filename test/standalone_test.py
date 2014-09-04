@@ -2,6 +2,7 @@ from mockfs import replace_builtins, restore_builtins
 import pkg_resources
 import pytest
 from jasmine.config import Config
+from mock import Mock
 
 import jasmine.standalone
 
@@ -35,8 +36,8 @@ def mockfs(request):
     request.addfinalizer(lambda: restore_builtins())
     return mfs
 
-
-def test__favicon(mockfs, monkeypatch, app):
+@pytest.mark.usefixtures('mockfs')
+def test__favicon(monkeypatch, app):
     monkeypatch.setattr(pkg_resources, 'resource_stream', lambda package, filename: [])
 
     with app.test_client() as client:
@@ -44,8 +45,8 @@ def test__favicon(mockfs, monkeypatch, app):
 
         assert rv.status_code == 200
 
-
-def test__before_first_request(mockfs, monkeypatch, app):
+@pytest.mark.usefixtures('mockfs')
+def test__before_first_request(monkeypatch, app):
     monkeypatch.setattr(pkg_resources, 'resource_stream', lambda package, filename: [])
 
     assert not hasattr(app, 'jasmine_config')
@@ -57,7 +58,7 @@ def test__before_first_request(mockfs, monkeypatch, app):
     assert app.jasmine_config is not None
 
 
-def test__serve(mockfs, monkeypatch, app):
+def test__serve(mockfs, app):
     mockfs.add_entries({
         "/src/main.css": "CSS",
         "/src/main.js": "JS",
@@ -89,8 +90,12 @@ def test__run(template, mockfs, monkeypatch, app):
     monkeypatch.setattr(Config, 'stylesheets', lambda self: ['main.css'])
 
     with app.test_client() as client:
+        client.get("/")  # call app before_first_request so that the app has a jasmine_config to mock
+        app.jasmine_config.reload = Mock()
+
         rv = client.get("/")
 
+        assert app.jasmine_config.reload.called
         assert rv.status_code == 200
 
         html = rv.get_data(as_text=True)

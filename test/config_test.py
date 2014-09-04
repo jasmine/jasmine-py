@@ -43,7 +43,8 @@ def fs(request):
 
 
 @pytest.fixture
-def config(fs):
+@pytest.mark.usefixtures("fs")
+def config():
     from jasmine.config import Config
 
     return Config("jasmine.yml", project_path="/")

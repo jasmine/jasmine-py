@@ -50,6 +50,7 @@ def serve(filetype, filename):
 
 @app.route("/")
 def run():
+    app.jasmine_config.reload()
     context = {
         'css_files': app.jasmine_config.stylesheet_urls(),
         'js_files': app.jasmine_config.script_urls()
