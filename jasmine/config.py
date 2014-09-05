@@ -109,8 +109,11 @@ class Config(object):
       )
 
     def script_urls(self):
+        core_js_files = Core.js_files()
+        if 'node_boot.js' in core_js_files:
+            core_js_files.remove('node_boot.js')
         return \
-            ["__jasmine__/{0}".format(core_js) for core_js in Core.js_files()] + \
+            ["__jasmine__/{0}".format(core_js) for core_js in core_js_files] + \
             [self._prefix_src_underscored(src_file) for src_file in self.src_files()] + \
             ["__spec__/{0}".format(helper) for helper in self.helpers()] + \
             ["__spec__/{0}".format(spec_file) for spec_file in self.spec_files()]

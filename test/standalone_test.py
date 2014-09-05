@@ -83,7 +83,7 @@ def test__serve(mockfs, app):
 
 
 def test__run(template, mockfs, monkeypatch, app):
-    monkeypatch.setattr(pkg_resources, 'resource_listdir', lambda package, dir: ['jasmine.js', 'boot.js'])
+    monkeypatch.setattr(pkg_resources, 'resource_listdir', lambda package, dir: ['jasmine.js', 'boot.js', 'node_boot.js'])
     monkeypatch.setattr(pkg_resources, 'resource_string', lambda package, filename: template)
 
     monkeypatch.setattr(Config, 'src_files', lambda self: ['main.js', 'main_spec.js'])
@@ -105,3 +105,5 @@ def test__run(template, mockfs, monkeypatch, app):
         assert """<script src="__src__/main.js" type="text/javascript"></script>""" in html
         assert """<script src="__src__/main_spec.js" type="text/javascript"></script>""" in html
         assert """<link rel="stylesheet" href="__src__/main.css" type="text/css" media="screen"/>""" in html
+
+        assert """<script src="__jasmine__/node_boot.js" type="text/javascript"></script>""" not in html

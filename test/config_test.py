@@ -107,7 +107,7 @@ def test_src_dir_spec_dir(config):
 @pytest.mark.usefixtures("fs")
 def test_script_urls(config, monkeypatch):
     monkeypatch.setattr(pkg_resources, 'resource_listdir',
-                        lambda package, directory: ['json2.js', 'jasmine.js', 'boot.js', 'jasmine-html.js', 'jasmine.css'])
+                        lambda package, directory: ['json2.js', 'jasmine.js', 'boot.js', 'node_boot.js', 'jasmine-html.js', 'jasmine.css'])
 
     script_urls = config.script_urls()
 
@@ -127,7 +127,7 @@ def test_script_urls(config, monkeypatch):
 
 def test_stylesheet_urls(fs, config, monkeypatch):
     monkeypatch.setattr(pkg_resources, 'resource_listdir',
-                        lambda package, directory: ['json2.js', 'jasmine.js', 'jasmine-html.js', 'boot.js', 'jasmine.css'])
+                        lambda package, directory: ['json2.js', 'jasmine.js', 'jasmine-html.js', 'boot.js', 'node_boot.js', 'jasmine.css'])
 
     config.yaml['stylesheets'] = ['**/*.css']
 
