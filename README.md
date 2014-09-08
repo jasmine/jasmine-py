@@ -75,7 +75,7 @@ or adding `--browser` to `jasmine-ci`
 1. `git clone` this repo
 1. Make an environment: `mkvirtualenv jasminePy`
 1. Use that environment: `workon jasminePy`
-1. Install dependencies: `pip install -r requirements.txt`
+1. Install dependencies: `pip install -r requirements_dev.txt`
 1. Run specs: `detox`
 
 
