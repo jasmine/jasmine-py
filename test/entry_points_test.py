@@ -40,13 +40,22 @@ def test_continuous_integration__browser_default(monkeypatch):
     CIRunner.run.assert_called_once_with(browser=None)
 
 
+def test_standalone__set_host(monkeypatch):
+    monkeypatch.setattr(sys, 'argv', ["test.py", "-h", "127.0.0.2"])
+    App.run = MagicMock(name='run')
+
+    standalone()
+
+    App.run.assert_called_once_with(host="127.0.0.2", port=8888, debug=True)
+
+
 def test_standalone__set_port(monkeypatch):
     monkeypatch.setattr(sys, 'argv', ["test.py", "-p", "1337"])
     App.run = MagicMock(name='run')
 
     standalone()
 
-    App.run.assert_called_once_with(port=1337, debug=True)
+    App.run.assert_called_once_with(host="127.0.0.1", port=1337, debug=True)
 
 
 def test_standalone__port_default(monkeypatch):
@@ -55,7 +64,7 @@ def test_standalone__port_default(monkeypatch):
 
     standalone()
 
-    App.run.assert_called_once_with(port=8888, debug=True)
+    App.run.assert_called_once_with(host="127.0.0.1", port=8888, debug=True)
 
 
 def test_standalone__port_invalid(monkeypatch):
@@ -64,7 +73,7 @@ def test_standalone__port_invalid(monkeypatch):
 
     standalone()
 
-    App.run.assert_called_once_with(port=8888, debug=True)
+    App.run.assert_called_once_with(host="127.0.0.1", port=8888, debug=True)
 
 
 def test__query__yes(capsys, monkeypatch):
