@@ -99,6 +99,22 @@ def results():
         }
     ]
 
+@pytest.fixture
+def suite_results():
+    return [
+            {
+                "id": "suite0",
+                "status": "failed",
+                "failedExpectations": [
+                    { "message": "something went wrong"}
+                 ]
+            },
+            {
+                "id": "suite1",
+                "status": "finished"
+            }
+           ]
+
 def test_run_exits_with_zero_on_success(suites, results, capsys, sysexit, firefox_driver, test_server):
     results[0] = results[1]
     del results[1]
@@ -108,6 +124,8 @@ def test_run_exits_with_zero_on_success(suites, results, capsys, sysexit, firefo
             return True
         if 'jsApiReporter.specResults' in js:
             return results
+        if 'jsApiReporter.suiteResults' in js:
+            return []
         return None
 
     def get_log(type):
@@ -132,6 +150,8 @@ def test_run_exits_with_nonzero_on_failure(suites, results, capsys, sysexit, fir
             return True
         if 'jsApiReporter.specResults' in js:
             return results
+        if 'jsApiReporter.suiteResults' in js:
+            return []
         return None
 
     timestamp = time.time() * 1000
@@ -156,3 +176,26 @@ def test_run_exits_with_nonzero_on_failure(suites, results, capsys, sysexit, fir
 
     dt = datetime.datetime.fromtimestamp((timestamp + 1) / 1000.0)
     assert '[{0} - WARNING] world\n'.format(dt) in stdout
+
+def test_displays_afterall_errors(suite_results, suites, results, capsys, sysexit, firefox_driver, test_server):
+    results[0] = results[1]
+    del results[1]
+
+    def execute_script(js):
+        if 'jsApiReporter.finished' in js:
+            return True
+        if 'jsApiReporter.specResults' in js:
+            return results
+        if 'jsApiReporter.suiteResults' in js:
+            return suite_results
+        return None
+
+    firefox_driver.execute_script = execute_script
+
+    CIRunner().run()
+    stdout, _stderr = capsys.readouterr()
+
+    assert 'After All something went wrong' in stdout
+    sysexit.assert_called_with(1)
+    stdout, _stderr = capsys.readouterr()
+

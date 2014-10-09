@@ -72,6 +72,13 @@ def test_format_summary(results):
 
     assert formatter.format_summary() == "4 specs, 1 failed, 1 pending"
 
+def test_format_after_all_errors():
+    parser = Parser()
+    suite_results = parser.parse([{u'status': u'failed', u'failedExpectations': [{"message": "ahhh"}]}])
+
+    formatter = Formatter([], suite_results=suite_results)
+    assert "After All ahhh" in formatter.format_suite_failure()
+
 def test_format_browser_logs(results, browser_logs):
     formatter = Formatter(results, colors=False, browser_logs=browser_logs)
 

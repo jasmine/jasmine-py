@@ -32,6 +32,7 @@ class Formatter(object):
     def __init__(self, results, **kwargs):
         self.colors = kwargs.get('colors', True)
         self.browser_logs = kwargs.get('browser_logs', [])
+        self.suite_results = ResultList(kwargs.get('suite_results', []))
         self.results = ResultList(results)
 
     def colorize(self, color, text):
@@ -45,6 +46,7 @@ class Formatter(object):
             self.JASMINE_HEADER +
             self.format_progress() + "\n\n" +
             self.format_summary() + "\n\n" +
+            self.format_suite_failure() + "\n\n" +
             self.format_browser_logs() +
             self.format_failures() +
             self.format_pending()
@@ -69,6 +71,13 @@ class Formatter(object):
         if self.results.pending():
             output += ", {0} pending".format(len(list(self.results.pending())))
 
+        return output
+
+    def format_suite_failure(self, colors=False):
+        output = ""
+        for result in self.suite_results:
+            if(result.failedExpectations):
+                output += self.colorize('red', '\nAfter All {0}'.format(result.failedExpectations[0]['message']))
         return output
 
     def format_browser_logs(self):
