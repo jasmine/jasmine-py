@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
 from .standalone import app as App
-
+import os
 
 def standalone():
     import sys
@@ -31,13 +31,18 @@ def continuous_integration():
     from jasmine.ci import CIRunner
     import argparse
 
-    parser = argparse.ArgumentParser(description='Jasmine-CI')
-    parser.add_argument('--browser', type=str,
-                        help='the selenium driver to utilize')
+    project_path = os.path.realpath(os.path.dirname(__name__))
+    config_file = os.path.join(project_path, "spec/javascripts/support/jasmine.yml")
 
-    args = parser.parse_args()
+    if os.path.exists(config_file):
+        parser = argparse.ArgumentParser(description='Jasmine-CI')
+        parser.add_argument('--browser', type=str,
+                            help='the selenium driver to utilize')
 
-    CIRunner().run(browser=args.browser)
+        args = parser.parse_args()
+        CIRunner().run(browser=args.browser)
+    else:
+        print("Could not find your config file at {0}".format(config_file))
 
 
 def _query(question):

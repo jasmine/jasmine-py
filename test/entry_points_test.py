@@ -22,45 +22,68 @@ def mockfs(request):
     return mfs
 
 
-def test_continuous_integration__set_browser(monkeypatch):
-    monkeypatch.setattr(sys, 'argv', ["test.py", "--browser", "firefox"])
+@pytest.fixture
+def mockfs_with_config(request):
+    mfs = replace_builtins()
+    mfs.add_entries({
+        "/spec/javascripts/support/jasmine.yml": """
+        src_dir: src
+        spec_dir: spec
+        """
+    })
+    request.addfinalizer(lambda: restore_builtins())
+    return mfs
+
+
+@pytest.fixture
+def mock_CI_run(request):
     CIRunner.run = MagicMock(name='run')
+
+def test_ci_config_check(mockfs, monkeypatch, mock_CI_run):
+    monkeypatch.setattr(sys, 'argv', ['test.py'])
+
+    continuous_integration()
+    assert not CIRunner.run.called
+
+def test_continuous_integration__set_browser(monkeypatch, mockfs_with_config, mock_CI_run):
+    monkeypatch.setattr(sys, 'argv', ["test.py", "--browser", "firefox"])
 
     continuous_integration()
 
     CIRunner.run.assert_called_once_with(browser='firefox')
 
 
-def test_continuous_integration__browser_default(monkeypatch):
+def test_continuous_integration__browser_default(monkeypatch, mockfs_with_config, mock_CI_run):
     monkeypatch.setattr(sys, 'argv', ["test.py"])
-    CIRunner.run = MagicMock(name='run')
 
     continuous_integration()
 
     CIRunner.run.assert_called_once_with(browser=None)
 
 
-def test_standalone__set_port(monkeypatch):
-    monkeypatch.setattr(sys, 'argv', ["test.py", "-p", "1337"])
+@pytest.fixture
+def mock_App_run(request):
     App.run = MagicMock(name='run')
+
+
+def test_standalone__set_port(monkeypatch, mock_App_run):
+    monkeypatch.setattr(sys, 'argv', ["test.py", "-p", "1337"])
 
     standalone()
 
     App.run.assert_called_once_with(port=1337, debug=True)
 
 
-def test_standalone__port_default(monkeypatch):
+def test_standalone__port_default(monkeypatch, mock_App_run):
     monkeypatch.setattr(sys, 'argv', ["test.py"])
-    App.run = MagicMock(name='run')
 
     standalone()
 
     App.run.assert_called_once_with(port=8888, debug=True)
 
 
-def test_standalone__port_invalid(monkeypatch):
+def test_standalone__port_invalid(monkeypatch, mock_App_run):
     monkeypatch.setattr(sys, 'argv', ["test.py", "-p", "pants"])
-    App.run = MagicMock(name='run')
 
     standalone()
 
