@@ -66,7 +66,7 @@ def mock_App_run(request):
     App.run = MagicMock(name='run')
 
 
-def test_standalone__set_port(monkeypatch, mock_App_run):
+def test_standalone__set_port(monkeypatch, mock_App_run, mockfs_with_config):
     monkeypatch.setattr(sys, 'argv', ["test.py", "-p", "1337"])
 
     standalone()
@@ -74,7 +74,7 @@ def test_standalone__set_port(monkeypatch, mock_App_run):
     App.run.assert_called_once_with(port=1337, debug=True)
 
 
-def test_standalone__port_default(monkeypatch, mock_App_run):
+def test_standalone__port_default(monkeypatch, mock_App_run, mockfs_with_config):
     monkeypatch.setattr(sys, 'argv', ["test.py"])
 
     standalone()
@@ -82,12 +82,20 @@ def test_standalone__port_default(monkeypatch, mock_App_run):
     App.run.assert_called_once_with(port=8888, debug=True)
 
 
-def test_standalone__port_invalid(monkeypatch, mock_App_run):
+def test_standalone__port_invalid(monkeypatch, mock_App_run, mockfs_with_config):
     monkeypatch.setattr(sys, 'argv', ["test.py", "-p", "pants"])
 
     standalone()
 
     App.run.assert_called_once_with(port=8888, debug=True)
+
+
+def test_standalone__missing_config(monkeypatch, mock_App_run, mockfs):
+    monkeypatch.setattr(sys, 'argv', ["test.py"])
+
+    standalone()
+
+    assert not App.run.called
 
 
 def test__query__yes(capsys, monkeypatch):

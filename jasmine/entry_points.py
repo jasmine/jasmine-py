@@ -3,6 +3,7 @@ from __future__ import print_function
 from .standalone import app as App
 import os
 
+
 def standalone():
     import sys
     import getopt
@@ -22,7 +23,8 @@ def standalone():
                 pass
     port = port_arg if port_arg and 0 <= port_arg <= 65535 else 8888
     try:
-        App.run(port=port, debug=True)
+        if _check_for_config():
+            App.run(port=port, debug=True)
     except socket.error:
         sys.stdout.write('Socket unavailable')
 
@@ -34,15 +36,23 @@ def continuous_integration():
     project_path = os.path.realpath(os.path.dirname(__name__))
     config_file = os.path.join(project_path, "spec/javascripts/support/jasmine.yml")
 
-    if os.path.exists(config_file):
+    if _check_for_config():
         parser = argparse.ArgumentParser(description='Jasmine-CI')
         parser.add_argument('--browser', type=str,
                             help='the selenium driver to utilize')
 
         args = parser.parse_args()
         CIRunner().run(browser=args.browser)
-    else:
+
+
+def _check_for_config():
+    project_path = os.path.realpath(os.path.dirname(__name__))
+    config_file = os.path.join(project_path, "spec/javascripts/support/jasmine.yml")
+
+    config_exists = os.path.exists(config_file)
+    if not config_exists:
         print("Could not find your config file at {0}".format(config_file))
+    return config_exists
 
 
 def _query(question):
