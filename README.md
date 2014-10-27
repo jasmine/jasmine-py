@@ -51,6 +51,8 @@ Start Jasmine on a different port:
 
 Point your browser to `localhost:1337`.
 
+You can also set the host using the `--host` argument.
+
 #### Continuous Integration
 
 For Continuous Integration environments, add this task to the project build steps:
@@ -66,6 +68,7 @@ or adding `--browser` to `jasmine-ci`
 
 	$ jasmine-ci --browser firefox
 
+For a full list of commands, type `jasmine-ci -h`
 
 ## Contributing
 
