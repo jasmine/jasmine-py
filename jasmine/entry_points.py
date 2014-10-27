@@ -9,11 +9,12 @@ def standalone():
     import getopt
     import socket
 
+    host_arg = None
     port_arg = None
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "p:", ["port="])
+        opts, args = getopt.getopt(sys.argv[1:], "h:p:", ["host=", "port="])
     except getopt.GetoptError:
-        sys.stdout.write('jasmine.py -p <port>')
+        sys.stdout.write('jasmine [-h <host>] [-p <port>]')
         sys.exit(2)
     for opt, arg in opts:
         if opt in ['-p', '--port']:
@@ -21,10 +22,16 @@ def standalone():
                 port_arg = int(arg)
             except ValueError:
                 pass
+        if opt in ['-h', '--host']:
+            try:
+                host_arg = str(arg).strip()
+            except ValueError:
+                pass
+    host = host_arg if host_arg else "127.0.0.1"
     port = port_arg if port_arg and 0 <= port_arg <= 65535 else 8888
     try:
         if _check_for_config():
-            App.run(port=port, debug=True)
+            App.run(host=host, port=port, debug=True)
     except socket.error:
         sys.stdout.write('Socket unavailable')
 
