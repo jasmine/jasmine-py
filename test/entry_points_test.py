@@ -74,12 +74,21 @@ def mock_App_run(request):
     App.run = MagicMock(name='run')
 
 
+def test_standalone__set_host(monkeypatch, mock_App_run, mockfs_with_config):
+    monkeypatch.setattr(sys, 'argv', ["test.py", "-h", "127.0.0.2"])
+    App.run = MagicMock(name='run')
+
+    standalone()
+
+    App.run.assert_called_once_with(host="127.0.0.2", port=8888, debug=True)
+
+
 def test_standalone__set_port(monkeypatch, mock_App_run, mockfs_with_config):
     monkeypatch.setattr(sys, 'argv', ["test.py", "-p", "1337"])
 
     standalone()
 
-    App.run.assert_called_once_with(port=1337, debug=True)
+    App.run.assert_called_once_with(host="127.0.0.1", port=1337, debug=True)
 
 
 def test_standalone__port_default(monkeypatch, mock_App_run, mockfs_with_config):
@@ -87,7 +96,7 @@ def test_standalone__port_default(monkeypatch, mock_App_run, mockfs_with_config)
 
     standalone()
 
-    App.run.assert_called_once_with(port=8888, debug=True)
+    App.run.assert_called_once_with(host="127.0.0.1", port=8888, debug=True)
 
 
 def test_standalone__port_invalid(monkeypatch, mock_App_run, mockfs_with_config):
@@ -95,7 +104,7 @@ def test_standalone__port_invalid(monkeypatch, mock_App_run, mockfs_with_config)
 
     standalone()
 
-    App.run.assert_called_once_with(port=8888, debug=True)
+    App.run.assert_called_once_with(host="127.0.0.1", port=8888, debug=True)
 
 
 def test_standalone__missing_config(monkeypatch, mock_App_run, mockfs):
