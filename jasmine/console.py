@@ -82,7 +82,7 @@ class Formatter(object):
 
     def format_browser_logs(self):
         output = ""
-        if list(self.results.failed()):
+        if list(self.results.failed()) and self.browser_logs:
             output = "Browser Session Logs:\n"
             for log in self.browser_logs:
                 output += "  [{0} - {1}] {2}\n".format(

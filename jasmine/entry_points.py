@@ -40,9 +40,10 @@ def continuous_integration():
         parser = argparse.ArgumentParser(description='Jasmine-CI')
         parser.add_argument('--browser', type=str,
                             help='the selenium driver to utilize')
-
+        parser.add_argument('--logs', action='store_true',
+                            help='displays browser logs')
         args = parser.parse_args()
-        CIRunner().run(browser=args.browser)
+        CIRunner().run(browser=args.browser, logs=args.logs)
 
 
 def _check_for_config():

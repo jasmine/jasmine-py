@@ -51,7 +51,7 @@ class TestServerThread(threading.Thread):
 
 
 class CIRunner(object):
-    def run(self, browser=None):
+    def run(self, browser=None, logs=False):
         try:
             test_server = TestServerThread()
             test_server.start()
@@ -99,10 +99,12 @@ class CIRunner(object):
                 if not len(results) == batch_size:
                     break
 
-            try:
-                log = self.browser.get_log('browser')
-            except WebDriverException:
-                log = []
+            log = []
+            if logs:
+                try:
+                    log = self.browser.get_log('browser')
+                except WebDriverException:
+                    pass
 
             formatter = Formatter(spec_results, suite_results=suite_results, browser_logs=log)
             sys.stdout.write(formatter.format())

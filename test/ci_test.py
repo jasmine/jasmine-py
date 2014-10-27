@@ -134,7 +134,7 @@ def test_run_exits_with_zero_on_success(suites, results, capsys, sysexit, firefo
     firefox_driver.execute_script = execute_script
     firefox_driver.get_log = get_log
 
-    CIRunner().run()
+    CIRunner().run(logs=True)
     stdout, _stderr = capsys.readouterr()
 
     assert not sysexit.called
@@ -171,11 +171,43 @@ def test_run_exits_with_nonzero_on_failure(suites, results, capsys, sysexit, fir
     sysexit.assert_called_with(1)
     stdout, _stderr = capsys.readouterr()
 
+    assert "Browser Session Logs" not in stdout
+    assert "hello" not in stdout
+    assert "world" not in stdout
+
+
+def test_run_with_browser_logs(suites, results, capsys, sysexit, firefox_driver, test_server):
+    def execute_script(js):
+        if 'jsApiReporter.finished' in js:
+            return True
+        if 'jsApiReporter.specResults' in js:
+            return results
+        if 'jsApiReporter.suiteResults' in js:
+            return []
+        return None
+
+    timestamp = time.time() * 1000
+
+    def get_log(type):
+        assert type == 'browser'
+        return [
+            dict(timestamp=timestamp, level='INFO', message='hello'),
+            dict(timestamp=timestamp + 1, level='WARNING', message='world'),
+        ]
+
+    firefox_driver.execute_script = execute_script
+    firefox_driver.get_log = get_log
+
+    CIRunner().run(logs=True)
+
+    stdout, _stderr = capsys.readouterr()
+
     dt = datetime.datetime.fromtimestamp(timestamp / 1000.0)
     assert '[{0} - INFO] hello\n'.format(dt) in stdout
 
     dt = datetime.datetime.fromtimestamp((timestamp + 1) / 1000.0)
     assert '[{0} - WARNING] world\n'.format(dt) in stdout
+
 
 def test_displays_afterall_errors(suite_results, suites, results, capsys, sysexit, firefox_driver, test_server):
     results[0] = results[1]
@@ -197,5 +229,4 @@ def test_displays_afterall_errors(suite_results, suites, results, capsys, sysexi
 
     assert 'After All something went wrong' in stdout
     sysexit.assert_called_with(1)
-    stdout, _stderr = capsys.readouterr()
 
