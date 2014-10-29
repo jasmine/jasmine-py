@@ -1,57 +1,34 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
 from .standalone import app as App
+from jasmine.ci import CIRunner
 import os
-
+import argparse
 
 def standalone():
-    import sys
-    import getopt
-    import socket
+    parser = argparse.ArgumentParser(description='Jasmine Standalone')
+    parser.add_argument('-p', '--port', type=int, default=8888,
+            help='The port of the Jasmine html runner')
+    parser.add_argument('-o', '--host', type=str, default='127.0.0.1',
+            help='The host of the Jasmine html runner')
+    args = parser.parse_args()
 
-    host_arg = None
-    port_arg = None
-    try:
-        opts, args = getopt.getopt(sys.argv[1:], "h:p:", ["host=", "port="])
-    except getopt.GetoptError:
-        sys.stdout.write('jasmine [-h <host>] [-p <port>]')
-        sys.exit(2)
-    for opt, arg in opts:
-        if opt in ['-p', '--port']:
-            try:
-                port_arg = int(arg)
-            except ValueError:
-                pass
-        if opt in ['-h', '--host']:
-            try:
-                host_arg = str(arg).strip()
-            except ValueError:
-                pass
-    host = host_arg if host_arg else "127.0.0.1"
-    port = port_arg if port_arg and 0 <= port_arg <= 65535 else 8888
-    try:
-        if _check_for_config():
-            App.run(host=host, port=port, debug=True)
-    except socket.error:
-        sys.stdout.write('Socket unavailable')
+    if _check_for_config():
+        try:
+             App.run(host=args.host, port=args.port)
+        except socket.error:
+            sys.stdout.write('Socket unavailable')
 
 
 def continuous_integration():
-    from jasmine.ci import CIRunner
-    import argparse
+    parser = argparse.ArgumentParser(description='Jasmine-CI')
+    parser.add_argument('-b', '--browser', type=str,
+                        help='The selenium driver to utilize')
+    parser.add_argument('-l', '--logs', action='store_true',
+                        help='Displays browser logs')
+    args = parser.parse_args()
 
-    project_path = os.path.realpath(os.path.dirname(__name__))
-    config_file = os.path.join(project_path, "spec/javascripts/support/jasmine.yml")
-
-    if _check_for_config():
-        parser = argparse.ArgumentParser(description='Jasmine-CI')
-        parser.add_argument('--browser', type=str,
-                            help='the selenium driver to utilize')
-        parser.add_argument('--logs', action='store_true',
-                            help='displays browser logs')
-        args = parser.parse_args()
-        CIRunner().run(browser=args.browser, logs=args.logs)
-
+    if _check_for_config(): CIRunner().run(browser=args.browser, logs=args.logs)
 
 def _check_for_config():
     project_path = os.path.realpath(os.path.dirname(__name__))
