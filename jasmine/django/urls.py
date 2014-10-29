@@ -14,7 +14,7 @@ def _config_file():
     return settings.JASMINE_YAML if hasattr(settings, 'JASMINE_YAML') else default_location
 
 config = Config(_config_file(), project_path=settings.PROJECT_PATH)
-favicon_path = os.path.dirname(Core.favicon_path())
+favicon_path = os.path.dirname(Core.favicon())
 
 urlpatterns = patterns(
     '',
