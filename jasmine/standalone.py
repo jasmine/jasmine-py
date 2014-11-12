@@ -9,7 +9,7 @@ from jasmine.config import Config
 
 # instance_path set to work around: https://bitbucket.org/hpk42/pytest/issue/317
 app = Flask(__name__, instance_path=os.getcwd())
-app.debug = False
+app.debug = True
 
 
 @app.before_first_request

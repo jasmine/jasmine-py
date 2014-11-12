@@ -15,7 +15,7 @@ def standalone():
 
     if _check_for_config():
         try:
-             App.run(host=args.host, port=args.port)
+             App.run(host=args.host, port=args.port, debug=True)
         except socket.error:
             sys.stdout.write('Socket unavailable')
 
