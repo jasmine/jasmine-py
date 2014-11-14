@@ -20,21 +20,10 @@ To initialize a project for Jasmine:
 
 This will create a spec directory and configuration yaml template for you.
 
-#### Django Pipeline Support
-If you want access to Django's asset pipeline, then you can create a Jasmine view within your app.  This feature currently under development, and is **not recommended** unless you absolutely need it.
-
-* Add 'jasmine.django' to INSTALLED_APPS in your setting.py
-* To display test results within your application, add a route to your urls.py: 
-
-        url(r'^jasmine/', include('jasmine.django.urls', namespace='jasmine'))
-* Test results are now visible at your.django.app/jasmine 
-    * You may wish to protect this URL so it does not appear in the production deploy of your app
-
 ## Configuration
 
 Customize `spec/javascripts/support/jasmine.yml` to enumerate the source files, stylesheets, and spec files you would like the Jasmine runner to include.
 You may use dir glob strings.
-
 
 ## Usage
 
@@ -51,7 +40,7 @@ Start Jasmine on a different port:
 
 Point your browser to `localhost:1337`.
 
-You can also set the host using the `--host` argument.
+For a full list of commands, type `jasmine -h`
 
 #### Continuous Integration
 
@@ -72,7 +61,7 @@ For a full list of commands, type `jasmine-ci -h`
 
 ## Contributing
 
-1. Get a python 2.7, 2.6, 3.3, and pypy
+1. Get a python 2.7, 2.6, 3.3, 3.4, and pypy
 1. Get pip: http://www.pip-installer.org/en/latest/installing.html
 1. Get virtualenvwrapper: http://virtualenvwrapper.readthedocs.org/en/latest/
 1. `git clone` this repo
@@ -81,7 +70,6 @@ For a full list of commands, type `jasmine-ci -h`
 1. Install dependencies: `pip install -r requirements_dev.txt`
 1. Run specs: `detox`
 
-
 ## Support
 
 Jasmine Mailing list: [jasmine-js@googlegroups.com](mailto:jasmine-js@googlegroups.com)
@@ -89,4 +77,4 @@ Twitter: [@jasminebdd](http://twitter.com/jasminebdd)
 
 Please file issues here at Github
 
-Copyright (c) 2008-2013 Pivotal Labs. This software is licensed under the MIT License.
+Copyright (c) 2008-2014 Pivotal Labs. This software is licensed under the MIT License.
