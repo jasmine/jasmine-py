@@ -1,8 +1,8 @@
 # Jasmine... For Python!
 
-<a title="Build at Travis CI" href="https://travis-ci.org/pivotal/jasmine-py"><img src="https://api.travis-ci.org/pivotal/jasmine-py.png" /></a>
+<a title="Build at Travis CI" href="https://travis-ci.org/jasmine/jasmine-py"><img src="https://api.travis-ci.org/jasmine/jasmine-py.png" /></a>
 
-The [Jasmine](http://github.com/pivotal/jasmine) Python package contains helper code for developing Jasmine projects for Python-based web projects (Django, Flask, etc.) or for JavaScript projects where Python is a welcome partner. It serves up a project's Jasmine suite in a browser so you can focus on your code instead of manually editing script tags in the Jasmine runner HTML file.
+The [Jasmine](http://github.com/jasmine/jasmine) Python package contains helper code for developing Jasmine projects for Python-based web projects (Django, Flask, etc.) or for JavaScript projects where Python is a welcome partner. It serves up a project's Jasmine suite in a browser so you can focus on your code instead of manually editing script tags in the Jasmine runner HTML file.
 
 ## Contents
 This package contains:
