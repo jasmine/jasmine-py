@@ -4,6 +4,8 @@
 
 The [Jasmine](http://github.com/jasmine/jasmine) Python package contains helper code for developing Jasmine projects for Python-based web projects (Django, Flask, etc.) or for JavaScript projects where Python is a welcome partner. It serves up a project's Jasmine suite in a browser so you can focus on your code instead of manually editing script tags in the Jasmine runner HTML file.
 
+For documentation on writing Jasmine tests, check out the [Jasmine Documentation site](http://jasmine.github.io/).
+
 ## Contents
 This package contains:
 
