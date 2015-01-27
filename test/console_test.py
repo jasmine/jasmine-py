@@ -23,7 +23,8 @@ def test_parser_should_return_a_correct_results_list():
                                   u'stack': u'',
                                   u'passed': True}],
          u'id': 0,
-         u'description': u'refer to the most holy'}
+         u'description': u'refer to the most holy',
+         u'pendingReason': u'pending reason'}
     ])
 
     assert len(results) == 1
@@ -31,6 +32,7 @@ def test_parser_should_return_a_correct_results_list():
     assert results[0].fullName == 'Globals refer to the most holy.'
     assert len(results[0].failedExpectations) == 1
     assert results[0].failedExpectations[0]['stack'] == "stack\n    stack\n    stack"
+    assert results[0].pendingReason == u'pending reason'
 
 
 @pytest.fixture
@@ -140,3 +142,16 @@ def test_pending_stack(results):
     formatter = Formatter(results, colors=False)
 
     assert formatter.format_pending() == "Context is this test is pending\n"
+
+def test_pending_with_message():
+    parser = Parser();
+
+    results = parser.parse([{
+        u'status': u'pending',
+        u'fullName': u'pending',
+        u'pendingReason': 'the reason'
+    }]);
+
+    formatter = Formatter(results, colors=False)
+    assert formatter.format_pending() == "pending\n  Reason: the reason\n"
+

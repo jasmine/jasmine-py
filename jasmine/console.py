@@ -115,6 +115,9 @@ class Formatter(object):
 
         for pending in self.results.pending():
             output += self.colorize('yellow', pending.fullName + "\n")
+            if pending.pendingReason:
+                output += "  Reason: {0}\n".format(pending.pendingReason)
+
         return output
 
 
@@ -132,7 +135,7 @@ class ResultList(list):
         return filter(lambda x: x.status == status, self)
 
 
-RESULT_FIELDS = ['status', 'fullName', 'failedExpectations', 'id', 'description']
+RESULT_FIELDS = ['status', 'fullName', 'failedExpectations', 'id', 'description', 'pendingReason']
 
 class Parser(object):
     def parse(self, items):
@@ -146,7 +149,7 @@ class Parser(object):
 
 
 class Result(namedtuple('Result', RESULT_FIELDS)):
-    def __new__(cls, status=None, fullName=None, failedExpectations=[], id=None, description=None):
+    def __new__(cls, status=None, fullName=None, failedExpectations=[], id=None, description=None, pendingReason=None):
         # Constructor arguments correspond to RESULT_FIELDS
-        return super(Result, cls).__new__(cls, status, fullName, failedExpectations, id, description)
+        return super(Result, cls).__new__(cls, status, fullName, failedExpectations, id, description, pendingReason)
 
