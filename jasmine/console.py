@@ -96,8 +96,9 @@ class Formatter(object):
     def format_failures(self):
         output = ""
         for failure in self.results.failed():
-            output += self.colorize('red', failure.fullName) + "\n" +\
-                self.clean_stack(failure.failedExpectations[0]['stack']) + "\n"
+            output += self.colorize('red', failure.fullName) + "\n  " +\
+                    failure.failedExpectations[0]['message'] + "\n  " +\
+                    self.clean_stack(failure.failedExpectations[0]['stack']) + "\n"
 
         return output
 

@@ -32,6 +32,7 @@ def test_parser_should_return_a_correct_results_list():
     assert results[0].fullName == 'Globals refer to the most holy.'
     assert len(results[0].failedExpectations) == 1
     assert results[0].failedExpectations[0]['stack'] == "stack\n    stack\n    stack"
+    assert results[0].failedExpectations[0]['message'] == "Expected 'Batman' to equal 'PANTS'."
     assert results[0].pendingReason == u'pending reason'
 
 
@@ -111,19 +112,22 @@ def test_format_failures():
 
     results = parser.parse([
         {u'status': u'passed', u'fullName': u'Context is this test passes'},
-        {u'status': u'failed', u'fullName': u'Context is this test fails', u'failedExpectations': [{u'stack': stack1}]},
+        {u'status': u'failed', u'fullName': u'Context is this test fails',
+            u'failedExpectations': [{u'stack': stack1, u'message': 'Message1'}]},
         {u'status': u'failed', u'fullName': u'Context is this test also fails',
-            u'failedExpectations': [{u'stack': stack2}]},
+            u'failedExpectations': [{u'stack': stack2, u'message': 'Message2'}]},
     ])
 
     formatter = Formatter(results, colors=False)
 
     assert formatter.format_failures() ==\
         "Context is this test fails\n" +\
-        "Error: Expected 'Batman' to equal 'PANTS'.\n" +\
+        "  Message1\n" +\
+        "  Error: Expected 'Batman' to equal 'PANTS'.\n" +\
         "        at http://localhost:8888/__spec__/global_spec.js:3\n" +\
         "Context is this test also fails\n" +\
-        "Error: Expected 'Batman' to equal 'Superman'.\n" +\
+        "  Message2\n" +\
+        "  Error: Expected 'Batman' to equal 'Superman'.\n" +\
         "        at http://localhost:8888/__spec__/global_spec.js:6\n"
 
 
