@@ -6,6 +6,7 @@ from mock import Mock
 
 import jasmine.standalone
 
+
 @pytest.fixture
 def app():
     try:
@@ -45,6 +46,7 @@ def test__favicon(monkeypatch, app):
 
         assert rv.status_code == 200
 
+
 @pytest.mark.usefixtures('mockfs')
 def test__before_first_request(monkeypatch, app):
     monkeypatch.setattr(pkg_resources, 'resource_stream', lambda package, filename: [])
@@ -62,7 +64,8 @@ def test__serve(mockfs, app):
     mockfs.add_entries({
         "/src/main.css": "CSS",
         "/src/main.js": "JS",
-        "/src/main.png": "PNG"
+        "/src/main.png": "PNG",
+        "/spec/resources/texture.jpg": "JPEG"
     })
 
     with app.test_client() as client:
@@ -80,6 +83,11 @@ def test__serve(mockfs, app):
 
         assert rv.status_code == 200
         assert rv.headers['Content-Type'] == 'image/png'
+
+        rv = client.get("/__resources__/texture.jpg")
+
+        assert rv.status_code == 200
+        assert rv.headers['Content-Type'] == 'image/jpeg'
 
 
 def test__run(template, mockfs, monkeypatch, app):
