@@ -1,9 +1,5 @@
 import datetime
 from collections import namedtuple
-try:
-    from collections import OrderedDict
-except ImportError:
-    from ordereddict import OrderedDict
 
 try:
     from future_builtins import filter
@@ -66,7 +62,10 @@ class Formatter(object):
         return output
 
     def format_summary(self):
-        output = "{0} specs, {1} failed".format(len(self.results), len(list(self.results.failed())))
+        output = "{0} specs, {1} failed".format(
+            len(self.results),
+            len(list(self.results.failed()))
+        )
 
         if self.results.pending():
             output += ", {0} pending".format(len(list(self.results.pending())))
@@ -76,8 +75,13 @@ class Formatter(object):
     def format_suite_failure(self, colors=False):
         output = ""
         for result in self.suite_results:
-            if(result.failedExpectations):
-                output += self.colorize('red', '\nAfter All {0}'.format(result.failedExpectations[0]['message']))
+            if (result.failedExpectations):
+                output += self.colorize(
+                    'red',
+                    '\nAfter All {0}'.format(
+                        result.failedExpectations[0]['message']
+                    )
+                )
         return output
 
     def format_browser_logs(self):
@@ -96,8 +100,12 @@ class Formatter(object):
     def format_failures(self):
         output = ""
         for failure in self.results.failed():
-            output += self.colorize('red', failure.fullName) + "\n" +\
-                self.clean_stack(failure.failedExpectations[0]['stack']) + "\n"
+            output += (
+                self.colorize('red', failure.fullName)
+                + "\n"
+                + self.clean_stack(failure.failedExpectations[0]['stack'])
+                + "\n"
+            )
 
         return output
 
@@ -108,7 +116,11 @@ class Formatter(object):
         def dirty(stack_line):
             return "__jasmine__" in stack_line or "__boot__" in stack_line
 
-        return "\n".join([stack_line for stack_line in stack.split("\n") if not dirty(stack_line)])
+        return "\n".join([
+            stack_line
+            for stack_line in stack.split("\n")
+            if not dirty(stack_line)
+        ])
 
     def format_pending(self):
         output = ""
@@ -135,21 +147,38 @@ class ResultList(list):
         return filter(lambda x: x.status == status, self)
 
 
-RESULT_FIELDS = ['status', 'fullName', 'failedExpectations', 'id', 'description', 'pendingReason']
+RESULT_FIELDS = [
+    'status',
+    'fullName',
+    'failedExpectations',
+    'id',
+    'description',
+    'pendingReason'
+]
+
 
 class Parser(object):
     def parse(self, items):
-        return ResultList([Result(**item) for item in self._filter_fields(items)])
+        return ResultList([
+            Result(**item)
+            for item in self._filter_fields(items)
+        ])
 
     def _filter_fields(self, raw_items):
         filtered_items = []
         for item in raw_items:
-            filtered_items.append(dict(((k,v) for k,v in item.items() if k in RESULT_FIELDS)))
+            filtered_items.append(dict((
+                (k, v)
+                for k, v in item.items()
+                if k in RESULT_FIELDS
+            )))
         return filtered_items
 
 
 class Result(namedtuple('Result', RESULT_FIELDS)):
-    def __new__(cls, status=None, fullName=None, failedExpectations=[], id=None, description=None, pendingReason=None):
+    def __new__(cls, status=None, fullName=None, failedExpectations={},
+                id=None, description=None, pendingReason=None):
         # Constructor arguments correspond to RESULT_FIELDS
-        return super(Result, cls).__new__(cls, status, fullName, failedExpectations, id, description, pendingReason)
-
+        return super(Result, cls).__new__(cls, status, fullName,
+                                          failedExpectations, id,
+                                          description, pendingReason)

@@ -1,12 +1,11 @@
-from pytest import raises
-import pytest
-import subprocess
-
-from jasmine_core import Core
 import os
+
+import pytest
+from jasmine_core import Core
 import pkg_resources
 
 notwin32 = pytest.mark.skipif("sys.platform == 'win32'")
+
 
 @notwin32
 def test_js_files():

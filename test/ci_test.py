@@ -1,25 +1,17 @@
 import datetime
 import time
 import sys
-try:
-    from io import StringIO
-except ImportError:
-    from StringIO import StringIO
 
-from mock import MagicMock, Mock
+from mock import MagicMock
 import pytest
 
 from jasmine.ci import CIRunner, TestServerThread
-
-try:
-    from collections import OrderedDict
-except ImportError:
-    from ordereddict import OrderedDict
 
 
 def test_possible_ports():
     ports = TestServerThread().possible_ports("localhost:80,8000-8002")
     assert ports == [80, 8000, 8001, 8002]
+
 
 @pytest.fixture
 def sysexit(monkeypatch):
@@ -27,21 +19,26 @@ def sysexit(monkeypatch):
     monkeypatch.setattr(sys, 'exit', mock_exit)
     return mock_exit
 
+
 @pytest.fixture
 def test_server(monkeypatch):
     import jasmine.ci
+
     server = MagicMock()
     server.port = 80
     monkeypatch.setattr(jasmine.ci, 'TestServerThread', server)
     return server
 
+
 @pytest.fixture
 def firefox_driver(monkeypatch):
     import selenium.webdriver.firefox.webdriver
+
     driver = MagicMock()
     driver_class = lambda: driver
     monkeypatch.setattr(selenium.webdriver.firefox.webdriver, 'WebDriver', driver_class)
     return driver
+
 
 @pytest.fixture
 def suites():
@@ -99,21 +96,23 @@ def results():
         }
     ]
 
+
 @pytest.fixture
 def suite_results():
     return [
-            {
-                "id": "suite0",
-                "status": "failed",
-                "failedExpectations": [
-                    { "message": "something went wrong"}
-                 ]
-            },
-            {
-                "id": "suite1",
-                "status": "finished"
-            }
-           ]
+        {
+            "id": "suite0",
+            "status": "failed",
+            "failedExpectations": [
+                {"message": "something went wrong"}
+            ]
+        },
+        {
+            "id": "suite1",
+            "status": "finished"
+        }
+    ]
+
 
 def test_run_exits_with_zero_on_success(suites, results, capsys, sysexit, firefox_driver, test_server):
     results[0] = results[1]

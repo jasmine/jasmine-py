@@ -1,13 +1,14 @@
 import os
 import re
-import pkg_resources
 
+import pkg_resources
 from flask import Flask, render_template_string, make_response, send_file
 
-from jasmine_core import Core
 from jasmine.config import Config
 
-# instance_path set to work around: https://bitbucket.org/hpk42/pytest/issue/317
+
+# instance_path set to work around:
+# https://bitbucket.org/hpk42/pytest/issue/317
 app = Flask(__name__, instance_path=os.getcwd())
 app.debug = True
 
@@ -16,7 +17,10 @@ app.debug = True
 def init():
     project_path = os.path.realpath(os.path.dirname(__name__))
 
-    config_file = os.path.join(project_path, "spec/javascripts/support/jasmine.yml")
+    config_file = os.path.join(
+        project_path,
+        "spec/javascripts/support/jasmine.yml"
+    )
 
     if not os.path.exists(config_file):
         print("Could not find your config file at {0}".format(config_file))
@@ -34,7 +38,11 @@ def serve(filetype, filename):
     if filetype == 'jasmine':
         contents = pkg_resources.resource_string('jasmine_core', filename)
     else:
-        path = os.path.join(os.getcwd(), app.filetype_mapping[filetype](), filename)
+        path = os.path.join(
+            os.getcwd(),
+            app.filetype_mapping[filetype](),
+            filename
+        )
         contents = open(path, 'r').read()
 
     response = make_response(contents)
@@ -56,10 +64,20 @@ def run():
         'js_files': app.jasmine_config.script_urls()
     }
 
-    template = pkg_resources.resource_string('jasmine.django.templates', 'runner.html')
+    template = pkg_resources.resource_string(
+        'jasmine.django.templates',
+        'runner.html'
+    )
 
     return render_template_string(template.decode(), **context)
 
+
 @app.route('/jasmine_favicon.png')
 def favicon():
-    return send_file(pkg_resources.resource_stream('jasmine_core.images', 'jasmine_favicon.png'), mimetype='image/png')
+    return send_file(
+        pkg_resources.resource_stream(
+            'jasmine_core.images',
+            'jasmine_favicon.png'
+        ),
+        mimetype='image/png'
+    )

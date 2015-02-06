@@ -1,16 +1,15 @@
 import os
 import threading
 import sys
+import socket
 
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.support.wait import WebDriverWait
-
 from cherrypy import wsgiserver
 
 from jasmine.standalone import app as App
 from jasmine.console import Parser, Formatter
 
-import socket
 
 class TestServerThread(threading.Thread):
     def run(self):
@@ -18,7 +17,11 @@ class TestServerThread(threading.Thread):
 
         for index, port in enumerate(ports):
             try:
-                self.server = wsgiserver.CherryPyWSGIServer(('localhost', port), App, request_queue_size=2048)
+                self.server = wsgiserver.CherryPyWSGIServer(
+                    ('localhost', port),
+                    App,
+                    request_queue_size=2048
+                )
                 self.port = port
                 self.server.start()
                 break
@@ -45,7 +48,9 @@ class TestServerThread(threading.Thread):
                     for port in range(extremes[0], extremes[1] + 1):
                         possible_ports.append(port)
         except Exception:
-            raise 'Invalid address ("{}") for live server.'.format(specified_address)
+            raise 'Invalid address ("{}") for live server.'.format(
+                specified_address
+            )
 
         return possible_ports
 
@@ -56,10 +61,14 @@ class CIRunner(object):
             test_server = TestServerThread()
             test_server.start()
 
-            driver = browser if browser else os.environ.get('JASMINE_BROWSER', 'firefox')
+            driver = browser if browser \
+                else os.environ.get('JASMINE_BROWSER', 'firefox')
 
             try:
-                webdriver = __import__("selenium.webdriver.{0}.webdriver".format(driver), globals(), locals(), ['object'], 0)
+                webdriver = __import__(
+                    "selenium.webdriver.{0}.webdriver".format(driver),
+                    globals(), locals(), ['object'], 0
+                )
 
                 self.browser = webdriver.WebDriver()
             except ImportError as e:
@@ -68,7 +77,8 @@ class CIRunner(object):
             self.browser.get("http://localhost:{0}/".format(test_server.port))
 
             WebDriverWait(self.browser, 100).until(
-                lambda driver: driver.execute_script("return jsApiReporter.finished;")
+                lambda driver:
+                    driver.execute_script("return jsApiReporter.finished;")
             )
 
             spec_results = []
@@ -77,7 +87,12 @@ class CIRunner(object):
             parser = Parser()
 
             while True:
-                results = self.browser.execute_script("return jsApiReporter.specResults({0}, {1})".format(index, batch_size))
+                results = self.browser.execute_script(
+                    "return jsApiReporter.specResults({0}, {1})".format(
+                        index,
+                        batch_size
+                    )
+                )
                 results = parser.parse(results)
 
                 spec_results.extend(results)
@@ -90,7 +105,12 @@ class CIRunner(object):
             index = 0
             batch_size = 50
             while True:
-                results = self.browser.execute_script("return jsApiReporter.suiteResults({0}, {1})".format(index, batch_size))
+                results = self.browser.execute_script(
+                    "return jsApiReporter.suiteResults({0}, {1})".format(
+                        index,
+                        batch_size
+                    )
+                )
                 results = parser.parse(results)
 
                 suite_results.extend(results)
@@ -106,9 +126,14 @@ class CIRunner(object):
                 except WebDriverException:
                     pass
 
-            formatter = Formatter(spec_results, suite_results=suite_results, browser_logs=log)
+            formatter = Formatter(
+                spec_results,
+                suite_results=suite_results,
+                browser_logs=log
+            )
             sys.stdout.write(formatter.format())
-            if len(list(formatter.results.failed())) or len(list(formatter.suite_results.failed())):
+            if (len(list(formatter.results.failed()))
+               or len(list(formatter.suite_results.failed()))):
                 sys.exit(1)
         finally:
             if hasattr(self, 'browser'):
