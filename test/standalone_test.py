@@ -79,7 +79,7 @@ def test__serve(mockfs, app):
         rv = client.get("/__src__/main.png")
 
         assert rv.status_code == 200
-        assert rv.headers['Content-Type'] == 'application/octet-stream'
+        assert rv.headers['Content-Type'] == 'image/png'
 
 
 def test__run(template, mockfs, monkeypatch, app):

@@ -1,11 +1,10 @@
+import mimetypes
+
 import os
-import re
 import pkg_resources
-
 from flask import Flask, render_template_string, make_response, send_file
-
-from jasmine_core import Core
 from jasmine.config import Config
+
 
 # instance_path set to work around: https://bitbucket.org/hpk42/pytest/issue/317
 app = Flask(__name__, instance_path=os.getcwd())
@@ -38,12 +37,7 @@ def serve(filetype, filename):
         contents = open(path, 'r').read()
 
     response = make_response(contents)
-    if re.match(r'^.*\.js$', filename):
-        response.mimetype = 'application/javascript'
-    elif re.match(r'^.*\.css$', filename):
-        response.mimetype = 'text/css'
-    else:
-        response.mimetype = 'application/octet-stream'
+    response.mimetype = mimetypes.guess_type(filename)[0]
 
     return response
 
@@ -59,6 +53,7 @@ def run():
     template = pkg_resources.resource_string('jasmine.django.templates', 'runner.html')
 
     return render_template_string(template.decode(), **context)
+
 
 @app.route('/jasmine_favicon.png')
 def favicon():
