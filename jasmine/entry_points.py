@@ -151,6 +151,20 @@ stylesheets:
 helpers:
   - "helpers/**/*.js"
 
+# resource_dir
+#
+# Root dir of fixtures that you want to serve during the tests.
+# Files will be served like "/__resources__/your-filename.json".
+# Default: ["resources"]
+#
+# EXAMPLE:
+#
+# fixtures_dir:
+#   - resources
+#
+resource_dir:
+  - resources
+
 # spec_files
 #
 # Return an array of filepaths relative to spec_dir to include.

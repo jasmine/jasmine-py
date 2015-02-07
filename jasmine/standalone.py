@@ -24,7 +24,8 @@ def init():
 
     app.filetype_mapping = {
         'src': app.jasmine_config.src_dir,
-        'spec': app.jasmine_config.spec_dir
+        'spec': app.jasmine_config.spec_dir,
+        'resources': app.jasmine_config.resource_dir,
     }
 
 

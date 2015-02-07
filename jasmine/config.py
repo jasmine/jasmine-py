@@ -44,22 +44,22 @@ class Config(object):
         paths = sum(paths, [])
         relpaths = [self._make_relative(path, relative_to) for path in paths]
 
-        #fix py26 relpath from root bug http://bugs.python.org/issue5117
+        # fix py26 relpath from root bug http://bugs.python.org/issue5117
         return [relpath[3:] if relpath.startswith("../") else relpath for relpath in relpaths]
 
     def _make_absolute(self, path, relative_to):
         return (path if path.startswith('http')
-        else 
-          os.path.abspath(os.path.join(self.project_path, relative_to, path)) )
+                else
+                os.path.abspath(os.path.join(self.project_path, relative_to, path)))
 
     def _expland_globs(self, path):
         return ([path] if path.startswith('http')
-        else 
-          self._glob_paths([path]))
+                else
+                self._glob_paths([path]))
 
     def _make_relative(self, path, relative_to):
         return (path if path.startswith('http')
-        else os.path.relpath(path, relative_to) )
+                else os.path.relpath(path, relative_to))
 
     def _glob_paths(self, paths):
         files = []
@@ -70,9 +70,9 @@ class Config(object):
         return list(self._uniq(files))
 
     def _extract_urls(self, filelist):
-      local_files = [x for x in filelist if 'http' not in x]
-      urls = [x for x in filelist if 'http' in x]
-      return local_files, urls
+        local_files = [x for x in filelist if 'http' not in x]
+        urls = [x for x in filelist if 'http' in x]
+        return local_files, urls
 
     def _load(self):
         with open(self.yaml_file, 'rU') as f:
@@ -103,10 +103,14 @@ class Config(object):
     def spec_dir(self):
         return self.yaml.get("spec_dir") or 'spec/javascripts'
 
+    def resource_dir(self):
+        return self.yaml.get("resource_dir") or os.path.join(self.spec_dir(), 'resources')
+
     def _prefix_src_underscored(self, path):
-      return (path if path.startswith('http')
-          else "__src__/{0}".format(path)
-      )
+        return (
+            path if path.startswith('http')
+            else "__src__/{0}".format(path)
+        )
 
     def script_urls(self):
         core_js_files = Core.js_files()
