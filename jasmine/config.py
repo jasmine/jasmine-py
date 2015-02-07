@@ -1,14 +1,9 @@
-from yaml import load
-
-try:
-    from yaml import CLoader as Loader, CDumper as Dumper
-except ImportError:
-    from yaml import Loader, Dumper
-
-from .utils import iglob
 import os
 
+from yaml import load, Loader
 from jasmine_core import Core
+
+from .utils import iglob
 
 
 class Config(object):
@@ -21,7 +16,8 @@ class Config(object):
         # order preserving
 
         if idfun is None:
-            def idfun(x): return x
+            def idfun(x):
+                return x
         seen = {}
         result = []
         for item in items:
@@ -44,22 +40,31 @@ class Config(object):
         paths = sum(paths, [])
         relpaths = [self._make_relative(path, relative_to) for path in paths]
 
-        #fix py26 relpath from root bug http://bugs.python.org/issue5117
-        return [relpath[3:] if relpath.startswith("../") else relpath for relpath in relpaths]
+        # fix py26 relpath from root bug http://bugs.python.org/issue5117
+        return [
+            relpath[3:] if relpath.startswith("../") else relpath
+            for relpath in relpaths
+        ]
 
     def _make_absolute(self, path, relative_to):
-        return (path if path.startswith('http')
-        else 
-          os.path.abspath(os.path.join(self.project_path, relative_to, path)) )
+        return (
+            path if path.startswith('http')
+            else os.path.abspath(
+                os.path.join(self.project_path, relative_to, path)
+            )
+        )
 
     def _expland_globs(self, path):
-        return ([path] if path.startswith('http')
-        else 
-          self._glob_paths([path]))
+        return (
+            [path] if path.startswith('http')
+            else self._glob_paths([path])
+        )
 
     def _make_relative(self, path, relative_to):
-        return (path if path.startswith('http')
-        else os.path.relpath(path, relative_to) )
+        return (
+            path if path.startswith('http')
+            else os.path.relpath(path, relative_to)
+        )
 
     def _glob_paths(self, paths):
         files = []
@@ -70,9 +75,10 @@ class Config(object):
         return list(self._uniq(files))
 
     def _extract_urls(self, filelist):
-      local_files = [x for x in filelist if 'http' not in x]
-      urls = [x for x in filelist if 'http' in x]
-      return local_files, urls
+        local_files = [x for x in filelist if 'http' not in x]
+        urls = [x for x in filelist if 'http' in x]
+
+        return local_files, urls
 
     def _load(self):
         with open(self.yaml_file, 'rU') as f:
@@ -88,14 +94,18 @@ class Config(object):
         return self._glob_filelist('stylesheets', self.src_dir())
 
     def helpers(self):
-        default_helpers = os.path.join(self.project_path, self.spec_dir(), 'helpers/**/*.js')
+        default_helpers = os.path.join(self.project_path, self.spec_dir(),
+                                       'helpers/**/*.js')
 
-        return self._glob_filelist('helpers', self.spec_dir(), default=[default_helpers])
+        return self._glob_filelist('helpers', self.spec_dir(),
+                                   default=[default_helpers])
 
     def spec_files(self):
-        default_spec = os.path.join(self.project_path, self.spec_dir(), "**/*[sS]pec.js")
+        default_spec = os.path.join(self.project_path, self.spec_dir(),
+                                    "**/*[sS]pec.js")
 
-        return self._glob_filelist('spec_files', self.spec_dir(), default=[default_spec])
+        return self._glob_filelist('spec_files', self.spec_dir(),
+                                   default=[default_spec])
 
     def src_dir(self):
         return self.yaml.get("src_dir") or self.project_path
@@ -104,21 +114,27 @@ class Config(object):
         return self.yaml.get("spec_dir") or 'spec/javascripts'
 
     def _prefix_src_underscored(self, path):
-      return (path if path.startswith('http')
-          else "__src__/{0}".format(path)
-      )
+        return (
+            path if path.startswith('http') else "__src__/{0}".format(path)
+        )
 
     def script_urls(self):
         core_js_files = Core.js_files()
         if 'node_boot.js' in core_js_files:
             core_js_files.remove('node_boot.js')
-        return \
-            ["__jasmine__/{0}".format(core_js) for core_js in core_js_files] + \
-            [self._prefix_src_underscored(src_file) for src_file in self.src_files()] + \
-            ["__spec__/{0}".format(helper) for helper in self.helpers()] + \
-            ["__spec__/{0}".format(spec_file) for spec_file in self.spec_files()]
+        return [
+            "__jasmine__/{0}".format(core_js) for core_js in core_js_files
+        ] + [
+            self._prefix_src_underscored(src_file) for src_file in self.src_files()
+        ] + [
+            "__spec__/{0}".format(helper) for helper in self.helpers()
+        ] + [
+            "__spec__/{0}".format(spec_file) for spec_file in self.spec_files()
+        ]
 
     def stylesheet_urls(self):
-        return \
-            ["__jasmine__/{0}".format(core_css) for core_css in Core.css_files()] + \
-            ["__src__/{0}".format(css_file) for css_file in self.stylesheets()]
+        return [
+            "__jasmine__/{0}".format(core_css) for core_css in Core.css_files()
+        ] + [
+            "__src__/{0}".format(css_file) for css_file in self.stylesheets()
+        ]

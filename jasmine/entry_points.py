@@ -1,21 +1,25 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
-from .standalone import app as App
-from jasmine.ci import CIRunner
 import os
 import argparse
+import socket
+import sys
+
+from .standalone import app as App
+from jasmine.ci import CIRunner
+
 
 def standalone():
     parser = argparse.ArgumentParser(description='Jasmine Standalone')
     parser.add_argument('-p', '--port', type=int, default=8888,
-            help='The port of the Jasmine html runner')
+                        help='The port of the Jasmine html runner')
     parser.add_argument('-o', '--host', type=str, default='127.0.0.1',
-            help='The host of the Jasmine html runner')
+                        help='The host of the Jasmine html runner')
     args = parser.parse_args()
 
     if _check_for_config():
         try:
-             App.run(host=args.host, port=args.port, debug=True)
+            App.run(host=args.host, port=args.port, debug=True)
         except socket.error:
             sys.stdout.write('Socket unavailable')
 
@@ -28,11 +32,16 @@ def continuous_integration():
                         help='Displays browser logs')
     args = parser.parse_args()
 
-    if _check_for_config(): CIRunner().run(browser=args.browser, logs=args.logs)
+    if _check_for_config():
+        CIRunner().run(browser=args.browser, logs=args.logs)
+
 
 def _check_for_config():
     project_path = os.path.realpath(os.path.dirname(__name__))
-    config_file = os.path.join(project_path, "spec/javascripts/support/jasmine.yml")
+    config_file = os.path.join(
+        project_path,
+        "spec/javascripts/support/jasmine.yml"
+    )
 
     config_exists = os.path.exists(config_file)
     if not config_exists:
@@ -41,7 +50,6 @@ def _check_for_config():
 
 
 def _query(question):
-    import sys
 
     valid = {"yes": True, "y": True, "ye": True,
              "no": False, "n": False}
@@ -62,7 +70,6 @@ def _query(question):
 
 
 def install():
-    import os
     from jasmine.console import Formatter
 
     spec_dir = os.path.join(os.getcwd(), 'spec/javascripts/')
@@ -71,7 +78,8 @@ def install():
 
     print('Spec directory')
 
-    if _query("About to create {0}... is this okay?".format(spec_dir)):
+    msg = "About to create {0}... is this okay?".format(spec_dir)
+    if _query(msg):
         print('making spec/javascripts')
         mkdir_p(spec_dir)
 
@@ -83,7 +91,8 @@ def install():
     if os.path.exists(yaml_file_path):
         print('found existing {0}, not overwriting'.format(yaml_file_path))
     else:
-        if _query("About to create {0}... is this okay?".format(yaml_file_path)):
+        msg = "About to create {0}... is this okay?".format(yaml_file_path)
+        if _query(msg):
             print('making {0}'.format(yaml_dir))
 
             mkdir_p(yaml_dir)

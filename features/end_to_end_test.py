@@ -1,10 +1,12 @@
 import subprocess
 import os
 
+
 def test_end_to_end(tmpdir):
     install_jasmine(tmpdir)
     output = run_jasmine(tmpdir)
     assert "2 specs, 0 failed" in str(output)
+
 
 def install_dependency(name, path=None):
     location = path if path else name
@@ -13,9 +15,13 @@ def install_dependency(name, path=None):
 
 def install_jasmine(project_dir):
     install_dependency('jasmine', path=os.path.abspath(os.getcwd()))
-    check_output("cd {0} && printf 'Y\nY\n' | jasmine-install".format(project_dir), shell=True)
+    check_output(
+        "cd {0} && printf 'Y\nY\n' | jasmine-install".format(project_dir),
+        shell=True
+    )
 
-    with open("{0}/spec/javascripts/test_spec.js".format(project_dir), 'w') as f:
+    filename = "{0}/spec/javascripts/test_spec.js".format(project_dir)
+    with open(filename, 'w') as f:
         f.writelines("""
 describe("Pants", function() {
     it("should prove the truth", function() {

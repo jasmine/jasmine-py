@@ -12,7 +12,9 @@ with open("requirements.txt", 'r') as f:
             continue
         elif requirement.startswith("http"):
             non_pypi_requirements.append(requirement)
-            requirements.append(re.match(r'.*#egg=(?P<egg>.*)', requirement).group('egg'))
+            requirements.append(
+                re.match(r'.*#egg=(?P<egg>.*)', requirement).group('egg')
+            )
         else:
             requirements.append(requirement)
 
@@ -22,9 +24,13 @@ setup(
     url="http://pivotal.github.io/jasmine/",
     author="Pivotal Labs",
     author_email="jasmine-js@googlegroups.com",
-    description=('Jasmine is a Behavior Driven Development testing framework for JavaScript. It does not rely on '+
-                 'browsers, DOM, or any JavaScript framework. Thus it\'s suited for websites, '+
-                 'Node.js (http://nodejs.org) projects, or anywhere that JavaScript can run.'),
+    description=('Jasmine is a Behavior Driven Development'
+                 ' testing framework for JavaScript.'
+                 ' It does not rely on browsers, DOM,'
+                 ' or any JavaScript framework.'
+                 ' Thus it\'s suited for websites, '
+                 'Node.js (http://nodejs.org) projects,'
+                 ' or anywhere that JavaScript can run.'),
     license='MIT',
     classifiers=[
         'Development Status :: 4 - Beta',

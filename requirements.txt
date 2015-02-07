@@ -1,5 +1,4 @@
 PyYAML==3.10
-ordereddict>=1.0, <2.0
 Flask>=0.10, <1.0
 argparse>=1.0, <2.0
 Jinja2>=2.0, <3.0

@@ -1,5 +1,3 @@
-from six.moves import builtins
-
 import os
 import errno
 import sys
@@ -7,8 +5,9 @@ import sys
 from mockfs import replace_builtins, restore_builtins
 from mock import MagicMock
 import pytest
-
 from yaml import load
+
+from six.moves import builtins
 
 from jasmine.entry_points import continuous_integration, _query, standalone, mkdir_p, install
 from jasmine.ci import CIRunner
@@ -39,11 +38,13 @@ def mockfs_with_config(request):
 def mock_CI_run(request):
     CIRunner.run = MagicMock(name='run')
 
+
 def test_ci_config_check(mockfs, monkeypatch, mock_CI_run):
     monkeypatch.setattr(sys, 'argv', ['test.py'])
 
     continuous_integration()
     assert not CIRunner.run.called
+
 
 def test_continuous_integration__set_browser(monkeypatch, mockfs_with_config, mock_CI_run):
     monkeypatch.setattr(sys, 'argv', ["test.py", "--browser", "firefox"])
@@ -102,8 +103,8 @@ def test_standalone__port_default(monkeypatch, mock_App_run, mockfs_with_config)
 def test_standalone__port_invalid(monkeypatch, mock_App_run, mockfs_with_config):
     monkeypatch.setattr(sys, 'argv', ["test.py", "-p", "pants"])
 
-    with pytest.raises(SystemExit) as exception:
-       standalone()
+    with pytest.raises(SystemExit):
+        standalone()
 
     assert "invalid int value: 'pants'"
     assert not App.run.called
@@ -159,7 +160,7 @@ def test__mkdir_p(mockfs):
     assert os.path.isdir("/pants/a/b/c")
 
 
-def test__mkdir_p(mockfs, monkeypatch):
+def test__mkdir_p_error(mockfs, monkeypatch):
     def raise_error(path):
         o = OSError()
         o.errno = errno.EEXIST
@@ -169,7 +170,6 @@ def test__mkdir_p(mockfs, monkeypatch):
     mockfs.add_entries({
         '/pants/a/b/c': {}
     })
-
     mkdir_p("/pants/a/b/c")
 
 

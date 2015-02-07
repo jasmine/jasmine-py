@@ -6,7 +6,8 @@
 #
 # Licensed to Éric Araujo <merwok@netwok.org>
 #
-# Lovingly copied from http://hg.python.org/distutils2/file/65e23cccd0db/distutils2/util.py
+# Lovingly copied from
+#  http://hg.python.org/distutils2/file/65e23cccd0db/distutils2/util.py
 
 try:
     from glob import iglob as std_iglob
