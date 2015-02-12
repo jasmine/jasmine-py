@@ -125,7 +125,8 @@ class Config(object):
         return [
             "__jasmine__/{0}".format(core_js) for core_js in core_js_files
         ] + [
-            self._prefix_src_underscored(src_file) for src_file in self.src_files()
+            self._prefix_src_underscored(src_file)
+            for src_file in self.src_files()
         ] + [
             "__spec__/{0}".format(helper) for helper in self.helpers()
         ] + [

@@ -1,13 +1,16 @@
 language: python
+sudo: false
+env:
+  global:
+  - PYTHONPATH=.
+  - DISPLAY=:99.0
+install:
+- pip install .
+- pip install -r requirements_dev.txt
 before_script:
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-install: "pip install -r requirements_dev.txt --use-mirrors"
-
-script: py.test test && py.test features
-
-env: PYTHONPATH=.
-
+- sh -e /etc/init.d/xvfb start
+script:
+- py.test
 python:
   - "2.7"
   - "2.6"

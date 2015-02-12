@@ -122,7 +122,8 @@ def mkdir_p(path):
 YAML_TEMPLATE = """
 # src_files
 #
-# Return an array of filepaths relative to src_dir to include before jasmine specs.
+# Return an array of filepaths relative to src_dir
+# to include before jasmine specs.
 # Default: []
 #
 # EXAMPLE:
@@ -136,7 +137,8 @@ src_files:
 
 # stylesheets
 #
-# Return an array of stylesheet filepaths relative to src_dir to include before jasmine specs.
+# Return an array of stylesheet filepaths relative to src_dir
+# to include before jasmine specs.
 # Default: []
 #
 # EXAMPLE:
@@ -149,7 +151,8 @@ stylesheets:
 
 # helpers
 #
-# Return an array of filepaths relative to spec_dir to include before jasmine specs.
+# Return an array of file paths relative to spec_dir to include before jasmine
+# specs.
 # Default: ["helpers/**/*.js"]
 #
 # EXAMPLE:
@@ -176,7 +179,8 @@ spec_files:
 
 # src_dir
 #
-# Source directory path. Your src_files must be returned relative to this path. Will use root if left blank.
+# Source directory path. Your src_files must be returned relative to this path.
+# Will use root if left blank.
 # Default: project root
 #
 # EXAMPLE:
