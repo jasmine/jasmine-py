@@ -7,8 +7,9 @@ from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.support.wait import WebDriverWait
 from cherrypy import wsgiserver
 
-from jasmine.standalone import app as App
-from jasmine.console import Parser, Formatter
+from jasmine.standalone import app
+from jasmine.console_formatter import ConsoleFormatter
+from jasmine.js_api_parser import Parser
 
 
 class TestServerThread(threading.Thread):
@@ -19,7 +20,7 @@ class TestServerThread(threading.Thread):
             try:
                 self.server = wsgiserver.CherryPyWSGIServer(
                     ('localhost', port),
-                    App,
+                    app,
                     request_queue_size=2048
                 )
                 self.port = port
@@ -126,7 +127,7 @@ class CIRunner(object):
                 except WebDriverException:
                     pass
 
-            formatter = Formatter(
+            formatter = ConsoleFormatter(
                 spec_results,
                 suite_results=suite_results,
                 browser_logs=log

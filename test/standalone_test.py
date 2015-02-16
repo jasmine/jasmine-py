@@ -1,10 +1,11 @@
 from mockfs import replace_builtins, restore_builtins
 import pkg_resources
 import pytest
-from jasmine.config import Config
 from mock import Mock
 
+from jasmine.config import Config
 import jasmine.standalone
+
 
 @pytest.fixture
 def app():

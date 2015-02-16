@@ -8,7 +8,6 @@ import pytest
 from yaml import load
 
 from six.moves import builtins
-
 from jasmine.entry_points import continuous_integration, _query, standalone, mkdir_p, install
 from jasmine.ci import CIRunner
 from jasmine.standalone import app as App

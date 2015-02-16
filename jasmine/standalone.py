@@ -1,6 +1,6 @@
 import mimetypes
-
 import os
+
 import pkg_resources
 from flask import Flask, render_template_string, make_response, send_file
 

@@ -70,11 +70,11 @@ def _query(question):
 
 
 def install():
-    from jasmine.console import Formatter
+    from jasmine.console_formatter import ConsoleFormatter
 
     spec_dir = os.path.join(os.getcwd(), 'spec/javascripts/')
 
-    print(Formatter.JASMINE_HEADER)
+    print(ConsoleFormatter.JASMINE_HEADER)
 
     print('Spec directory')
 
