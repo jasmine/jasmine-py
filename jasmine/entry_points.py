@@ -50,7 +50,6 @@ def _check_for_config():
 
 
 def _query(question):
-
     valid = {"yes": True, "y": True, "ye": True,
              "no": False, "n": False}
     prompt = " [Y/n] "

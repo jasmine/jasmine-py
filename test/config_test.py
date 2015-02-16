@@ -104,10 +104,12 @@ def test_src_dir_spec_dir(config):
         "javascripts/tuner/fm/fm_tuner_spec.js",
     ])
 
+
 @pytest.mark.usefixtures("fs")
 def test_script_urls(config, monkeypatch):
     monkeypatch.setattr(pkg_resources, 'resource_listdir',
-                        lambda package, directory: ['json2.js', 'jasmine.js', 'boot.js', 'node_boot.js', 'jasmine-html.js', 'jasmine.css'])
+                        lambda package, directory: ['json2.js', 'jasmine.js', 'boot.js', 'node_boot.js',
+                                                    'jasmine-html.js', 'jasmine.css'])
 
     script_urls = config.script_urls()
 
@@ -118,7 +120,7 @@ def test_script_urls(config, monkeypatch):
         "__jasmine__/boot.js",
         "__src__/src/player.js"
     ]
-    
+
     assert 'http://cdn.jquery.com/jquery.js' in script_urls
     assert '__src__/src/mixer/mixer.js' in script_urls
     assert '__src__/src/tuner/fm/fm_tuner.js' in script_urls
@@ -127,7 +129,8 @@ def test_script_urls(config, monkeypatch):
 
 def test_stylesheet_urls(fs, config, monkeypatch):
     monkeypatch.setattr(pkg_resources, 'resource_listdir',
-                        lambda package, directory: ['json2.js', 'jasmine.js', 'jasmine-html.js', 'boot.js', 'node_boot.js', 'jasmine.css'])
+                        lambda package, directory: ['json2.js', 'jasmine.js', 'jasmine-html.js', 'boot.js',
+                                                    'node_boot.js', 'jasmine.css'])
 
     config.yaml['stylesheets'] = ['**/*.css']
 
@@ -149,7 +152,7 @@ def test_reload(fs, config):
             src_files:
               - pants
             """
-     })
+    })
 
     config.reload()
 

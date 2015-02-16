@@ -79,7 +79,7 @@ class CIRunner(object):
 
             WebDriverWait(self.browser, 100).until(
                 lambda driver:
-                    driver.execute_script("return jsApiReporter.finished;")
+                driver.execute_script("return jsApiReporter.finished;")
             )
 
             spec_results = []
@@ -134,7 +134,7 @@ class CIRunner(object):
             )
             sys.stdout.write(formatter.format())
             if (len(list(formatter.results.failed()))
-               or len(list(formatter.suite_results.failed()))):
+                or len(list(formatter.suite_results.failed()))):
                 sys.exit(1)
         finally:
             if hasattr(self, 'browser'):

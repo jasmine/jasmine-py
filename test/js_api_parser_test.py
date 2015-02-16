@@ -1,5 +1,6 @@
 from jasmine.js_api_parser import Parser
 
+
 def test_parser_should_return_a_correct_results_list():
     parser = Parser()
 

@@ -13,9 +13,11 @@ def app():
         reload(jasmine.standalone)
     except NameError:
         import imp
+
         imp.reload(jasmine.standalone)
 
     from jasmine.standalone import app
+
     app.testing = True
     return app
 
@@ -37,6 +39,7 @@ def mockfs(request):
     request.addfinalizer(lambda: restore_builtins())
     return mfs
 
+
 @pytest.mark.usefixtures('mockfs')
 def test__favicon(monkeypatch, app):
     monkeypatch.setattr(pkg_resources, 'resource_stream', lambda package, filename: [])
@@ -45,6 +48,7 @@ def test__favicon(monkeypatch, app):
         rv = client.get("/jasmine_favicon.png")
 
         assert rv.status_code == 200
+
 
 @pytest.mark.usefixtures('mockfs')
 def test__before_first_request(monkeypatch, app):
@@ -84,7 +88,8 @@ def test__serve(mockfs, app):
 
 
 def test__run(template, mockfs, monkeypatch, app):
-    monkeypatch.setattr(pkg_resources, 'resource_listdir', lambda package, dir: ['jasmine.js', 'boot.js', 'node_boot.js'])
+    monkeypatch.setattr(pkg_resources, 'resource_listdir',
+                        lambda package, dir: ['jasmine.js', 'boot.js', 'node_boot.js'])
     monkeypatch.setattr(pkg_resources, 'resource_string', lambda package, filename: template)
 
     monkeypatch.setattr(Config, 'src_files', lambda self: ['main.js', 'main_spec.js'])
