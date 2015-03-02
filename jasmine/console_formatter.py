@@ -66,11 +66,11 @@ class ConsoleFormatter(object):
     def format_suite_failure(self, colors=False):
         output = ""
         for result in self.suite_results:
-            if result.failedExpectations:
+            if result.failed_expectations:
                 output += self._colorize(
                     'red',
                     '\nAfter All {0}'.format(
-                        result.failedExpectations[0]['message']
+                        result.failed_expectations[0]['message']
                     )
                 )
         return output
@@ -92,11 +92,11 @@ class ConsoleFormatter(object):
         output = ""
         for failure in self.results.failed():
             output += (
-                self._colorize('red', failure.fullName)
+                self._colorize('red', failure.full_name)
                 + "\n  "
-                + failure.failedExpectations[0]['message']
+                + failure.failed_expectations[0]['message']
                 + "\n  "
-                + self.clean_stack(failure.failedExpectations[0]['stack'])
+                + self.clean_stack(failure.failed_expectations[0]['stack'])
                 + "\n"
             )
 
@@ -119,9 +119,9 @@ class ConsoleFormatter(object):
         output = ""
 
         for pending in self.results.pending():
-            output += self._colorize('yellow', pending.fullName + "\n")
-            if pending.pendingReason:
-                output += "  Reason: {0}\n".format(pending.pendingReason)
+            output += self._colorize('yellow', pending.full_name + "\n")
+            if pending.pending_reason:
+                output += "  Reason: {0}\n".format(pending.pending_reason)
 
         return output
 

@@ -37,10 +37,10 @@ def test_parser_should_return_a_correct_results_list():
 
     assert len(results) == 1
     assert results[0].status == 'failed'
-    assert results[0].fullName == 'Globals refer to the most holy.'
-    assert len(results[0].failedExpectations) == 1
-    assert results[0].failedExpectations[0]['stack'] == "stack\n    stack\n    stack"
-    assert results[0].failedExpectations[0]['message'] == "Expected 'Batman' to equal 'PANTS'."
-    assert results[0].pendingReason == u'pending reason'
+    assert results[0].full_name == 'Globals refer to the most holy.'
+    assert len(results[0].failed_expectations) == 1
+    assert results[0].failed_expectations[0]['stack'] == "stack\n    stack\n    stack"
+    assert results[0].failed_expectations[0]['message'] == "Expected 'Batman' to equal 'PANTS'."
+    assert results[0].pending_reason == u'pending reason'
 
 
