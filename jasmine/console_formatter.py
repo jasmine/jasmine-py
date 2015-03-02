@@ -27,11 +27,6 @@ class ConsoleFormatter(object):
         self.suite_results = ResultList(kwargs.get('suite_results', []))
         self.results = ResultList(results)
 
-    def colorize(self, color, text):
-        if not self.colors:
-            return text
-
-        return self.COLORS[color] + text + self.COLORS['none']
 
     def format(self):
         return (
@@ -49,11 +44,11 @@ class ConsoleFormatter(object):
 
         for result in self.results:
             if result.status == "passed":
-                output += self.colorize('green', '.')
+                output += self._colorize('green', '.')
             elif result.status == "failed":
-                output += self.colorize('red', 'X')
+                output += self._colorize('red', 'X')
             else:
-                output += self.colorize('yellow', '*')
+                output += self._colorize('yellow', '*')
 
         return output
 
@@ -71,8 +66,8 @@ class ConsoleFormatter(object):
     def format_suite_failure(self, colors=False):
         output = ""
         for result in self.suite_results:
-            if (result.failedExpectations):
-                output += self.colorize(
+            if result.failedExpectations:
+                output += self._colorize(
                     'red',
                     '\nAfter All {0}'.format(
                         result.failedExpectations[0]['message']
@@ -97,7 +92,7 @@ class ConsoleFormatter(object):
         output = ""
         for failure in self.results.failed():
             output += (
-                self.colorize('red', failure.fullName)
+                self._colorize('red', failure.fullName)
                 + "\n  "
                 + failure.failedExpectations[0]['message']
                 + "\n  "
@@ -124,10 +119,15 @@ class ConsoleFormatter(object):
         output = ""
 
         for pending in self.results.pending():
-            output += self.colorize('yellow', pending.fullName + "\n")
+            output += self._colorize('yellow', pending.fullName + "\n")
             if pending.pendingReason:
                 output += "  Reason: {0}\n".format(pending.pendingReason)
 
         return output
 
+    def _colorize(self, color, text):
+        if not self.colors:
+            return text
+
+        return self.COLORS[color] + text + self.COLORS['none']
 

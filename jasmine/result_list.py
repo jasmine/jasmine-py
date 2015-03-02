@@ -1,3 +1,5 @@
+from jasmine.result import Result
+
 try:
     from future_builtins import filter
 except ImportError:
@@ -5,6 +7,10 @@ except ImportError:
 
 
 class ResultList(list):
+
+    def add_result(self, result):
+        self.append(Result(**result))
+
     def passed(self):
         return self._filter_status('passed')
 
