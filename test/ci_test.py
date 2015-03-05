@@ -133,7 +133,7 @@ def test_run_exits_with_zero_on_success(suites, results, capsys, sysexit, firefo
     firefox_driver.execute_script = execute_script
     firefox_driver.get_log = get_log
 
-    CIRunner().run(logs=True)
+    CIRunner().run(show_logs=True)
     stdout, _stderr = capsys.readouterr()
 
     assert not sysexit.called
@@ -197,7 +197,7 @@ def test_run_with_browser_logs(suites, results, capsys, sysexit, firefox_driver,
     firefox_driver.execute_script = execute_script
     firefox_driver.get_log = get_log
 
-    CIRunner().run(logs=True)
+    CIRunner().run(show_logs=True)
 
     stdout, _stderr = capsys.readouterr()
 

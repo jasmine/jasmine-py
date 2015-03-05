@@ -50,7 +50,7 @@ def test_continuous_integration__set_browser(monkeypatch, mockfs_with_config, mo
 
     continuous_integration()
 
-    CIRunner.run.assert_called_once_with(browser='firefox', logs=False)
+    CIRunner.run.assert_called_once_with(browser='firefox', show_logs=False)
 
 
 def test_continuous_integration__show_logs(monkeypatch, mockfs_with_config, mock_CI_run):
@@ -58,7 +58,7 @@ def test_continuous_integration__show_logs(monkeypatch, mockfs_with_config, mock
 
     continuous_integration()
 
-    CIRunner.run.assert_called_once_with(logs=True, browser=None)
+    CIRunner.run.assert_called_once_with(show_logs=True, browser=None)
 
 
 def test_continuous_integration__browser_default(monkeypatch, mockfs_with_config, mock_CI_run):
@@ -66,7 +66,7 @@ def test_continuous_integration__browser_default(monkeypatch, mockfs_with_config
 
     continuous_integration()
 
-    CIRunner.run.assert_called_once_with(browser=None, logs=False)
+    CIRunner.run.assert_called_once_with(browser=None, show_logs=False)
 
 
 @pytest.fixture

@@ -1,7 +1,5 @@
 import datetime
 
-from jasmine.result_list import ResultList
-
 
 class ConsoleFormatter(object):
     COLORS = {
@@ -21,11 +19,11 @@ class ConsoleFormatter(object):
 
 """
 
-    def __init__(self, results, **kwargs):
-        self.colors = kwargs.get('colors', True)
-        self.browser_logs = kwargs.get('browser_logs', [])
-        self.suite_results = ResultList(kwargs.get('suite_results', []))
-        self.results = ResultList(results)
+    def __init__(self, spec_results, suite_results, browser_logs, colors=True):
+        self.results = spec_results
+        self.suite_results = suite_results
+        self.browser_logs = browser_logs
+        self.colors = colors
 
 
     def format(self):
@@ -106,13 +104,13 @@ class ConsoleFormatter(object):
         if not stack:
             return ""
 
-        def dirty(stack_line):
+        def _dirty(stack_line):
             return "__jasmine__" in stack_line or "__boot__" in stack_line
 
         return "\n".join([
             stack_line
             for stack_line in stack.split("\n")
-            if not dirty(stack_line)
+            if not _dirty(stack_line)
         ])
 
     def format_pending(self):

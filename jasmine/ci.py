@@ -57,7 +57,8 @@ class TestServerThread(threading.Thread):
 
 
 class CIRunner(object):
-    def run(self, browser=None, logs=False):
+
+    def run(self, browser=None, show_logs=False):
         try:
             test_server = TestServerThread()
             test_server.start()
@@ -82,55 +83,15 @@ class CIRunner(object):
                 driver.execute_script("return jsApiReporter.finished;")
             )
 
-            spec_results = []
-            index = 0
-            batch_size = 50
             parser = Parser()
-
-            while True:
-                results = self.browser.execute_script(
-                    "return jsApiReporter.specResults({0}, {1})".format(
-                        index,
-                        batch_size
-                    )
-                )
-                results = parser.parse(results)
-
-                spec_results.extend(results)
-                index += len(results)
-
-                if not len(results) == batch_size:
-                    break
-
-            suite_results = []
-            index = 0
-            batch_size = 50
-            while True:
-                results = self.browser.execute_script(
-                    "return jsApiReporter.suiteResults({0}, {1})".format(
-                        index,
-                        batch_size
-                    )
-                )
-                results = parser.parse(results)
-
-                suite_results.extend(results)
-                index += len(results)
-
-                if not len(results) == batch_size:
-                    break
-
-            log = []
-            if logs:
-                try:
-                    log = self.browser.get_log('browser')
-                except WebDriverException:
-                    pass
+            spec_results = self._get_spec_results(parser)
+            suite_results = self._get_suite_results(parser)
+            show_logs = self._get_browser_logs(show_logs=show_logs)
 
             formatter = ConsoleFormatter(
-                spec_results,
+                spec_results=spec_results,
                 suite_results=suite_results,
-                browser_logs=log
+                browser_logs=show_logs
             )
             sys.stdout.write(formatter.format())
             if (len(list(formatter.results.failed()))
@@ -141,3 +102,52 @@ class CIRunner(object):
                 self.browser.close()
             if hasattr(self, 'test_server'):
                 self.test_server.join()
+
+    def _get_spec_results(self, parser):
+        spec_results = []
+        index = 0
+        batch_size = 50
+        while True:
+            results = self.browser.execute_script(
+                "return jsApiReporter.specResults({0}, {1})".format(
+                    index,
+                    batch_size
+                )
+            )
+            spec_results.extend(results)
+            index += len(results)
+
+            if not len(results) == batch_size:
+                break
+
+        return parser.parse(spec_results)
+
+
+    def _get_suite_results(self, parser):
+        suite_results = []
+        index = 0
+        batch_size = 50
+        while True:
+            results = self.browser.execute_script(
+                "return jsApiReporter.suiteResults({0}, {1})".format(
+                    index,
+                    batch_size
+                )
+            )
+
+            suite_results.extend(results)
+            index += len(results)
+
+            if not len(results) == batch_size:
+                break
+
+        return parser.parse(suite_results)
+
+    def _get_browser_logs(self, show_logs):
+        log = []
+        if show_logs:
+            try:
+                log = self.browser.get_log('browser')
+            except WebDriverException:
+                pass
+        return log

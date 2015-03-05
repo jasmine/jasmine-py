@@ -44,3 +44,8 @@ def test_parser_should_return_a_correct_results_list():
     assert results[0].pending_reason == u'pending reason'
 
 
+def test_parser_returns_an_empty_results_list_with_no_runnables():
+    parser = Parser()
+    results = parser.parse([])
+
+    assert len(results) == 0

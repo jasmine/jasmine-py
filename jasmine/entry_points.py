@@ -33,7 +33,7 @@ def continuous_integration():
     args = parser.parse_args()
 
     if _check_for_config():
-        CIRunner().run(browser=args.browser, logs=args.logs)
+        CIRunner().run(browser=args.browser, show_logs=args.logs)
 
 
 def _check_for_config():

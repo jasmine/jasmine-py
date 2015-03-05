@@ -4,6 +4,7 @@ import pytest
 
 from jasmine.console_formatter import ConsoleFormatter
 from jasmine.js_api_parser import Parser
+from jasmine.result_list import ResultList
 
 
 @pytest.fixture
@@ -36,14 +37,27 @@ def browser_logs():
     ]
 
 
+def _create_console_formatter(spec_results=None, suite_results=None, browser_logs=None, colors=False):
+    spec_results = spec_results or ResultList([])
+    suite_results = suite_results or ResultList([])
+    browser_logs = browser_logs or []
+
+    return ConsoleFormatter(
+        spec_results=spec_results,
+        suite_results=suite_results,
+        browser_logs=browser_logs,
+        colors=colors,
+    )
+
+
 def test_format_progress(results):
-    formatter = ConsoleFormatter(results, colors=False)
+    formatter = _create_console_formatter(spec_results=results, colors=False)
 
     assert formatter.format_progress() == ".X.*"
 
 
 def test_format_summary(results):
-    formatter = ConsoleFormatter(results, colors=False)
+    formatter = _create_console_formatter(spec_results=results, colors=False)
 
     assert formatter.format_summary() == "4 specs, 1 failed, 1 pending"
 
@@ -52,12 +66,12 @@ def test_format_after_all_errors():
     parser = Parser()
     suite_results = parser.parse([{u'status': u'failed', u'failedExpectations': [{"message": "ahhh"}]}])
 
-    formatter = ConsoleFormatter([], suite_results=suite_results)
+    formatter = _create_console_formatter(spec_results=ResultList([]), suite_results=suite_results)
     assert "After All ahhh" in formatter.format_suite_failure()
 
 
 def test_format_browser_logs(results, browser_logs):
-    formatter = ConsoleFormatter(results, colors=False, browser_logs=browser_logs)
+    formatter = _create_console_formatter(spec_results=results, colors=False, browser_logs=browser_logs)
 
     dt1, dt2, dt3 = map(datetime.datetime.fromtimestamp, range(3))
     assert formatter.format_browser_logs() == (
@@ -70,7 +84,7 @@ def test_format_browser_logs(results, browser_logs):
 
 
 def test_format_browser_logs_with_no_failures(passing_results, browser_logs):
-    formatter = ConsoleFormatter(passing_results, colors=False, browser_logs=browser_logs)
+    formatter = _create_console_formatter(spec_results=passing_results, colors=False, browser_logs=browser_logs)
 
     assert formatter.format_browser_logs() == ""
 
@@ -94,7 +108,7 @@ def test_format_failures():
          u'failedExpectations': [{u'stack': stack2, u'message': 'Message2'}]},
     ])
 
-    formatter = ConsoleFormatter(results, colors=False)
+    formatter = _create_console_formatter(spec_results=results, colors=False)
 
     assert formatter.format_failures() == \
            "Context is this test fails\n" + \
@@ -108,7 +122,7 @@ def test_format_failures():
 
 
 def test_clean_stack(results):
-    formatter = ConsoleFormatter(results, colors=False)
+    formatter = _create_console_formatter(spec_results=results, colors=False)
 
     dirty_stack = u"""Error: Expected 'Batman' to equal 'PANTS'.
         at stack (http://localhost:8888/__jasmine__/jasmine.js:1110)
@@ -119,20 +133,24 @@ def test_clean_stack(results):
 
 
 def test_pending_stack(results):
-    formatter = ConsoleFormatter(results, colors=False)
+    formatter = _create_console_formatter(spec_results=results, colors=False)
 
     assert formatter.format_pending() == "Context is this test is pending\n"
 
 
 def test_pending_with_message():
-    parser = Parser();
+    parser = Parser()
 
-    results = parser.parse([{
-                                u'status': u'pending',
-                                u'fullName': u'pending',
-                                u'pendingReason': 'the reason'
-                            }]);
+    results = parser.parse(
+        [
+            {
+                u'status': u'pending',
+                u'fullName': u'pending',
+                u'pendingReason': 'the reason'
+            }
+        ]
+    )
 
-    formatter = ConsoleFormatter(results, colors=False)
+    formatter = _create_console_formatter(spec_results=results, colors=False)
     assert formatter.format_pending() == "pending\n  Reason: the reason\n"
 
