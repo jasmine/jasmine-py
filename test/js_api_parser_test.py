@@ -49,3 +49,25 @@ def test_parser_returns_an_empty_results_list_with_no_runnables():
     results = parser.parse([])
 
     assert len(results) == 0
+
+
+def test_parser_returns_all_failed_expectations():
+    parser = Parser()
+
+    results = parser.parse([
+        {
+            u'failedExpectations': [
+                {u'actual': u'Expectation1'},
+                {u'actual': u'Expectation2'},
+                {u'actual': u'Expectation3'},
+                {u'actual': u'Expectation4'},
+            ],
+        }
+    ])
+
+    assert len(results) == 1
+    assert len(results[0].failed_expectations) == 4
+    assert results[0].failed_expectations[0][u'actual'] == u'Expectation1'
+    assert results[0].failed_expectations[1][u'actual'] == u'Expectation2'
+    assert results[0].failed_expectations[2][u'actual'] == u'Expectation3'
+    assert results[0].failed_expectations[3][u'actual'] == u'Expectation4'

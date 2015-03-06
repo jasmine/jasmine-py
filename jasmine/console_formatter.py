@@ -33,7 +33,7 @@ class ConsoleFormatter(object):
             self.format_summary() + "\n\n" +
             self.format_suite_failure() + "\n\n" +
             self.format_browser_logs() +
-            self.format_failures() +
+            self.format_spec_failures() +
             self.format_pending()
         )
 
@@ -86,18 +86,15 @@ class ConsoleFormatter(object):
             output += "\n"
         return output
 
-    def format_failures(self):
+    def format_spec_failures(self):
         output = ""
-        for failure in self.results.failed():
-            output += (
-                self._colorize('red', failure.full_name)
-                + "\n  "
-                + failure.failed_expectations[0]['message']
-                + "\n  "
-                + self.clean_stack(failure.failed_expectations[0]['stack'])
-                + "\n"
-            )
-
+        for failed_spec in self.results.failed():
+            output += self._colorize('red', failed_spec.full_name) + "\n"
+            for expectation in failed_spec.failed_expectations:
+                output += (
+                    "  " + expectation['message'] + "\n"
+                    + "  " + self.clean_stack(expectation['stack']) + "\n"
+                )
         return output
 
     def clean_stack(self, stack):

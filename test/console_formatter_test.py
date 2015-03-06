@@ -100,17 +100,22 @@ def test_format_failures():
         at stack (http://localhost:8888/__jasmine__/jasmine.js:1110)
         at http://localhost:8888/__spec__/global_spec.js:6"""
 
+    stack3 = u"""Error: Expected 'Justice' to equal 'Served'.
+        at stack (http://localhost:8888/__jasmine__/jasmine.js:1110)
+        at http://localhost:8888/__spec__/global_spec.js:9"""
+
     results = parser.parse([
         {u'status': u'passed', u'fullName': u'Context is this test passes'},
         {u'status': u'failed', u'fullName': u'Context is this test fails',
          u'failedExpectations': [{u'stack': stack1, u'message': 'Message1'}]},
         {u'status': u'failed', u'fullName': u'Context is this test also fails',
-         u'failedExpectations': [{u'stack': stack2, u'message': 'Message2'}]},
+         u'failedExpectations': [{u'stack': stack2, u'message': 'Message2'},
+                                 {u'stack': stack3, u'message': 'Message3'}]},
     ])
 
     formatter = _create_console_formatter(spec_results=results, colors=False)
 
-    assert formatter.format_failures() == \
+    assert formatter.format_spec_failures() == \
            "Context is this test fails\n" + \
            "  Message1\n" + \
            "  Error: Expected 'Batman' to equal 'PANTS'.\n" + \
@@ -118,8 +123,10 @@ def test_format_failures():
            "Context is this test also fails\n" + \
            "  Message2\n" + \
            "  Error: Expected 'Batman' to equal 'Superman'.\n" + \
-           "        at http://localhost:8888/__spec__/global_spec.js:6\n"
-
+           "        at http://localhost:8888/__spec__/global_spec.js:6\n" + \
+           "  Message3\n" + \
+           "  Error: Expected 'Justice' to equal 'Served'.\n" + \
+           "        at http://localhost:8888/__spec__/global_spec.js:9\n"
 
 def test_clean_stack(results):
     formatter = _create_console_formatter(spec_results=results, colors=False)
