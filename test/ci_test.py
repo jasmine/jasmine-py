@@ -226,6 +226,6 @@ def test_displays_afterall_errors(suite_results, suites, results, capsys, sysexi
     CIRunner().run()
     stdout, _stderr = capsys.readouterr()
 
-    assert 'After All something went wrong' in stdout
+    assert 'something went wrong' in stdout
     sysexit.assert_called_with(1)
 

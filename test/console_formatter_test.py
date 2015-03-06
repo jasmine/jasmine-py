@@ -64,10 +64,14 @@ def test_format_summary(results):
 
 def test_format_after_all_errors():
     parser = Parser()
-    suite_results = parser.parse([{u'status': u'failed', u'failedExpectations': [{"message": "ahhh"}]}])
+    suite_results = parser.parse([{u'status': u'failed', u'failedExpectations': [{"message": "ahhh"}, {"message": "oh no!"}]}])
 
     formatter = _create_console_formatter(spec_results=ResultList([]), suite_results=suite_results)
-    assert "After All ahhh" in formatter.format_suite_failure()
+    assert formatter.format_suite_failure() == (
+           "After All Failures:\n"
+           + "  ahhh\n\n"
+           + "  oh no!\n\n"
+    )
 
 
 def test_format_browser_logs(results, browser_logs):

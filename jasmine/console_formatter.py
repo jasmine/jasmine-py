@@ -31,7 +31,7 @@ class ConsoleFormatter(object):
             self.JASMINE_HEADER +
             self.format_progress() + "\n\n" +
             self.format_summary() + "\n\n" +
-            self.format_suite_failure() + "\n\n" +
+            self.format_suite_failure() +
             self.format_browser_logs() +
             self.format_spec_failures() +
             self.format_pending()
@@ -65,12 +65,9 @@ class ConsoleFormatter(object):
         output = ""
         for result in self.suite_results:
             if result.failed_expectations:
-                output += self._colorize(
-                    'red',
-                    '\nAfter All {0}'.format(
-                        result.failed_expectations[0]['message']
-                    )
-                )
+                output += self._colorize('red', 'After All Failures:\n')
+                for expectation in result.failed_expectations:
+                    output += "  " + expectation['message'] + "\n\n"
         return output
 
     def format_browser_logs(self):
