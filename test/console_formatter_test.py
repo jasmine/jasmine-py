@@ -71,6 +71,12 @@ def test_format_after_all_errors():
                 {"message": "ahhh", "stack": "stack1"},
                 {"message": "oh no!", "stack": "stack2"}
             ]
+        },
+        {
+            u'status': u'failed',
+            u'failedExpectations': [
+                {"message": "boom", "stack": "stack3"},
+            ]
         }
     ])
 
@@ -81,6 +87,8 @@ def test_format_after_all_errors():
            + "  stack1\n" \
            + "  oh no!\n" \
            + "  stack2\n" \
+           + "  boom\n" \
+           + "  stack3\n" \
 
 
 def test_format_browser_logs(results, browser_logs):

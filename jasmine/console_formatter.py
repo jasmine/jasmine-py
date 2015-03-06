@@ -62,9 +62,8 @@ class ConsoleFormatter(object):
         return output
 
     def format_suite_failure(self):
-        output = ""
+        output = self._colorize('red', 'After All Failures:\n')
         for failed_suite in self.suite_results.failed():
-            output += self._colorize('red', 'After All Failures:\n')
             for expectation in failed_suite.failed_expectations:
                 output += self._format_expectation_failure(expectation)
         return output
