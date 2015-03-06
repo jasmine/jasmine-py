@@ -104,7 +104,10 @@ def suite_results():
             "id": "suite0",
             "status": "failed",
             "failedExpectations": [
-                {"message": "something went wrong"}
+                {
+                    "message": "something went wrong",
+                    "stack": "stack"
+                }
             ]
         },
         {

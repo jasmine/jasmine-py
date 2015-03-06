@@ -61,13 +61,20 @@ class ConsoleFormatter(object):
 
         return output
 
-    def format_suite_failure(self, colors=False):
+    def format_suite_failure(self):
         output = ""
-        for result in self.suite_results:
-            if result.failed_expectations:
-                output += self._colorize('red', 'After All Failures:\n')
-                for expectation in result.failed_expectations:
-                    output += "  " + expectation['message'] + "\n\n"
+        for failed_suite in self.suite_results.failed():
+            output += self._colorize('red', 'After All Failures:\n')
+            for expectation in failed_suite.failed_expectations:
+                output += self._format_expectation_failure(expectation)
+        return output
+
+    def format_spec_failures(self):
+        output = ""
+        for failed_spec in self.results.failed():
+            output += self._colorize('red', failed_spec.full_name) + "\n"
+            for expectation in failed_spec.failed_expectations:
+                output += self._format_expectation_failure(expectation)
         return output
 
     def format_browser_logs(self):
@@ -81,17 +88,6 @@ class ConsoleFormatter(object):
                     log['message']
                 )
             output += "\n"
-        return output
-
-    def format_spec_failures(self):
-        output = ""
-        for failed_spec in self.results.failed():
-            output += self._colorize('red', failed_spec.full_name) + "\n"
-            for expectation in failed_spec.failed_expectations:
-                output += (
-                    "  " + expectation['message'] + "\n"
-                    + "  " + self.clean_stack(expectation['stack']) + "\n"
-                )
         return output
 
     def clean_stack(self, stack):
@@ -116,6 +112,12 @@ class ConsoleFormatter(object):
                 output += "  Reason: {0}\n".format(pending.pending_reason)
 
         return output
+
+    def _format_expectation_failure(self, expectation):
+        return (
+            "  " + expectation['message'] + "\n"
+            + "  " + self.clean_stack(expectation['stack']) + "\n"
+        )
 
     def _colorize(self, color, text):
         if not self.colors:
