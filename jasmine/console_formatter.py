@@ -45,21 +45,23 @@ class ConsoleFormatter(object):
                 output += self._colorize('green', '.')
             elif result.status == "failed":
                 output += self._colorize('red', 'X')
-            else:
+            elif result.status == 'pending':
                 output += self._colorize('yellow', '*')
 
         return output
 
     def format_summary(self):
         output = "{0} specs, {1} failed".format(
-            len(self.results),
-            len(list(self.results.failed()))
+            self._enabled_spec_count(),
+            len(self.results.failed())
         )
 
         if self.results.pending():
-            output += ", {0} pending".format(len(list(self.results.pending())))
-
+            output += ", {0} pending".format(len(self.results.pending()))
         return output
+
+    def _enabled_spec_count(self):
+        return len(self.results.enabled())
 
     def format_suite_failure(self):
         output = ""
@@ -80,7 +82,7 @@ class ConsoleFormatter(object):
 
     def format_browser_logs(self):
         output = ""
-        if list(self.results.failed()) and self.browser_logs:
+        if self.results.failed() and self.browser_logs:
             output = "Browser Session Logs:\n"
             for log in self.browser_logs:
                 output += "  [{0} - {1}] {2}\n".format(

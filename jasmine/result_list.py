@@ -1,10 +1,5 @@
 from jasmine.result import Result
 
-try:
-    from future_builtins import filter
-except ImportError:
-    pass
-
 
 class ResultList(list):
 
@@ -20,6 +15,9 @@ class ResultList(list):
     def pending(self):
         return self._filter_status('pending')
 
+    def enabled(self):
+        return [result for result in self if result.status != 'disabled']
+
     def _filter_status(self, status):
-        return filter(lambda x: x.status == status, self)
+        return [result for result in self if result.status == status]
 

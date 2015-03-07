@@ -15,6 +15,7 @@ def results():
         {u'status': u'failed'},
         {u'status': u'passed'},
         {u'status': u'pending', u'fullName': u'Context is this test is pending'},
+        {u'status': u'disabled'},
     ])
 
 
@@ -153,6 +154,7 @@ def test_format_failures():
            "  Message3\n" + \
            "  Error: Expected 'Justice' to equal 'Served'.\n" + \
            "        at http://localhost:8888/__spec__/global_spec.js:9\n"
+
 
 def test_clean_stack(results):
     formatter = _create_console_formatter(spec_results=results, colors=False)
