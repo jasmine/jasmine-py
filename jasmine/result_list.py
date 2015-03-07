@@ -20,4 +20,3 @@ class ResultList(list):
 
     def _filter_status(self, status):
         return [result for result in self if result.status == status]
-

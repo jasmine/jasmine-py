@@ -25,7 +25,6 @@ class ConsoleFormatter(object):
         self.browser_logs = browser_logs
         self.colors = colors
 
-
     def format(self):
         return (
             self.JASMINE_HEADER +
@@ -118,8 +117,8 @@ class ConsoleFormatter(object):
 
     def _format_expectation_failure(self, expectation):
         return (
-            "  " + expectation['message'] + "\n"
-            + "  " + self.clean_stack(expectation['stack']) + "\n"
+            "  " + expectation['message'] + "\n" +
+            "  " + self.clean_stack(expectation['stack']) + "\n"
         )
 
     def _colorize(self, color, text):
@@ -127,4 +126,3 @@ class ConsoleFormatter(object):
             return text
 
         return self.COLORS[color] + text + self.COLORS['none']
-

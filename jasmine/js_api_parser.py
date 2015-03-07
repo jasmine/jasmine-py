@@ -29,5 +29,3 @@ class Parser(object):
 
     def _to_snake_case(self, key):
         return self.RESULT_FIELDS[key]
-
-

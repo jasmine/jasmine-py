@@ -94,8 +94,8 @@ class CIRunner(object):
                 browser_logs=show_logs
             )
             sys.stdout.write(formatter.format())
-            if (len(list(formatter.results.failed()))
-                or len(list(formatter.suite_results.failed()))):
+            if (len(list(formatter.results.failed())) or
+                    len(list(formatter.suite_results.failed()))):
                 sys.exit(1)
         finally:
             if hasattr(self, 'browser'):
@@ -121,7 +121,6 @@ class CIRunner(object):
                 break
 
         return parser.parse(spec_results)
-
 
     def _get_suite_results(self, parser):
         suite_results = []
