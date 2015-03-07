@@ -62,7 +62,12 @@ def test_format_summary(results):
     assert formatter.format_summary() == "4 specs, 1 failed, 1 pending"
 
 
-def test_format_after_all_errors():
+def test_format_suite_errors_empty():
+    formatter = _create_console_formatter(suite_results=ResultList([]))
+    assert formatter.format_suite_failure() == ""
+
+
+def test_format_suite_errors():
     parser = Parser()
     suite_results = parser.parse([
         {
@@ -80,7 +85,7 @@ def test_format_after_all_errors():
         }
     ])
 
-    formatter = _create_console_formatter(spec_results=ResultList([]), suite_results=suite_results)
+    formatter = _create_console_formatter(suite_results=suite_results)
     assert formatter.format_suite_failure() == \
            "After All Failures:\n" \
            + "  ahhh\n" \
