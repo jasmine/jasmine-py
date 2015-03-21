@@ -5,6 +5,8 @@ import mockfs
 import pkg_resources
 import pytest
 
+from jasmine.config import Config
+
 
 @pytest.fixture
 def fs(request):
@@ -45,8 +47,6 @@ def fs(request):
 @pytest.fixture
 @pytest.mark.usefixtures("fs")
 def config():
-    from jasmine.config import Config
-
     return Config("jasmine.yml", project_path="/")
 
 
@@ -84,11 +84,19 @@ def test_spec_files_default(config):
     ]
 
 
-@pytest.mark.usefixtures("fs")
-def test_src_dir_spec_dir(config):
-    config.yaml['src_dir'] = 'src'
-    config.yaml['spec_dir'] = 'spec'
-    config.yaml['src_files'] = ['**/*.js', 'player.js', 'vendor/test.js', 'vendor/**/*.{js,coffee}']
+def test_src_dir_spec_dir(fs, config):
+    fs.add_entries({
+         "jasmine.yml": """
+            src_dir: src
+            spec_dir: spec
+            src_files:
+                - ./**/*.js
+                - player.js
+                - vendor/test.js
+                - vendor/**/*.{js,coffee}
+            """,
+    })
+    config.reload()
 
     src_files = config.src_files()
 
@@ -128,15 +136,28 @@ def test_script_urls(config, monkeypatch):
 
 
 def test_stylesheet_urls(fs, config, monkeypatch):
-    monkeypatch.setattr(pkg_resources, 'resource_listdir',
-                        lambda package, directory: ['json2.js', 'jasmine.js', 'jasmine-html.js', 'boot.js',
-                                                    'node_boot.js', 'jasmine.css'])
-
-    config.yaml['stylesheets'] = ['**/*.css']
+    monkeypatch.setattr(
+        pkg_resources,
+        'resource_listdir',
+        lambda package, directory: [
+            'json2.js',
+            'jasmine.js',
+            'jasmine-html.js',
+            'boot.js',
+            'node_boot.js',
+            'jasmine.css'
+        ]
+    )
 
     fs.add_entries({
-        'main.css': """ body { color: blue; } """
+         "jasmine.yml": """
+            stylesheets:
+              - ./**/*.css
+            """,
+         "main.css": " body { color: blue; } "
     })
+
+    config.reload()
 
     stylesheet_urls = config.stylesheet_urls()
 
@@ -147,13 +168,16 @@ def test_stylesheet_urls(fs, config, monkeypatch):
 
 
 def test_reload(fs, config):
+    assert config.src_files() != ['pants.txt']
+
     fs.add_entries({
         "jasmine.yml": """
             src_files:
-              - pants
-            """
+              - pants.txt
+            """,
+        "pants.txt": ""
     })
 
     config.reload()
 
-    assert config.yaml['src_files'] == ['pants']
+    assert config.src_files() == ['pants.txt']
