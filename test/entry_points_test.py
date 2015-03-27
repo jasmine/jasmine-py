@@ -3,14 +3,36 @@ import errno
 import sys
 
 from mockfs import replace_builtins, restore_builtins
-from mock import MagicMock
+from mock import Mock, MagicMock
 import pytest
 from yaml import load
 
 from six.moves import builtins
-from jasmine.entry_points import continuous_integration, _query, standalone, mkdir_p, install
+from jasmine.entry_points import (
+    continuous_integration,
+    query,
+    standalone,
+    mkdir_p,
+    install
+)
 from jasmine.ci import CIRunner
-from jasmine.standalone import app as App
+import jasmine.standalone
+
+
+class FakeApp(object):
+    def __init__(self, jasmine_config=None):
+        self.app = Mock()
+        FakeApp.app = self.app
+
+    def run(self):
+        pass
+
+
+@pytest.fixture
+def app(request):
+    fake_app = FakeApp()
+    fake_app.run = MagicMock(name='run')
+    return fake_app
 
 
 @pytest.fixture
@@ -47,80 +69,80 @@ def test_ci_config_check(mockfs, monkeypatch, mock_CI_run):
 
 def test_continuous_integration__set_browser(monkeypatch, mockfs_with_config, mock_CI_run):
     monkeypatch.setattr(sys, 'argv', ["test.py", "--browser", "firefox"])
+    monkeypatch.setattr(jasmine.entry_points, 'JasmineApp', FakeApp)
 
     continuous_integration()
 
-    CIRunner.run.assert_called_once_with(browser='firefox', show_logs=False)
+    CIRunner.run.assert_called_once_with(browser='firefox', show_logs=False, app=FakeApp.app)
 
 
 def test_continuous_integration__show_logs(monkeypatch, mockfs_with_config, mock_CI_run):
     monkeypatch.setattr(sys, 'argv', ["test.py", "--logs"])
+    monkeypatch.setattr(jasmine.entry_points, 'JasmineApp', FakeApp)
 
     continuous_integration()
 
-    CIRunner.run.assert_called_once_with(show_logs=True, browser=None)
+    CIRunner.run.assert_called_once_with(show_logs=True, browser=None, app=FakeApp.app)
 
 
 def test_continuous_integration__browser_default(monkeypatch, mockfs_with_config, mock_CI_run):
     monkeypatch.setattr(sys, 'argv', ["test.py"])
+    monkeypatch.setattr(jasmine.entry_points, 'JasmineApp', FakeApp)
 
     continuous_integration()
 
-    CIRunner.run.assert_called_once_with(browser=None, show_logs=False)
+    CIRunner.run.assert_called_once_with(browser=None, show_logs=False, app=FakeApp.app)
 
 
-@pytest.fixture
-def mock_App_run(request):
-    App.run = MagicMock(name='run')
-
-
-def test_standalone__set_host(monkeypatch, mock_App_run, mockfs_with_config):
+def test_standalone__set_host(monkeypatch, app, mockfs_with_config):
     monkeypatch.setattr(sys, 'argv', ["test.py", "-o", "127.0.0.2"])
-    App.run = MagicMock(name='run')
+    monkeypatch.setattr(jasmine.entry_points, 'JasmineApp', FakeApp)
 
     standalone()
 
-    App.run.assert_called_once_with(host="127.0.0.2", port=8888, debug=True)
+    FakeApp.app.run.assert_called_once_with(host="127.0.0.2", port=8888, debug=True)
 
 
-def test_standalone__set_port(monkeypatch, mock_App_run, mockfs_with_config):
+def test_standalone__set_port(monkeypatch, app, mockfs_with_config):
     monkeypatch.setattr(sys, 'argv', ["test.py", "-p", "1337"])
+    monkeypatch.setattr(jasmine.entry_points, 'JasmineApp', FakeApp)
 
     standalone()
 
-    App.run.assert_called_once_with(host="127.0.0.1", port=1337, debug=True)
+    FakeApp.app.run.assert_called_once_with(host="127.0.0.1", port=1337, debug=True)
 
 
-def test_standalone__port_default(monkeypatch, mock_App_run, mockfs_with_config):
+def test_standalone__port_default(monkeypatch, app, mockfs_with_config):
     monkeypatch.setattr(sys, 'argv', ["test.py"])
+    monkeypatch.setattr(jasmine.entry_points, 'JasmineApp', FakeApp)
 
     standalone()
 
-    App.run.assert_called_once_with(host="127.0.0.1", port=8888, debug=True)
+    FakeApp.app.run.assert_called_once_with(host="127.0.0.1", port=8888, debug=True)
 
 
-def test_standalone__port_invalid(monkeypatch, mock_App_run, mockfs_with_config):
+def test_standalone__port_invalid(monkeypatch, app, mockfs_with_config):
     monkeypatch.setattr(sys, 'argv', ["test.py", "-p", "pants"])
 
     with pytest.raises(SystemExit):
         standalone()
 
     assert "invalid int value: 'pants'"
-    assert not App.run.called
+    assert not app.run.called
 
 
-def test_standalone__missing_config(monkeypatch, mock_App_run, mockfs):
+def test_standalone__missing_config(monkeypatch, app, mockfs):
     monkeypatch.setattr(sys, 'argv', ["test.py"])
 
     standalone()
 
-    assert not App.run.called
+    assert not app.run.called
 
 
 def test__query__yes(capsys, monkeypatch):
     input_string(monkeypatch, "Y")
 
-    choice = _query("Would you like to play a game?")
+    choice = query("Would you like to play a game?")
 
     out, err = capsys.readouterr()
 
@@ -131,7 +153,7 @@ def test__query__yes(capsys, monkeypatch):
 def test__query__no(capsys, monkeypatch):
     input_string(monkeypatch, "N")
 
-    choice = _query("Would you like to hear some cat facts?")
+    choice = query("Would you like to hear some cat facts?")
 
     out, err = capsys.readouterr()
 
@@ -142,7 +164,7 @@ def test__query__no(capsys, monkeypatch):
 def test__query__default(capsys, monkeypatch):
     input_string(monkeypatch, "")
 
-    choice = _query("Would you like to blindly accept my defaults?")
+    choice = query("Would you like to blindly accept my defaults?")
 
     out, err = capsys.readouterr()
 

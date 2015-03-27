@@ -7,12 +7,19 @@ from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.support.wait import WebDriverWait
 from cherrypy import wsgiserver
 
-from jasmine.standalone import app
+from jasmine.standalone import JasmineApp
 from jasmine.console_formatter import ConsoleFormatter
 from jasmine.js_api_parser import Parser
 
 
 class TestServerThread(threading.Thread):
+
+    def __init__(self, app=None, *args, **kwargs):
+        super(TestServerThread, self).__init__(*args, **kwargs)
+        self.server = None
+        self.port = None
+        self.app = app
+
     def run(self):
         ports = self.possible_ports("localhost:80,8889-9999")
 
@@ -20,7 +27,7 @@ class TestServerThread(threading.Thread):
             try:
                 self.server = wsgiserver.CherryPyWSGIServer(
                     ('localhost', port),
-                    app,
+                    self.app,
                     request_queue_size=2048
                 )
                 self.port = port
@@ -58,25 +65,15 @@ class TestServerThread(threading.Thread):
 
 class CIRunner(object):
 
-    def run(self, browser=None, show_logs=False):
+    def __init__(self, jasmine_config=None):
+        self.jasmine_config = jasmine_config
+
+    def run(self, browser=None, show_logs=False, app=None):
         try:
-            test_server = TestServerThread()
-            test_server.start()
+            test_server = self._start_test_server(app, browser)
 
-            driver = browser if browser \
-                else os.environ.get('JASMINE_BROWSER', 'firefox')
-
-            try:
-                webdriver = __import__(
-                    "selenium.webdriver.{0}.webdriver".format(driver),
-                    globals(), locals(), ['object'], 0
-                )
-
-                self.browser = webdriver.WebDriver()
-            except ImportError as e:
-                print("Browser {0} not found".format(driver))
-
-            self.browser.get("http://localhost:{0}/".format(test_server.port))
+            jasmine_url = "http://localhost:{0}/".format(test_server.port)
+            self.browser.get(jasmine_url)
 
             WebDriverWait(self.browser, 100).until(
                 lambda driver:
@@ -102,6 +99,22 @@ class CIRunner(object):
                 self.browser.close()
             if hasattr(self, 'test_server'):
                 self.test_server.join()
+
+    def _start_test_server(self, app, browser):
+        test_server = TestServerThread(app=app)
+        test_server.start()
+        driver = browser if browser \
+            else os.environ.get('JASMINE_BROWSER', 'firefox')
+        try:
+            webdriver = __import__(
+                "selenium.webdriver.{0}.webdriver".format(driver),
+                globals(), locals(), ['object'], 0
+            )
+
+            self.browser = webdriver.WebDriver()
+        except ImportError as e:
+            print("Browser {0} not found".format(driver))
+        return test_server
 
     def _get_spec_results(self, parser):
         spec_results = []
