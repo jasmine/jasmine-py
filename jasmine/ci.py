@@ -64,7 +64,6 @@ class TestServerThread(threading.Thread):
 
 class CIRunner(object):
 
-
     def run(self, browser=None, show_logs=False, app=None):
         try:
             test_server = self._start_test_server(app, browser)
