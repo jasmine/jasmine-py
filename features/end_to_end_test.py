@@ -32,7 +32,7 @@ describe("Pants", function() {
 
 
 def run_jasmine(project_dir):
-    return check_output("cd {0} && jasmine-ci -b phantomjs".format(project_dir), shell=True)
+    return check_output("cd {0} && jasmine-ci".format(project_dir), shell=True)
 
 
 # ported from 2.7 for 2.6 support
