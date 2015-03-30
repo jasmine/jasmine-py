@@ -1,25 +1,59 @@
 from mockfs import replace_builtins, restore_builtins
 import pkg_resources
 import pytest
-from mock import Mock
 
-from jasmine.config import Config
-import jasmine.standalone
+from jasmine.standalone import JasmineApp
+
+
+class FakeConfig(object):
+    def __init__(
+            self,
+            src_dir=None,
+            spec_dir=None,
+            stylesheet_urls=None,
+            script_urls=None
+    ):
+        self._src_dir = src_dir
+        self._spec_dir = spec_dir
+        self._stylesheet_urls = stylesheet_urls
+        self._script_urls = script_urls
+
+        self.reload_call_count = 0
+
+    def src_dir(self):
+        return self._src_dir
+
+    def spec_dir(self):
+        return self._spec_dir
+
+    def stylesheet_urls(self):
+        return self._stylesheet_urls
+
+    def script_urls(self):
+        return self._script_urls
+
+    def reload(self):
+        self.reload_call_count += 1
 
 
 @pytest.fixture
-def app():
-    try:
-        reload(jasmine.standalone)
-    except NameError:
-        import imp
+def jasmine_config():
+    script_urls = ['__src__/main.js', '__spec__/main_spec.js']
+    stylesheet_urls = ['__src__/main.css']
 
-        imp.reload(jasmine.standalone)
+    return FakeConfig(
+        src_dir='src',
+        spec_dir='spec',
+        script_urls=script_urls,
+        stylesheet_urls=stylesheet_urls
+    )
 
-    from jasmine.standalone import app
+@pytest.fixture
+def app(jasmine_config):
+    jasmine_app = JasmineApp(jasmine_config=jasmine_config)
 
-    app.testing = True
-    return app
+    jasmine_app.app.testing = True
+    return jasmine_app.app
 
 
 @pytest.fixture
@@ -30,12 +64,6 @@ def template():
 @pytest.fixture
 def mockfs(request):
     mfs = replace_builtins()
-    mfs.add_entries({
-        "/spec/javascripts/support/jasmine.yml": """
-        src_dir: src
-        spec_dir: spec
-        """
-    })
     request.addfinalizer(lambda: restore_builtins())
     return mfs
 
@@ -45,25 +73,12 @@ def test__favicon(monkeypatch, app):
     monkeypatch.setattr(pkg_resources, 'resource_stream', lambda package, filename: [])
 
     with app.test_client() as client:
-        rv = client.get("/jasmine_favicon.png")
+        response = client.get("/jasmine_favicon.png")
 
-        assert rv.status_code == 200
-
-
-@pytest.mark.usefixtures('mockfs')
-def test__before_first_request(monkeypatch, app):
-    monkeypatch.setattr(pkg_resources, 'resource_stream', lambda package, filename: [])
-
-    assert not hasattr(app, 'jasmine_config')
-
-    with app.test_client() as client:
-        rv = client.get("/jasmine_favicon.png")
-        assert rv.status_code == 200
-
-    assert app.jasmine_config is not None
+        assert response.status_code == 200
 
 
-def test__serve(mockfs, app):
+def test__seresponsee(mockfs, app):
     mockfs.add_entries({
         "/src/main.css": "CSS",
         "/src/main.js": "JS",
@@ -71,45 +86,60 @@ def test__serve(mockfs, app):
     })
 
     with app.test_client() as client:
-        rv = client.get("/__src__/main.css")
+        response = client.get("/__src__/main.css")
 
-        assert rv.status_code == 200
-        assert rv.headers['Content-Type'] == 'text/css; charset=utf-8'
+        assert response.status_code == 200
+        assert response.headers['Content-Type'] == 'text/css; charset=utf-8'
 
-        rv = client.get("/__src__/main.js")
+        response = client.get("/__src__/main.js")
 
-        assert rv.status_code == 200
-        assert rv.headers['Content-Type'] == 'application/javascript'
+        assert response.status_code == 200
+        assert response.headers['Content-Type'] == 'application/javascript'
 
-        rv = client.get("/__src__/main.png")
+        response = client.get("/__src__/main.png")
 
-        assert rv.status_code == 200
-        assert rv.headers['Content-Type'] == 'image/png'
+        assert response.status_code == 200
+        assert response.headers['Content-Type'] == 'image/png'
 
 
-def test__run(template, mockfs, monkeypatch, app):
-    monkeypatch.setattr(pkg_resources, 'resource_listdir',
-                        lambda package, dir: ['jasmine.js', 'boot.js', 'node_boot.js'])
-    monkeypatch.setattr(pkg_resources, 'resource_string', lambda package, filename: template)
-
-    monkeypatch.setattr(Config, 'src_files', lambda self: ['main.js', 'main_spec.js'])
-    monkeypatch.setattr(Config, 'stylesheets', lambda self: ['main.css'])
+def test__seresponsee_jasmine_files(mockfs, app, monkeypatch):
+    monkeypatch.setattr(
+        pkg_resources,
+        'resource_string',
+        lambda package, filename: "file content"
+    )
 
     with app.test_client() as client:
-        client.get("/")  # call app before_first_request so that the app has a jasmine_config to mock
-        app.jasmine_config.reload = Mock()
+        response = client.get("/__jasmine__/jasmine-source.js")
 
-        rv = client.get("/")
+        assert response.status_code == 200
+        assert response.headers['Content-Type'] == 'application/javascript'
+        assert response.data == 'file content'
 
-        assert app.jasmine_config.reload.called
-        assert rv.status_code == 200
+def test__run(template, mockfs, monkeypatch, app, jasmine_config):
+    monkeypatch.setattr(
+        pkg_resources,
+        'resource_listdir',
+        lambda package, dir: [
+            'jasmine.js',
+            'boot.js',
+            'node_boot.js'
+        ]
+    )
+    monkeypatch.setattr(
+        pkg_resources,
+        'resource_string',
+        lambda package, filename: template
+    )
 
-        html = rv.get_data(as_text=True)
+    with app.test_client() as client:
+        response = client.get("/")
 
-        assert """<script src="__jasmine__/jasmine.js" type="text/javascript"></script>""" in html
-        assert """<script src="__jasmine__/boot.js" type="text/javascript"></script>""" in html
+        assert jasmine_config.reload_call_count == 1
+        assert response.status_code == 200
+
+        html = response.get_data(as_text=True)
+
         assert """<script src="__src__/main.js" type="text/javascript"></script>""" in html
-        assert """<script src="__src__/main_spec.js" type="text/javascript"></script>""" in html
+        assert """<script src="__spec__/main_spec.js" type="text/javascript"></script>""" in html
         assert """<link rel="stylesheet" href="__src__/main.css" type="text/css" media="screen"/>""" in html
-
-        assert """<script src="__jasmine__/node_boot.js" type="text/javascript"></script>""" not in html

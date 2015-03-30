@@ -8,13 +8,10 @@ def test_end_to_end(tmpdir):
     assert "2 specs, 0 failed" in str(output)
 
 
-def install_dependency(name, path=None):
-    location = path if path else name
-    check_output("pip install {0}".format(location), shell=True)
-
-
 def install_jasmine(project_dir):
-    install_dependency('jasmine', path=os.path.abspath(os.getcwd()))
+    jasmine_path = os.path.abspath(os.getcwd())
+    check_output("pip install {0}".format(jasmine_path), shell=True)
+
     check_output(
         "cd {0} && printf 'Y\nY\n' | jasmine-install".format(project_dir),
         shell=True
@@ -35,9 +32,10 @@ describe("Pants", function() {
 
 
 def run_jasmine(project_dir):
-    return check_output("cd {0} && jasmine-ci".format(project_dir), shell=True)
+    return check_output("cd {0} && jasmine-ci -b phantomjs".format(project_dir), shell=True)
 
 
+# ported from 2.7 for 2.6 support
 def check_output(*popenargs, **kwargs):
     if hasattr(subprocess, 'check_output'):
         return subprocess.check_output(*popenargs, **kwargs)

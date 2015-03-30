@@ -4,8 +4,9 @@ import os
 import argparse
 import socket
 import sys
+from jasmine.config import Config
 
-from .standalone import app as App
+from jasmine.standalone import JasmineApp
 from jasmine.ci import CIRunner
 
 
@@ -18,8 +19,10 @@ def standalone():
     args = parser.parse_args()
 
     if _check_for_config():
+        jasmine_config = _load_config()
         try:
-            App.run(host=args.host, port=args.port, debug=True)
+            jasmine_app = JasmineApp(jasmine_config=jasmine_config)
+            jasmine_app.app.run(host=args.host, port=args.port, debug=True)
         except socket.error:
             sys.stdout.write('Socket unavailable')
 
@@ -33,15 +36,26 @@ def continuous_integration():
     args = parser.parse_args()
 
     if _check_for_config():
-        CIRunner().run(browser=args.browser, show_logs=args.logs)
+        jasmine_config = _load_config()
+        jasmine_app = JasmineApp(jasmine_config=jasmine_config)
+        CIRunner().run(
+            browser=args.browser,
+            show_logs=args.logs,
+            app=jasmine_app.app
+        )
 
 
-def _check_for_config():
+def _config_paths():
     project_path = os.path.realpath(os.path.dirname(__name__))
     config_file = os.path.join(
         project_path,
         "spec/javascripts/support/jasmine.yml"
     )
+    return config_file, project_path
+
+
+def _check_for_config():
+    config_file, _ = _config_paths()
 
     config_exists = os.path.exists(config_file)
     if not config_exists:
@@ -49,7 +63,12 @@ def _check_for_config():
     return config_exists
 
 
-def _query(question):
+def _load_config():
+    config_file, project_path = _config_paths()
+    return Config(config_file, project_path=project_path)
+
+
+def query(question):
     valid = {"yes": True, "y": True, "ye": True,
              "no": False, "n": False}
     prompt = " [Y/n] "
@@ -78,7 +97,7 @@ def install():
     print('Spec directory')
 
     msg = "About to create {0}... is this okay?".format(spec_dir)
-    if _query(msg):
+    if query(msg):
         print('making spec/javascripts')
         mkdir_p(spec_dir)
 
@@ -91,7 +110,7 @@ def install():
         print('found existing {0}, not overwriting'.format(yaml_file_path))
     else:
         msg = "About to create {0}... is this okay?".format(yaml_file_path)
-        if _query(msg):
+        if query(msg):
             print('making {0}'.format(yaml_dir))
 
             mkdir_p(yaml_dir)
