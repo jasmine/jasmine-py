@@ -115,9 +115,18 @@ def test_src_dir_spec_dir(fs, config):
 
 @pytest.mark.usefixtures("fs")
 def test_script_urls(config, monkeypatch):
-    monkeypatch.setattr(pkg_resources, 'resource_listdir',
-                        lambda package, directory: ['json2.js', 'jasmine.js', 'boot.js', 'node_boot.js',
-                                                    'jasmine-html.js', 'jasmine.css'])
+    monkeypatch.setattr(
+        pkg_resources,
+        'resource_listdir',
+        lambda package, directory: [
+            'json2.js',
+            'jasmine.js',
+            'boot.js',
+            'node_boot.js',
+            'jasmine-html.js',
+            'jasmine.css'
+        ]
+    )
 
     script_urls = config.script_urls()
 
@@ -165,6 +174,32 @@ def test_stylesheet_urls(fs, config, monkeypatch):
         "__jasmine__/jasmine.css",
         "__src__/main.css"
     ]
+
+@pytest.mark.usefixtures("fs")
+def test_stop_spec_on_expectation_failure_default(config):
+    assert config.stop_spec_on_expectation_failure() is False
+
+
+def test_stop_spec_on_expectation_failure_invalid(fs, config):
+    fs.add_entries({
+        "jasmine.yml": """
+            stop_spec_on_expectation_failure: pants
+        """
+    })
+    config.reload()
+
+    assert config.stop_spec_on_expectation_failure() is False
+
+
+def test_stop_spec_on_expectation_failure_set(fs, config):
+    fs.add_entries({
+        "jasmine.yml": """
+            stop_spec_on_expectation_failure: true
+        """
+    })
+    config.reload()
+
+    assert config.stop_spec_on_expectation_failure() is True
 
 
 def test_reload(fs, config):

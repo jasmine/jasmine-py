@@ -64,11 +64,16 @@ class TestServerThread(threading.Thread):
 
 class CIRunner(object):
 
+    def __init__(self, jasmine_config=None):
+        self.jasmine_config = jasmine_config
+
     def run(self, browser=None, show_logs=False, app=None):
         try:
             test_server = self._start_test_server(app, browser)
 
             jasmine_url = "http://localhost:{0}/".format(test_server.port)
+            if self.jasmine_config.stop_spec_on_expectation_failure():
+                jasmine_url += "?throwFailures=true"
             self.browser.get(jasmine_url)
 
             WebDriverWait(self.browser, 100).until(

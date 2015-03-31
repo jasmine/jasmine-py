@@ -38,7 +38,7 @@ def continuous_integration():
     if _check_for_config():
         jasmine_config = _load_config()
         jasmine_app = JasmineApp(jasmine_config=jasmine_config)
-        CIRunner().run(
+        CIRunner(jasmine_config=jasmine_config).run(
             browser=args.browser,
             show_logs=args.logs,
             app=jasmine_app.app

@@ -6,6 +6,7 @@ from mock import MagicMock
 import pytest
 
 from jasmine.ci import CIRunner, TestServerThread
+from test.helpers.fake_config import FakeConfig
 
 
 def test_possible_ports():
@@ -25,8 +26,13 @@ def test_server(monkeypatch):
     import jasmine.ci
 
     server = MagicMock()
-    server.port = 80
-    monkeypatch.setattr(jasmine.ci, 'TestServerThread', server)
+    setattr(server, 'port', 80)
+
+    class FakeTestServerThread(object):
+        def __new__(cls, *args, **kwargs):
+            return server
+
+    monkeypatch.setattr(jasmine.ci, 'TestServerThread', FakeTestServerThread)
     return server
 
 
@@ -117,7 +123,26 @@ def suite_results():
     ]
 
 
-def test_run_exits_with_zero_on_success(suites, results, capsys, sysexit, firefox_driver, test_server):
+@pytest.fixture
+def jasmine_config():
+    return FakeConfig(
+        src_dir='src',
+        spec_dir='spec',
+    )
+
+
+def test_run_passes_stop_spec_on_expectation_failure_to_browser(jasmine_config, firefox_driver, test_server):
+    CIRunner(jasmine_config=jasmine_config).run(show_logs=True)
+
+    firefox_driver.get.assert_called_with('http://localhost:80/')
+
+    jasmine_config._stop_spec_on_expectation_failure = True
+    CIRunner(jasmine_config=jasmine_config).run(show_logs=True)
+
+    firefox_driver.get.assert_called_with('http://localhost:80/?throwFailures=true')
+
+
+def test_run_exits_with_zero_on_success(suites, results, capsys, sysexit, firefox_driver, test_server, jasmine_config):
     results[0] = results[1]
     del results[1]
 
@@ -136,17 +161,17 @@ def test_run_exits_with_zero_on_success(suites, results, capsys, sysexit, firefo
     firefox_driver.execute_script = execute_script
     firefox_driver.get_log = get_log
 
-    CIRunner().run(show_logs=True)
-    stdout, _stderr = capsys.readouterr()
+    CIRunner(jasmine_config=jasmine_config).run(show_logs=True)
+    capsys.readouterr()
 
     assert not sysexit.called
-    stdout, _stderr = capsys.readouterr()
+    stdout, _ = capsys.readouterr()
 
     dt = datetime.datetime.fromtimestamp(0)
     assert '[{0} - INFO] hello\n'.format(dt) not in stdout
 
 
-def test_run_exits_with_nonzero_on_failure(suites, results, capsys, sysexit, firefox_driver, test_server):
+def test_run_exits_with_nonzero_on_failure(suites, results, capsys, sysexit, firefox_driver, test_server, jasmine_config):
     def execute_script(js):
         if 'jsApiReporter.finished' in js:
             return True
@@ -168,17 +193,17 @@ def test_run_exits_with_nonzero_on_failure(suites, results, capsys, sysexit, fir
     firefox_driver.execute_script = execute_script
     firefox_driver.get_log = get_log
 
-    CIRunner().run()
+    CIRunner(jasmine_config=jasmine_config).run()
 
     sysexit.assert_called_with(1)
-    stdout, _stderr = capsys.readouterr()
+    stdout, _ = capsys.readouterr()
 
     assert "Browser Session Logs" not in stdout
     assert "hello" not in stdout
     assert "world" not in stdout
 
 
-def test_run_with_browser_logs(suites, results, capsys, sysexit, firefox_driver, test_server):
+def test_run_with_browser_logs(suites, results, capsys, sysexit, firefox_driver, test_server, jasmine_config):
     def execute_script(js):
         if 'jsApiReporter.finished' in js:
             return True
@@ -200,9 +225,9 @@ def test_run_with_browser_logs(suites, results, capsys, sysexit, firefox_driver,
     firefox_driver.execute_script = execute_script
     firefox_driver.get_log = get_log
 
-    CIRunner().run(show_logs=True)
+    CIRunner(jasmine_config=jasmine_config).run(show_logs=True)
 
-    stdout, _stderr = capsys.readouterr()
+    stdout, _ = capsys.readouterr()
 
     dt = datetime.datetime.fromtimestamp(timestamp / 1000.0)
     assert '[{0} - INFO] hello\n'.format(dt) in stdout
@@ -211,7 +236,7 @@ def test_run_with_browser_logs(suites, results, capsys, sysexit, firefox_driver,
     assert '[{0} - WARNING] world\n'.format(dt) in stdout
 
 
-def test_displays_afterall_errors(suite_results, suites, results, capsys, sysexit, firefox_driver, test_server):
+def test_displays_afterall_errors(suite_results, suites, results, capsys, sysexit, firefox_driver, test_server, jasmine_config):
     results[0] = results[1]
     del results[1]
 
@@ -226,8 +251,8 @@ def test_displays_afterall_errors(suite_results, suites, results, capsys, sysexi
 
     firefox_driver.execute_script = execute_script
 
-    CIRunner().run()
-    stdout, _stderr = capsys.readouterr()
+    CIRunner(jasmine_config=jasmine_config).run()
+    stdout, _ = capsys.readouterr()
 
     assert 'something went wrong' in stdout
     sysexit.assert_called_with(1)
