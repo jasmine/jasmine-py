@@ -78,7 +78,7 @@ def test__favicon(monkeypatch, app):
         assert response.status_code == 200
 
 
-def test__seresponsee(mockfs, app):
+def test__serve(mockfs, app):
     mockfs.add_entries({
         "/src/main.css": "CSS",
         "/src/main.js": "JS",
@@ -102,7 +102,7 @@ def test__seresponsee(mockfs, app):
         assert response.headers['Content-Type'] == 'image/png'
 
 
-def test__seresponsee_jasmine_files(mockfs, app, monkeypatch):
+def test__serve_jasmine_files(mockfs, app, monkeypatch):
     monkeypatch.setattr(
         pkg_resources,
         'resource_string',
@@ -114,7 +114,7 @@ def test__seresponsee_jasmine_files(mockfs, app, monkeypatch):
 
         assert response.status_code == 200
         assert response.headers['Content-Type'] == 'application/javascript'
-        assert response.data == 'file content'
+        assert response.data.decode('ascii') == 'file content'
 
 def test__run(template, mockfs, monkeypatch, app, jasmine_config):
     monkeypatch.setattr(
