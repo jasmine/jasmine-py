@@ -52,12 +52,12 @@ For Continuous Integration environments, add this task to the project build step
 
 The browser used by selenium can be changed by exporting `JASMINE_BROWSER` 
 
-    $ export JASMINE_BROWSER=chrome
+    $ export JASMINE_BROWSER=phantomjs
     $ jasmine-ci
 
 or adding `--browser` to `jasmine-ci`
 
-	$ jasmine-ci --browser firefox
+	$ jasmine-ci --browser phantomjs
 
 For a full list of commands, type `jasmine-ci -h`
 
