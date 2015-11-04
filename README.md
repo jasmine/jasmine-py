@@ -69,7 +69,8 @@ For a full list of commands, type `jasmine-ci -h`
 1. `git clone` this repo
 1. Make an environment: `mkvirtualenv jasminePy`
 1. Use that environment: `workon jasminePy`
-1. Install dependencies: `pip install -r requirements_dev.txt`
+1. Install invoke `pip install invoke`
+1. Install dependencies: `inv install`
 1. Run specs: `detox`
 
 ## Support
