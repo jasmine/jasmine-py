@@ -36,7 +36,6 @@ setup(
         'Development Status :: 4 - Beta',
         'Environment :: Console',
         'Environment :: Web Environment',
-        'Framework :: Django',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
@@ -56,7 +55,7 @@ setup(
     ],
 
     packages=find_packages(),
-    package_data={'jasmine.django.templates': ['*.html']},
+    package_data={'jasmine.templates': ['*.html']},
     include_package_data=True,
 
     entry_points={

@@ -48,7 +48,7 @@ class JasmineApp(object):
         }
 
         template = pkg_resources.resource_string(
-            'jasmine.django.templates',
+            'jasmine.templates',
             'runner.html'
         )
 

@@ -1,9 +1,7 @@
 detox
 mock
 pytest
-pytest-django
 pytest-cov
 pytest-flakes==0.2
 pytest-pep8==1.0.6
 http://github.com/mockfs/mockfs/tarball/master#egg=mockfs
-Django==1.6.5

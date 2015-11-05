@@ -28,7 +28,7 @@ def app(jasmine_config):
 
 @pytest.fixture
 def template():
-    return pkg_resources.resource_string('jasmine.django.templates', 'runner.html')
+    return pkg_resources.resource_string('jasmine.templates', 'runner.html')
 
 
 @pytest.fixture
