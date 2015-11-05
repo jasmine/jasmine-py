@@ -21,7 +21,7 @@ with open("requirements.txt", 'r') as f:
 setup(
     name="jasmine",
     version="2.3.0",
-    url="http://pivotal.github.io/jasmine/",
+    url="http://jasmine.github.io",
     author="Pivotal Labs",
     author_email="jasmine-js@googlegroups.com",
     description=('Jasmine is a Behavior Driven Development'
