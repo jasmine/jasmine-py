@@ -63,7 +63,7 @@ For a full list of commands, type `jasmine-ci -h`
 
 ## Contributing
 
-1. Get a python 2.7, 2.6, 3.3, 3.4, and pypy
+1. Get a python 2.7, 2.6, 3.4, 3.5 and pypy
 1. Get pip: http://www.pip-installer.org/en/latest/installing.html
 1. Get virtualenvwrapper: http://virtualenvwrapper.readthedocs.org/en/latest/
 1. `git clone` this repo
