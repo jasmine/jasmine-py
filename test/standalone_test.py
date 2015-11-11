@@ -1,3 +1,5 @@
+# coding=utf-8
+from mock import patch, Mock
 from mockfs import replace_builtins, restore_builtins
 import pkg_resources
 import pytest
@@ -50,9 +52,9 @@ def test__favicon(monkeypatch, app):
 
 def test__serve(mockfs, app):
     mockfs.add_entries({
-        "/src/main.css": "CSS",
-        "/src/main.js": "JS",
-        "/src/main.png": "PNG"
+        "/src/main.css": b"CSS",
+        "/src/main.js": b"JS",
+        "/src/main.png": b"PNG"
     })
 
     with app.test_client() as client:
@@ -72,6 +74,18 @@ def test__serve(mockfs, app):
         assert response.headers['Content-Type'] == 'image/png'
 
 
+def test__serve_weird_encodings(mockfs, app):
+    with app.test_client() as client:
+        with patch('jasmine.standalone.open', create=True) as m:
+            mock_file = Mock()
+            mock_file.read.return_value = b"\xe3"
+            m.return_value = mock_file
+
+            response = client.get("/__src__/weird_encoding.js")
+            assert response.status_code == 200
+            assert response.get_data(as_text=True) == u'ã'
+
+
 def test__serve_jasmine_files(mockfs, app, monkeypatch):
     monkeypatch.setattr(
         pkg_resources,
@@ -85,6 +99,7 @@ def test__serve_jasmine_files(mockfs, app, monkeypatch):
         assert response.status_code == 200
         assert response.headers['Content-Type'] == 'application/javascript'
         assert response.data.decode('ascii') == 'file content'
+
 
 def test__run(template, mockfs, monkeypatch, app, jasmine_config):
     monkeypatch.setattr(

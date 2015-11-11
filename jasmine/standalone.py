@@ -1,6 +1,7 @@
 import mimetypes
 import os
 
+import chardet
 import pkg_resources
 from flask import Flask, render_template_string, make_response, send_file
 
@@ -33,7 +34,8 @@ class JasmineApp(object):
                 self.filetype_mapping[filetype],
                 filename
             )
-            contents = open(path, 'r').read()
+            raw_contents = open(path, 'rb').read()
+            contents = self._decode_raw(raw_contents)
 
         response = make_response(contents)
         response.mimetype = mimetypes.guess_type(filename)[0]
@@ -62,3 +64,8 @@ class JasmineApp(object):
             ),
             mimetype='image/png'
         )
+
+    def _decode_raw(self, raw_contents):
+        encoding = chardet.detect(raw_contents)['encoding']
+        contents = raw_contents.decode(encoding)
+        return contents
