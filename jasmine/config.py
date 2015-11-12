@@ -65,6 +65,9 @@ class Config(object):
     def stop_spec_on_expectation_failure(self):
         return self._yaml.get("stop_spec_on_expectation_failure") is True
 
+    def random(self):
+        return self._yaml.get("random") is True
+
     def _prefix_src_underscored(self, path):
         return (
             path if path.startswith('http') else "__src__/{0}".format(path)

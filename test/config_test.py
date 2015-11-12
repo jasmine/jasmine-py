@@ -202,6 +202,33 @@ def test_stop_spec_on_expectation_failure_set(fs, config):
     assert config.stop_spec_on_expectation_failure() is True
 
 
+@pytest.mark.usefixtures("fs")
+def test_random_default(config):
+    assert config.random() is False
+
+
+def test_random_invalid(fs, config):
+    fs.add_entries({
+        "jasmine.yml": """
+            random: pants
+        """
+    })
+    config.reload()
+
+    assert config.random() is False
+
+
+def test_random_set(fs, config):
+    fs.add_entries({
+        "jasmine.yml": """
+            random: true
+        """
+    })
+    config.reload()
+
+    assert config.random() is True
+
+
 def test_reload(fs, config):
     assert config.src_files() != ['pants.txt']
 

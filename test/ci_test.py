@@ -1,6 +1,7 @@
 import datetime
 import time
 import sys
+import six.moves.urllib as urllib
 
 from mock import MagicMock
 import pytest
@@ -131,15 +132,35 @@ def jasmine_config():
     )
 
 
-def test_run_passes_stop_spec_on_expectation_failure_to_browser(jasmine_config, firefox_driver, test_server):
+def test_run_passes_no_query_params_by_default(jasmine_config, firefox_driver, test_server):
     CIRunner(jasmine_config=jasmine_config).run(show_logs=True)
 
-    firefox_driver.get.assert_called_with('http://localhost:80/')
+    firefox_driver.get.assert_called_with('http://localhost:80')
 
+def test_run_passes_stop_spec_on_expectation_failure_to_browser(jasmine_config, firefox_driver, test_server):
     jasmine_config._stop_spec_on_expectation_failure = True
     CIRunner(jasmine_config=jasmine_config).run(show_logs=True)
 
-    firefox_driver.get.assert_called_with('http://localhost:80/?throwFailures=true')
+    firefox_driver.get.assert_called_with('http://localhost:80?throwFailures=True')
+
+
+def test_run_passes_random_to_browser(jasmine_config, firefox_driver, test_server):
+    jasmine_config._random = True
+    CIRunner(jasmine_config=jasmine_config).run(show_logs=True)
+
+    firefox_driver.get.assert_called_with('http://localhost:80?random=True')
+
+
+def test_run_can_handle_multiple_query_params(jasmine_config, firefox_driver, test_server):
+    jasmine_config._random = True
+    jasmine_config._stop_spec_on_expectation_failure = True
+    CIRunner(jasmine_config=jasmine_config).run(show_logs=True)
+
+    called_url = firefox_driver.get.call_args[0][0]
+    uri_tuple = urllib.parse.urlparse(called_url)
+    assert uri_tuple[0] == 'http'
+    assert uri_tuple[1] == 'localhost:80'
+    assert urllib.parse.parse_qs(uri_tuple[4]) == { "random": ['True'], "throwFailures": ['True'] }
 
 
 def test_run_exits_with_zero_on_success(suites, results, capsys, sysexit, firefox_driver, test_server, jasmine_config):

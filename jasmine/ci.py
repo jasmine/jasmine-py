@@ -2,6 +2,7 @@ import os
 import threading
 import sys
 import socket
+import six.moves.urllib as urllib
 
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.support.wait import WebDriverWait
@@ -71,9 +72,9 @@ class CIRunner(object):
         try:
             test_server = self._start_test_server(app, browser)
 
-            jasmine_url = "http://localhost:{0}/".format(test_server.port)
-            if self.jasmine_config.stop_spec_on_expectation_failure():
-                jasmine_url += "?throwFailures=true"
+            netloc = "localhost:{0}".format(test_server.port)
+            query_string = self._build_query_params()
+            jasmine_url = urllib.parse.urlunparse(('http', netloc, "", "", query_string, ""))
             self.browser.get(jasmine_url)
 
             WebDriverWait(self.browser, 100).until(
@@ -100,6 +101,17 @@ class CIRunner(object):
                 self.browser.close()
             if hasattr(self, 'test_server'):
                 self.test_server.join()
+
+    def _build_query_params(self):
+        query_params = {
+            "throwFailures": self.jasmine_config.stop_spec_on_expectation_failure(),
+            "random": self.jasmine_config.random()
+        }
+        query_params = self._remove_empty_params(query_params)
+        return urllib.parse.urlencode(query_params)
+
+    def _remove_empty_params(self, query_params):
+        return dict(((k, v) for k, v in query_params.items() if v))
 
     def _start_test_server(self, app, browser):
         test_server = TestServerThread(app=app)
