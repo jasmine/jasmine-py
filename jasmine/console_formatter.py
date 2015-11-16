@@ -19,11 +19,12 @@ class ConsoleFormatter(object):
 
 """
 
-    def __init__(self, spec_results, suite_results, browser_logs, colors=True):
+    def __init__(self, spec_results, suite_results, browser_logs, seed=None, colors=True):
         self.results = spec_results
         self.suite_results = suite_results
         self.browser_logs = browser_logs
         self.colors = colors
+        self.seed = seed
 
     def format(self):
         return (
@@ -57,6 +58,9 @@ class ConsoleFormatter(object):
 
         if self.results.pending():
             output += ", {0} pending".format(len(self.results.pending()))
+
+        if self.seed:
+            output += "\nRandomized with seed {0}".format(self.seed)
         return output
 
     def _enabled_spec_count(self):

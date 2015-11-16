@@ -1,12 +1,12 @@
 import os
-import threading
-import sys
 import socket
-import six.moves.urllib as urllib
+import sys
+import threading
 
+import six.moves.urllib as urllib
+from cherrypy import wsgiserver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.support.wait import WebDriverWait
-from cherrypy import wsgiserver
 
 from jasmine.console_formatter import ConsoleFormatter
 from jasmine.js_api_parser import Parser
@@ -86,11 +86,13 @@ class CIRunner(object):
             spec_results = self._get_spec_results(parser)
             suite_results = self._get_suite_results(parser)
             show_logs = self._get_browser_logs(show_logs=show_logs)
+            seed = self._get_seed()
 
             formatter = ConsoleFormatter(
                 spec_results=spec_results,
                 suite_results=suite_results,
-                browser_logs=show_logs
+                browser_logs=show_logs,
+                seed=seed
             )
             sys.stdout.write(formatter.format())
             if (len(list(formatter.results.failed())) or
@@ -167,6 +169,15 @@ class CIRunner(object):
                 break
 
         return parser.parse(suite_results)
+
+    def _get_seed(self):
+        order = self._get_order()
+        is_random = order.get('random')
+        seed = order.get('seed') if is_random else None
+        return seed
+
+    def _get_order(self):
+        return self.browser.execute_script("return jsApiReporter.runDetails").get('order')
 
     def _get_browser_logs(self, show_logs):
         log = []

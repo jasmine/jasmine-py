@@ -125,6 +125,26 @@ def suite_results():
 
 
 @pytest.fixture
+def run_details():
+    return {
+        "order": {
+            "random": False,
+            "seed": 54321
+        }
+    }
+
+
+@pytest.fixture
+def run_details_random():
+    return {
+        "order": {
+            "random": True,
+            "seed": 12345
+        }
+    }
+
+
+@pytest.fixture
 def jasmine_config():
     return FakeConfig(
         src_dir='src',
@@ -136,6 +156,7 @@ def test_run_passes_no_query_params_by_default(jasmine_config, firefox_driver, t
     CIRunner(jasmine_config=jasmine_config).run(show_logs=True)
 
     firefox_driver.get.assert_called_with('http://localhost:80')
+
 
 def test_run_passes_stop_spec_on_expectation_failure_to_browser(jasmine_config, firefox_driver, test_server):
     jasmine_config._stop_spec_on_expectation_failure = True
@@ -163,7 +184,7 @@ def test_run_can_handle_multiple_query_params(jasmine_config, firefox_driver, te
     assert urllib.parse.parse_qs(uri_tuple[4]) == { "random": ['True'], "throwFailures": ['True'] }
 
 
-def test_run_exits_with_zero_on_success(suites, results, capsys, sysexit, firefox_driver, test_server, jasmine_config):
+def test_run_exits_with_zero_on_success(suites, results, run_details, capsys, sysexit, firefox_driver, test_server, jasmine_config):
     results[0] = results[1]
     del results[1]
 
@@ -174,6 +195,8 @@ def test_run_exits_with_zero_on_success(suites, results, capsys, sysexit, firefo
             return results
         if 'jsApiReporter.suiteResults' in js:
             return []
+        if 'jsApiReporter.runDetails' in js:
+            return run_details
         return None
 
     def get_log(type):
@@ -192,7 +215,7 @@ def test_run_exits_with_zero_on_success(suites, results, capsys, sysexit, firefo
     assert '[{0} - INFO] hello\n'.format(dt) not in stdout
 
 
-def test_run_exits_with_nonzero_on_failure(suites, results, capsys, sysexit, firefox_driver, test_server, jasmine_config):
+def test_run_exits_with_nonzero_on_failure(suites, results, run_details, capsys, sysexit, firefox_driver, test_server, jasmine_config):
     def execute_script(js):
         if 'jsApiReporter.finished' in js:
             return True
@@ -200,6 +223,8 @@ def test_run_exits_with_nonzero_on_failure(suites, results, capsys, sysexit, fir
             return results
         if 'jsApiReporter.suiteResults' in js:
             return []
+        if 'jsApiReporter.runDetails' in js:
+            return run_details
         return None
 
     timestamp = time.time() * 1000
@@ -224,7 +249,7 @@ def test_run_exits_with_nonzero_on_failure(suites, results, capsys, sysexit, fir
     assert "world" not in stdout
 
 
-def test_run_with_browser_logs(suites, results, capsys, sysexit, firefox_driver, test_server, jasmine_config):
+def test_run_with_browser_logs(suites, results, run_details, capsys, sysexit, firefox_driver, test_server, jasmine_config):
     def execute_script(js):
         if 'jsApiReporter.finished' in js:
             return True
@@ -232,6 +257,8 @@ def test_run_with_browser_logs(suites, results, capsys, sysexit, firefox_driver,
             return results
         if 'jsApiReporter.suiteResults' in js:
             return []
+        if 'jsApiReporter.runDetails' in js:
+            return run_details
         return None
 
     timestamp = time.time() * 1000
@@ -257,7 +284,7 @@ def test_run_with_browser_logs(suites, results, capsys, sysexit, firefox_driver,
     assert '[{0} - WARNING] world\n'.format(dt) in stdout
 
 
-def test_displays_afterall_errors(suite_results, suites, results, capsys, sysexit, firefox_driver, test_server, jasmine_config):
+def test_displays_afterall_errors(suite_results, suites, results, run_details, capsys, sysexit, firefox_driver, test_server, jasmine_config):
     results[0] = results[1]
     del results[1]
 
@@ -268,6 +295,8 @@ def test_displays_afterall_errors(suite_results, suites, results, capsys, sysexi
             return results
         if 'jsApiReporter.suiteResults' in js:
             return suite_results
+        if 'jsApiReporter.runDetails' in js:
+            return run_details
         return None
 
     firefox_driver.execute_script = execute_script
@@ -277,4 +306,42 @@ def test_displays_afterall_errors(suite_results, suites, results, capsys, sysexi
 
     assert 'something went wrong' in stdout
     sysexit.assert_called_with(1)
+
+
+def test_displays_random_seed(results, suite_results, run_details_random, firefox_driver, capsys, test_server, jasmine_config, sysexit):
+    def execute_script(js):
+        if 'jsApiReporter.finished' in js:
+            return True
+        if 'jsApiReporter.specResults' in js:
+            return results
+        if 'jsApiReporter.suiteResults' in js:
+            return suite_results
+        if 'jsApiReporter.runDetails' in js:
+            return run_details_random
+        return None
+
+    firefox_driver.execute_script = execute_script
+
+    CIRunner(jasmine_config=jasmine_config).run()
+    stdout, _ = capsys.readouterr()
+    assert 'Randomized with seed 12345' in stdout
+
+
+def test_doesnt_displays_random_seed_if_not_random(results, suite_results, run_details, firefox_driver, capsys, test_server, jasmine_config, sysexit):
+    def execute_script(js):
+        if 'jsApiReporter.finished' in js:
+            return True
+        if 'jsApiReporter.specResults' in js:
+            return results
+        if 'jsApiReporter.suiteResults' in js:
+            return suite_results
+        if 'jsApiReporter.runDetails' in js:
+            return run_details
+        return None
+
+    firefox_driver.execute_script = execute_script
+
+    CIRunner(jasmine_config=jasmine_config).run()
+    stdout, _ = capsys.readouterr()
+    assert 'Randomized with seed 54321' not in stdout
 

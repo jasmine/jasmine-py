@@ -38,7 +38,7 @@ def browser_logs():
     ]
 
 
-def _create_console_formatter(spec_results=None, suite_results=None, browser_logs=None, colors=False):
+def _create_console_formatter(spec_results=None, suite_results=None, browser_logs=None, seed=None, colors=False):
     spec_results = spec_results or ResultList([])
     suite_results = suite_results or ResultList([])
     browser_logs = browser_logs or []
@@ -47,6 +47,7 @@ def _create_console_formatter(spec_results=None, suite_results=None, browser_log
         spec_results=spec_results,
         suite_results=suite_results,
         browser_logs=browser_logs,
+        seed=seed,
         colors=colors,
     )
 
@@ -61,6 +62,12 @@ def test_format_summary(results):
     formatter = _create_console_formatter(spec_results=results, colors=False)
 
     assert formatter.format_summary() == "4 specs, 1 failed, 1 pending"
+
+
+def test_format_summary_with_seed(results):
+    formatter = _create_console_formatter(spec_results=results, seed=1234, colors=False)
+
+    assert formatter.format_summary() == "4 specs, 1 failed, 1 pending\nRandomized with seed 1234"
 
 
 def test_format_suite_errors_empty():
@@ -94,7 +101,7 @@ def test_format_suite_errors():
            + "  oh no!\n" \
            + "  stack2\n" \
            + "  boom\n" \
-           + "  stack3\n" \
+           + "  stack3\n"
 
 
 def test_format_browser_logs(results, browser_logs):
