@@ -50,7 +50,7 @@ For Continuous Integration environments, add this task to the project build step
 
 	$ jasmine-ci
 
-The browser used by selenium can be changed by exporting `JASMINE_BROWSER` 
+The browser used by selenium can be changed by exporting `JASMINE_BROWSER`
 
     $ export JASMINE_BROWSER=phantomjs
     $ jasmine-ci

@@ -68,12 +68,12 @@ class CIRunner(object):
     def __init__(self, jasmine_config=None):
         self.jasmine_config = jasmine_config
 
-    def run(self, browser=None, show_logs=False, app=None):
+    def run(self, browser=None, show_logs=False, app=None, seed=None):
         try:
             test_server = self._start_test_server(app, browser)
 
             netloc = "localhost:{0}".format(test_server.port)
-            query_string = self._build_query_params()
+            query_string = self._build_query_params(seed=seed)
             jasmine_url = urllib.parse.urlunparse(('http', netloc, "", "", query_string, ""))
             self.browser.get(jasmine_url)
 
@@ -86,13 +86,13 @@ class CIRunner(object):
             spec_results = self._get_spec_results(parser)
             suite_results = self._get_suite_results(parser)
             show_logs = self._get_browser_logs(show_logs=show_logs)
-            seed = self._get_seed()
+            actual_seed = self._get_seed()
 
             formatter = ConsoleFormatter(
                 spec_results=spec_results,
                 suite_results=suite_results,
                 browser_logs=show_logs,
-                seed=seed
+                seed=actual_seed
             )
             sys.stdout.write(formatter.format())
             if (len(list(formatter.results.failed())) or
@@ -104,10 +104,11 @@ class CIRunner(object):
             if hasattr(self, 'test_server'):
                 self.test_server.join()
 
-    def _build_query_params(self):
+    def _build_query_params(self, seed):
         query_params = {
             "throwFailures": self.jasmine_config.stop_spec_on_expectation_failure(),
-            "random": self.jasmine_config.random()
+            "random": self.jasmine_config.random(),
+            "seed": seed
         }
         query_params = self._remove_empty_params(query_params)
         return urllib.parse.urlencode(query_params)

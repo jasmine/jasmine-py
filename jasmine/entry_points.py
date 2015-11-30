@@ -33,6 +33,8 @@ def continuous_integration():
                         help='The selenium driver to utilize')
     parser.add_argument('-l', '--logs', action='store_true',
                         help='Displays browser logs')
+    parser.add_argument('-s', '--seed', type=str,
+                        help='Seed for random spec order')
     args = parser.parse_args()
 
     if _check_for_config():
@@ -41,7 +43,8 @@ def continuous_integration():
         CIRunner(jasmine_config=jasmine_config).run(
             browser=args.browser,
             show_logs=args.logs,
-            app=jasmine_app.app
+            seed=args.seed,
+            app=jasmine_app.app,
         )
 
 

@@ -73,16 +73,7 @@ def test_continuous_integration__set_browser(monkeypatch, mockfs_with_config, mo
 
     continuous_integration()
 
-    CIRunner.run.assert_called_once_with(browser='firefox', show_logs=False, app=FakeApp.app)
-
-
-def test_continuous_integration__show_logs(monkeypatch, mockfs_with_config, mock_CI_run):
-    monkeypatch.setattr(sys, 'argv', ["test.py", "--logs"])
-    monkeypatch.setattr(jasmine.entry_points, 'JasmineApp', FakeApp)
-
-    continuous_integration()
-
-    CIRunner.run.assert_called_once_with(show_logs=True, browser=None, app=FakeApp.app)
+    CIRunner.run.assert_called_once_with(browser='firefox', show_logs=False, seed=None, app=FakeApp.app)
 
 
 def test_continuous_integration__browser_default(monkeypatch, mockfs_with_config, mock_CI_run):
@@ -91,7 +82,25 @@ def test_continuous_integration__browser_default(monkeypatch, mockfs_with_config
 
     continuous_integration()
 
-    CIRunner.run.assert_called_once_with(browser=None, show_logs=False, app=FakeApp.app)
+    CIRunner.run.assert_called_once_with(browser=None, show_logs=False, seed=None, app=FakeApp.app)
+
+
+def test_continuous_integration__show_logs(monkeypatch, mockfs_with_config, mock_CI_run):
+    monkeypatch.setattr(sys, 'argv', ["test.py", "--logs"])
+    monkeypatch.setattr(jasmine.entry_points, 'JasmineApp', FakeApp)
+
+    continuous_integration()
+
+    CIRunner.run.assert_called_once_with(show_logs=True, browser=None, seed=None, app=FakeApp.app)
+
+
+def test_continuous_integration__set_seed(monkeypatch, mockfs_with_config, mock_CI_run):
+    monkeypatch.setattr(sys, 'argv', ["test.py", "--seed", "1234"])
+    monkeypatch.setattr(jasmine.entry_points, 'JasmineApp', FakeApp)
+
+    continuous_integration()
+
+    CIRunner.run.assert_called_once_with(seed="1234", show_logs=False, browser=None, app=FakeApp.app)
 
 
 def test_standalone__set_host(monkeypatch, app, mockfs_with_config):
