@@ -194,7 +194,6 @@ helpers:
 spec_files:
   - "**/*[Ss]pec.js"
 
-
 # src_dir
 #
 # Source directory path. Your src_files must be returned relative to this path. Will use root if left blank.
@@ -216,4 +215,26 @@ src_dir:
 # spec_dir: spec/javascripts
 #
 spec_dir: spec/javascripts
+
+# stop_spec_on_expectation_failure
+#
+# Stop executing each spec on the first expectation failure.
+# Default: false
+#
+# EXAMPLE:
+#
+# stop_spec_on_expectation_failure: true
+#
+stop_spec_on_expectation_failure:
+
+# random
+#
+# Run specs in semi-random order.
+# Default: false
+#
+# EXAMPLE:
+#
+# random: true
+#
+random:
 """
