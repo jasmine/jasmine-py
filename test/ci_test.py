@@ -1,18 +1,13 @@
 import datetime
-import time
 import sys
-import six.moves.urllib as urllib
+import time
 
-from mock import MagicMock
 import pytest
+import six.moves.urllib as urllib
+from mock import MagicMock
 
-from jasmine.ci import CIRunner, TestServerThread
+from jasmine.ci import CIRunner
 from test.helpers.fake_config import FakeConfig
-
-
-def test_possible_ports():
-    ports = TestServerThread().possible_ports("localhost:80,8000-8002")
-    assert ports == [80, 8000, 8001, 8002]
 
 
 @pytest.fixture

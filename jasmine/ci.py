@@ -1,3 +1,4 @@
+import itertools
 import os
 import socket
 import sys
@@ -21,17 +22,11 @@ class TestServerThread(threading.Thread):
         self.app = app
 
     def run(self):
-        ports = self.possible_ports("localhost:80,8889-9999")
+        ports = self._possible_ports()
 
-        for index, port in enumerate(ports):
+        for port in ports:
             try:
-                self.server = wsgiserver.CherryPyWSGIServer(
-                    ('localhost', port),
-                    self.app,
-                    request_queue_size=2048
-                )
-                self.port = port
-                self.server.start()
+                self._attempt_server_start(port)
                 break
             except socket.error:
                 continue
@@ -39,28 +34,17 @@ class TestServerThread(threading.Thread):
     def join(self, timeout=None):
         self.server.stop()
 
-    def possible_ports(self, specified_address):
-        possible_ports = []
+    def _attempt_server_start(self, port):
+        self.server = wsgiserver.CherryPyWSGIServer(
+            ('localhost', port),
+            self.app,
+            request_queue_size=2048
+        )
+        self.port = port
+        self.server.start()
 
-        try:
-            host, port_ranges = specified_address.split(':')
-            for port_range in port_ranges.split(','):
-                # A port range can be of either form: '8000' or '8000-8010'.
-                extremes = list(map(int, port_range.split('-')))
-                assert len(extremes) in [1, 2]
-                if len(extremes) == 1:
-                    # Port range of the form '8000'
-                    possible_ports.append(extremes[0])
-                else:
-                    # Port range of the form '8000-8010'
-                    for port in range(extremes[0], extremes[1] + 1):
-                        possible_ports.append(port)
-        except Exception:
-            raise 'Invalid address ("{}") for live server.'.format(
-                specified_address
-            )
-
-        return possible_ports
+    def _possible_ports(self):
+        return itertools.chain(xrange(80, 81, 1), xrange(8889, 10000))
 
 
 class CIRunner(object):
