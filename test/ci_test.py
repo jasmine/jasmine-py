@@ -2,8 +2,8 @@ import datetime
 import sys
 import time
 
+import mock
 import pytest
-import six.moves.urllib as urllib
 from mock import MagicMock
 
 from jasmine.ci import CIRunner
@@ -146,37 +146,33 @@ def jasmine_config():
         spec_dir='spec',
     )
 
+@pytest.fixture
+def url_builder(request):
+    patcher = mock.patch('jasmine.ci.JasmineUrlBuilder')
+    mock_builder_class = patcher.start()
+    mock_builder = mock.Mock()
+    mock_builder_class.return_value = mock_builder
 
-def test_run_passes_no_query_params_by_default(jasmine_config, firefox_driver, test_server):
-    CIRunner(jasmine_config=jasmine_config).run(show_logs=True)
+    def teardown():
+        patcher.stop()
+    request.addfinalizer(teardown)
 
-    firefox_driver.get.assert_called_with('http://localhost:80')
-
-
-def test_run_passes_stop_spec_on_expectation_failure_to_browser(jasmine_config, firefox_driver, test_server):
-    jasmine_config._stop_spec_on_expectation_failure = True
-    CIRunner(jasmine_config=jasmine_config).run(show_logs=True)
-
-    firefox_driver.get.assert_called_with('http://localhost:80?throwFailures=True')
-
-
-def test_run_passes_random_to_browser(jasmine_config, firefox_driver, test_server):
-    jasmine_config._random = True
-    CIRunner(jasmine_config=jasmine_config).run(show_logs=True)
-
-    firefox_driver.get.assert_called_with('http://localhost:80?random=True')
+    return mock_builder
 
 
-def test_run_can_handle_multiple_query_params(jasmine_config, firefox_driver, test_server):
-    jasmine_config._random = True
-    jasmine_config._stop_spec_on_expectation_failure = True
-    CIRunner(jasmine_config=jasmine_config).run(show_logs=True, seed="1234")
+def test_run_builds_url(suites, results, run_details, capsys, sysexit, firefox_driver, test_server, jasmine_config, url_builder):
+    url_builder.build_url.return_value = 'http://localhost:80?seed=1234'
+    CIRunner(jasmine_config=jasmine_config).run()
 
-    called_url = firefox_driver.get.call_args[0][0]
-    uri_tuple = urllib.parse.urlparse(called_url)
-    assert uri_tuple[0] == 'http'
-    assert uri_tuple[1] == 'localhost:80'
-    assert urllib.parse.parse_qs(uri_tuple[4]) == {"random": ['True'], "throwFailures": ['True'], "seed": ['1234']}
+    firefox_driver.get.assert_called_with('http://localhost:80?seed=1234')
+
+
+def test_run_with_random_seed(suites, results, run_details, capsys, sysexit, firefox_driver, test_server, jasmine_config, url_builder):
+    url_builder.build_url.return_value = 'http://localhost:80?seed=1234'
+    CIRunner(jasmine_config=jasmine_config).run(seed="1234")
+    url_builder.build_url.assert_called_with(80, '1234')
+
+    firefox_driver.get.assert_called_with('http://localhost:80?seed=1234')
 
 
 def test_run_exits_with_zero_on_success(suites, results, run_details, capsys, sysexit, firefox_driver, test_server, jasmine_config):
@@ -277,12 +273,6 @@ def test_run_with_browser_logs(suites, results, run_details, capsys, sysexit, fi
 
     dt = datetime.datetime.fromtimestamp((timestamp + 1) / 1000.0)
     assert '[{0} - WARNING] world\n'.format(dt) in stdout
-
-
-def test_run_with_random_seed(suites, results, run_details, capsys, sysexit, firefox_driver, test_server, jasmine_config):
-    CIRunner(jasmine_config=jasmine_config).run(seed="1234")
-
-    firefox_driver.get.assert_called_with('http://localhost:80?seed=1234')
 
 
 def test_displays_afterall_errors(suite_results, suites, results, run_details, capsys, sysexit, firefox_driver, test_server, jasmine_config):

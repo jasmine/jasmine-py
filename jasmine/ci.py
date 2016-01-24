@@ -4,13 +4,13 @@ import socket
 import sys
 import threading
 
-import six.moves.urllib as urllib
 from cherrypy import wsgiserver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.support.wait import WebDriverWait
 
 from jasmine.console_formatter import ConsoleFormatter
 from jasmine.js_api_parser import Parser
+from jasmine.url_builder import JasmineUrlBuilder
 
 
 class TestServerThread(threading.Thread):
@@ -56,9 +56,8 @@ class CIRunner(object):
         try:
             test_server = self._start_test_server(app, browser)
 
-            netloc = "localhost:{0}".format(test_server.port)
-            query_string = self._build_query_params(seed=seed)
-            jasmine_url = urllib.parse.urlunparse(('http', netloc, "", "", query_string, ""))
+            url_builder = JasmineUrlBuilder(jasmine_config=self.jasmine_config)
+            jasmine_url = url_builder.build_url(test_server.port, seed)
             self.browser.get(jasmine_url)
 
             WebDriverWait(self.browser, 100).until(
@@ -79,26 +78,13 @@ class CIRunner(object):
                 seed=actual_seed
             )
             sys.stdout.write(formatter.format())
-            if (len(list(formatter.results.failed())) or
-                    len(list(formatter.suite_results.failed()))):
+            if len(spec_results.failed()) or len(suite_results.failed()):
                 sys.exit(1)
         finally:
             if hasattr(self, 'browser'):
                 self.browser.close()
             if hasattr(self, 'test_server'):
                 self.test_server.join()
-
-    def _build_query_params(self, seed):
-        query_params = {
-            "throwFailures": self.jasmine_config.stop_spec_on_expectation_failure(),
-            "random": self.jasmine_config.random(),
-            "seed": seed
-        }
-        query_params = self._remove_empty_params(query_params)
-        return urllib.parse.urlencode(query_params)
-
-    def _remove_empty_params(self, query_params):
-        return dict(((k, v) for k, v in query_params.items() if v))
 
     def _start_test_server(self, app, browser):
         test_server = TestServerThread(app=app)
