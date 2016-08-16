@@ -4,6 +4,7 @@ import socket
 import sys
 import threading
 
+from six.moves import range
 from cherrypy import wsgiserver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.support.wait import WebDriverWait
@@ -44,7 +45,7 @@ class TestServerThread(threading.Thread):
         self.server.start()
 
     def _possible_ports(self):
-        return itertools.chain(xrange(80, 81, 1), xrange(8889, 10000))
+        return itertools.chain(range(80, 81, 1), range(8889, 10000))
 
 
 class CIRunner(object):
