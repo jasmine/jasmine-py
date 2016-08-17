@@ -122,6 +122,7 @@ def suite_results():
 @pytest.fixture
 def run_details():
     return {
+        "failedExpectations": [],
         "order": {
             "random": False,
             "seed": 54321
@@ -130,8 +131,36 @@ def run_details():
 
 
 @pytest.fixture
+def run_details_with_failures():
+    return {
+        "failedExpectations": [
+            {
+                "matcherName": "toEqual",
+                "message": "Expected 'foo' to equal 'bar'.",
+                "stack": "stack trace",
+                "passed": False,
+                "expected": "foo",
+                "actual": "bar"
+            },
+            {
+                "matcherName": "toEqual",
+                "message": "Expected 'baz' to equal 'quux'.",
+                "stack": "stack trace 2",
+                "passed": False,
+                "expected": "baz",
+                "actual": "quux"
+            }
+        ],
+        "order": {
+            "random": False,
+            "seed": 54321
+        }
+    }
+
+@pytest.fixture
 def run_details_random():
     return {
+        "failedExpectations": [],
         "order": {
             "random": True,
             "seed": 12345
@@ -296,6 +325,34 @@ def test_displays_afterall_errors(suite_results, suites, results, run_details, c
     stdout, _ = capsys.readouterr()
 
     assert 'something went wrong' in stdout
+    sysexit.assert_called_with(1)
+
+
+def test_displays_top_suite_errors(suite_results, suites, results, run_details_with_failures, capsys, sysexit, firefox_driver, test_server, jasmine_config):
+    results[0] = results[1]
+    del results[1]
+
+    def execute_script(js):
+        if 'jsApiReporter.finished' in js:
+            return True
+        if 'jsApiReporter.specResults' in js:
+            return results
+        if 'jsApiReporter.suiteResults' in js:
+            return suite_results
+        if 'jsApiReporter.runDetails' in js:
+            return run_details_with_failures
+        return None
+
+    firefox_driver.execute_script = execute_script
+
+    CIRunner(jasmine_config=jasmine_config).run()
+    stdout, _ = capsys.readouterr()
+
+    assert "Expected 'foo' to equal 'bar'." in stdout
+    assert "stack trace" in stdout
+    assert "Expected 'baz' to equal 'quux'." in stdout
+    assert "stack trace 2" in stdout
+
     sysexit.assert_called_with(1)
 
 

@@ -68,7 +68,8 @@ class CIRunner(object):
 
             parser = Parser()
             spec_results = self._get_spec_results(parser)
-            suite_results = self._get_suite_results(parser)
+            top_suite_results = self._get_top_suite_results(parser)
+            suite_results = self._get_suite_results(parser) + top_suite_results
             show_logs = self._get_browser_logs(show_logs=show_logs)
             actual_seed = self._get_seed()
 
@@ -141,6 +142,16 @@ class CIRunner(object):
                 break
 
         return parser.parse(suite_results)
+
+    def _get_top_suite_results(self, parser):
+        failed_expectations = self.browser.execute_script("return jsApiReporter.runDetails").get('failedExpectations')
+
+        top_suite_result = {
+            "failedExpectations": failed_expectations,
+            "status": "failed" if len(failed_expectations) else "passed"
+        }
+
+        return parser.parse([top_suite_result])
 
     def _get_seed(self):
         order = self._get_order()

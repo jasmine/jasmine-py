@@ -38,3 +38,8 @@ def test_result_list_enabled(result_list):
     assert enabled[0].id == 'pass'
     assert enabled[1].id == 'fail'
     assert enabled[2].id == 'pend'
+
+
+def test_result_list_concatination(result_list):
+    concatinated = result_list + result_list
+    assert len(concatinated.passed()) == 2
