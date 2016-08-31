@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="jasmine",
-    version="2.4.0",
+    version="2.5.0",
     url="http://jasmine.github.io",
     author="Pivotal Labs",
     author_email="jasmine-js@googlegroups.com",
