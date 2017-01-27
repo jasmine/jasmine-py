@@ -16,10 +16,12 @@ def standalone():
                         help='The port of the Jasmine html runner')
     parser.add_argument('-o', '--host', type=str, default='127.0.0.1',
                         help='The host of the Jasmine html runner')
+    parser.add_argument('--config', type=str, default='spec/javascripts/support/jasmine.yml',
+                        help='The path to the Jasmine configuration file')
     args = parser.parse_args()
 
-    if _check_for_config():
-        jasmine_config = _load_config()
+    if _check_for_config(config_path=args.config):
+        jasmine_config = _load_config(config_path=args.config)
         try:
             jasmine_app = JasmineApp(jasmine_config=jasmine_config)
             jasmine_app.app.run(host=args.host, port=args.port, debug=True)
@@ -35,10 +37,12 @@ def continuous_integration():
                         help='Displays browser logs')
     parser.add_argument('-s', '--seed', type=str,
                         help='Seed for random spec order')
+    parser.add_argument('--config', type=str, default='spec/javascripts/support/jasmine.yml',
+                        help='The path to the Jasmine configuration file')
     args = parser.parse_args()
 
-    if _check_for_config():
-        jasmine_config = _load_config()
+    if _check_for_config(config_path=args.config):
+        jasmine_config = _load_config(config_path=args.config)
         jasmine_app = JasmineApp(jasmine_config=jasmine_config)
         CIRunner(jasmine_config=jasmine_config).run(
             browser=args.browser,
@@ -48,17 +52,17 @@ def continuous_integration():
         )
 
 
-def _config_paths():
+def _config_paths(config_path):
     project_path = os.path.realpath(os.path.dirname(__name__))
     config_file = os.path.join(
         project_path,
-        "spec/javascripts/support/jasmine.yml"
+        config_path
     )
     return config_file, project_path
 
 
-def _check_for_config():
-    config_file, _ = _config_paths()
+def _check_for_config(config_path):
+    config_file, _ = _config_paths(config_path)
 
     config_exists = os.path.exists(config_file)
     if not config_exists:
@@ -66,8 +70,8 @@ def _check_for_config():
     return config_exists
 
 
-def _load_config():
-    config_file, project_path = _config_paths()
+def _load_config(config_path):
+    config_file, project_path = _config_paths(config_path)
     return Config(config_file, project_path=project_path)
 
 
