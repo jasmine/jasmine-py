@@ -138,7 +138,7 @@ def test_standalone__port_invalid(monkeypatch, app, mockfs_with_config):
         standalone()
 
     assert "invalid int value: 'pants'"
-    assert not FakeApp.app.run.called
+    FakeApp.app.run.assert_not_called()
 
 
 def test_standalone__missing_config(monkeypatch, app, mockfs):
@@ -147,7 +147,7 @@ def test_standalone__missing_config(monkeypatch, app, mockfs):
 
     standalone()
 
-    assert not FakeApp.app.run.called
+    FakeApp.app.run.assert_not_called()
 
 
 def test__query__yes(capsys, monkeypatch):
