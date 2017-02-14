@@ -132,20 +132,22 @@ def test_standalone__port_default(monkeypatch, app, mockfs_with_config):
 
 def test_standalone__port_invalid(monkeypatch, app, mockfs_with_config):
     monkeypatch.setattr(sys, 'argv', ["test.py", "-p", "pants"])
+    monkeypatch.setattr(jasmine.entry_points, 'JasmineApp', FakeApp)
 
     with pytest.raises(SystemExit):
         standalone()
 
     assert "invalid int value: 'pants'"
-    assert not app.run.called
+    assert not FakeApp.app.run.called
 
 
 def test_standalone__missing_config(monkeypatch, app, mockfs):
     monkeypatch.setattr(sys, 'argv', ["test.py"])
+    monkeypatch.setattr(jasmine.entry_points, 'JasmineApp', FakeApp)
 
     standalone()
 
-    assert not app.run.called
+    assert not FakeApp.app.run.called
 
 
 def test__query__yes(capsys, monkeypatch):
