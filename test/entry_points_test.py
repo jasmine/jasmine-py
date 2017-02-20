@@ -54,6 +54,22 @@ def mockfs_with_config(request):
     request.addfinalizer(lambda: restore_builtins())
     return mfs
 
+@pytest.fixture
+def mockfs_with_config_and_custom_config(request):
+    mfs = replace_builtins()
+    mfs.add_entries({
+        "/spec/javascripts/support/jasmine.yml": """
+        src_dir: src
+        spec_dir: spec
+        """,
+        "/custom/path/to/jasmine.yml": """
+        src_dir: custom_src
+        spec_dir: custom_spec
+        """
+    })
+    request.addfinalizer(lambda: restore_builtins())
+    return mfs
+
 
 @pytest.fixture
 def mock_CI_run(request):
@@ -148,6 +164,21 @@ def test_standalone__missing_config(monkeypatch, app, mockfs):
     standalone()
 
     FakeApp.app.run.assert_not_called()
+
+
+def test_standalone__custom_config__when_environment_variable_set(monkeypatch, app, mockfs_with_config_and_custom_config):
+    monkeypatch.setattr(sys, 'argv', ["test.py"])
+    env_vars = {'JASMINE_CONFIG_PATH': "/custom/path/to/jasmine.yml"}
+    monkeypatch.setattr(os, 'environ', env_vars)
+    fake_standalone = Mock()
+    monkeypatch.setattr(jasmine.entry_points, 'JasmineApp', fake_standalone)
+
+    standalone()
+
+    fake_standalone.assert_called_once()
+    standalone_construction_kwargs = fake_standalone.call_args[1]
+    called_with_config = standalone_construction_kwargs['jasmine_config'].yaml_file
+    assert called_with_config == "/custom/path/to/jasmine.yml"
 
 
 def test__query__yes(capsys, monkeypatch):

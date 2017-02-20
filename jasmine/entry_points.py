@@ -50,9 +50,13 @@ def continuous_integration():
 
 def _config_paths():
     project_path = os.path.realpath(os.path.dirname(__name__))
+    jasmine_conf = "spec/javascripts/support/jasmine.yml"
+    if 'JASMINE_CONFIG_PATH' in os.environ:
+        jasmine_conf = os.environ['JASMINE_CONFIG_PATH']
+
     config_file = os.path.join(
         project_path,
-        "spec/javascripts/support/jasmine.yml"
+        jasmine_conf
     )
     return config_file, project_path
 
