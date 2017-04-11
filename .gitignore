@@ -37,3 +37,4 @@ env
 htmlcov
 *.swp
 .cache
+.idea/*
