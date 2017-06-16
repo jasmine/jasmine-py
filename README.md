@@ -66,11 +66,11 @@ For a full list of commands, type `jasmine-ci -h`
 1. Get a python 2.7, 2.6, 3.4, 3.5 and pypy
 1. Get pip: http://www.pip-installer.org/en/latest/installing.html
 1. Get virtualenvwrapper: http://virtualenvwrapper.readthedocs.org/en/latest/
+1. `source /usr/local/bin/virtualenvwrapper.sh`
 1. `git clone` this repo
 1. Make an environment: `mkvirtualenv jasminePy`
 1. Use that environment: `workon jasminePy`
-1. Install invoke `pip install invoke`
-1. Install dependencies: `inv install`
+1. Install dependencies: `pip install -r requirements.txt && pip install -r requirements_dev.txt`
 1. Run specs: `detox`
 
 ## Support
@@ -80,4 +80,4 @@ Twitter: [@jasminebdd](http://twitter.com/jasminebdd)
 
 Please file issues here at Github
 
-Copyright (c) 2008-2014 Pivotal Labs. This software is licensed under the MIT License.
+Copyright (c) 2008-2017 Pivotal Labs. This software is licensed under the MIT License.
