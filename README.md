@@ -6,6 +6,11 @@ The [Jasmine](http://github.com/jasmine/jasmine) Python package contains helper 
 
 For documentation on writing Jasmine tests, check out the [Jasmine Documentation site](http://jasmine.github.io/).
 
+## Contributing
+
+Please read the [contributor's guide](https://github.com/jasmine/jasmine-py/blob/master/.github/CONTRIBUTING.md).
+
+
 ## Contents
 This package contains:
 
@@ -60,18 +65,6 @@ or adding `--browser` to `jasmine-ci`
 	$ jasmine-ci --browser phantomjs
 
 For a full list of commands, type `jasmine-ci -h`
-
-## Contributing
-
-1. Get a python 2.7, 2.6, 3.4, 3.5 and pypy
-1. Get pip: http://www.pip-installer.org/en/latest/installing.html
-1. Get virtualenvwrapper: http://virtualenvwrapper.readthedocs.org/en/latest/
-1. `source /usr/local/bin/virtualenvwrapper.sh`
-1. `git clone` this repo
-1. Make an environment: `mkvirtualenv jasminePy`
-1. Use that environment: `workon jasminePy`
-1. Install dependencies: `pip install -r requirements.txt && pip install -r requirements_dev.txt`
-1. Run specs: `detox`
 
 ## Support
 
