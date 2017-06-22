@@ -1,7 +1,7 @@
 detox
 mock
-pytest==2.7.3
+pytest
 pytest-cov
-pytest-flakes==0.2
-pytest-pep8==1.0.6
+pytest-flakes
+pytest-pep8
 http://github.com/mockfs/mockfs/tarball/master#egg=mockfs
