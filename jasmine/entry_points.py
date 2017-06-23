@@ -22,7 +22,7 @@ def standalone():
         jasmine_config = _load_config()
         try:
             jasmine_app = JasmineApp(jasmine_config=jasmine_config)
-            jasmine_app.app.run(host=args.host, port=args.port, debug=True)
+            jasmine_app.app.run(host=args.host, port=args.port)
         except socket.error:
             sys.stdout.write('Socket unavailable')
 

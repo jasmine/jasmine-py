@@ -3,7 +3,7 @@ import os
 
 import chardet
 import pkg_resources
-from flask import Flask, render_template_string, make_response, send_file
+from flask import Flask, render_template_string, make_response, send_file, send_from_directory
 
 
 class JasmineApp(object):
@@ -19,7 +19,7 @@ class JasmineApp(object):
         # instance_path set to work around:
         # https://bitbucket.org/hpk42/pytest/issue/317
         self.app = Flask(__name__, instance_path=os.getcwd())
-        self.app.debug = True
+        #  self.app.debug = True
 
         self.app.add_url_rule("/__<filetype>__/<path:filename>", 'serve', self.serve)
         self.app.add_url_rule("/", 'run', self.run)
@@ -28,19 +28,20 @@ class JasmineApp(object):
     def serve(self, filetype, filename):
         if filetype == 'jasmine':
             contents = pkg_resources.resource_string('jasmine_core', filename)
+            response = make_response(contents)
+            response.mimetype = mimetypes.guess_type(filename)[0]
+            return response
         else:
-            path = os.path.join(
-                os.getcwd(),
-                self.filetype_mapping[filetype],
-                filename
-            )
-            raw_contents = open(path, 'rb').read()
-            contents = self._decode_raw(raw_contents)
+            print "Doing the interesting serve for " + filename
+            return send_from_directory(os.path.join(os.getcwd(), self.filetype_mapping[filetype]), filename)
+            --path = os.path.join(
+            --    os.getcwd(),
+            --    self.filetype_mapping[filetype],
+            --    filename
+            --)
+            --raw_contents = open(path, 'rb').read()
+            -- contents = self._decode_raw(raw_contents)
 
-        response = make_response(contents)
-        response.mimetype = mimetypes.guess_type(filename)[0]
-
-        return response
 
     def run(self):
         self.jasmine_config.reload()
