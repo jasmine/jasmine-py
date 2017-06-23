@@ -25,7 +25,7 @@ The Jasmine python package tests itself against multiple versions of Python. How
 If you want to run the tests against all supported versions of Python:
 
 1. Install Python 2.6, 2.7, 3.4, 3.5, and pypy.
-1. Run specs: `detox`
+1. Run specs: `detox -n 1`
 
 ## Submitting a Pull Request
 
