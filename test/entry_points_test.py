@@ -118,6 +118,18 @@ def test_continuous_integration__set_seed(monkeypatch, mockfs_with_config, mock_
 
     CIRunner.run.assert_called_once_with(seed="1234", show_logs=False, browser=None, app=FakeApp.app)
 
+def test_continuous_integration__custom_config__from_argv(monkeypatch, app, mockfs_with_config_and_custom_config):
+    monkeypatch.setattr(sys, 'argv', ["test.py", "-c", "/custom/path/to/jasmine.yml"])
+    fake_standalone = Mock()
+    monkeypatch.setattr(jasmine.entry_points, 'JasmineApp', fake_standalone)
+
+    continuous_integration()
+
+    fake_standalone.assert_called_once()
+    standalone_construction_kwargs = fake_standalone.call_args[1]
+    called_with_config = standalone_construction_kwargs['jasmine_config'].yaml_file
+    assert called_with_config == "/custom/path/to/jasmine.yml"
+
 
 def test_standalone__set_host(monkeypatch, app, mockfs_with_config):
     monkeypatch.setattr(sys, 'argv', ["test.py", "-o", "127.0.0.2"])
@@ -165,6 +177,17 @@ def test_standalone__missing_config(monkeypatch, app, mockfs):
 
     FakeApp.app.run.assert_not_called()
 
+def test_standalone__custom_config__from_argv(monkeypatch, app, mockfs_with_config_and_custom_config):
+    monkeypatch.setattr(sys, 'argv', ["test.py", "-c", "/custom/path/to/jasmine.yml"])
+    fake_standalone = Mock()
+    monkeypatch.setattr(jasmine.entry_points, 'JasmineApp', fake_standalone)
+
+    standalone()
+
+    fake_standalone.assert_called_once()
+    standalone_construction_kwargs = fake_standalone.call_args[1]
+    called_with_config = standalone_construction_kwargs['jasmine_config'].yaml_file
+    assert called_with_config == "/custom/path/to/jasmine.yml"
 
 def test_standalone__custom_config__when_environment_variable_set(monkeypatch, app, mockfs_with_config_and_custom_config):
     monkeypatch.setattr(sys, 'argv', ["test.py"])
