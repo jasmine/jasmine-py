@@ -19,7 +19,6 @@ class JasmineApp(object):
         # instance_path set to work around:
         # https://bitbucket.org/hpk42/pytest/issue/317
         self.app = Flask(__name__, instance_path=os.getcwd())
-        self.app.debug = True
 
         self.app.add_url_rule("/__<filetype>__/<path:filename>", 'serve', self.serve)
         self.app.add_url_rule("/", 'run', self.run)

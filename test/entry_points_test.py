@@ -125,7 +125,7 @@ def test_standalone__set_host(monkeypatch, app, mockfs_with_config):
 
     standalone()
 
-    FakeApp.app.run.assert_called_once_with(host="127.0.0.2", port=8888, debug=True)
+    FakeApp.app.run.assert_called_once_with(host="127.0.0.2", port=8888)
 
 
 def test_standalone__set_port(monkeypatch, app, mockfs_with_config):
@@ -134,7 +134,7 @@ def test_standalone__set_port(monkeypatch, app, mockfs_with_config):
 
     standalone()
 
-    FakeApp.app.run.assert_called_once_with(host="127.0.0.1", port=1337, debug=True)
+    FakeApp.app.run.assert_called_once_with(host="127.0.0.1", port=1337)
 
 
 def test_standalone__port_default(monkeypatch, app, mockfs_with_config):
@@ -143,7 +143,7 @@ def test_standalone__port_default(monkeypatch, app, mockfs_with_config):
 
     standalone()
 
-    FakeApp.app.run.assert_called_once_with(host="127.0.0.1", port=8888, debug=True)
+    FakeApp.app.run.assert_called_once_with(host="127.0.0.1", port=8888)
 
 
 def test_standalone__port_invalid(monkeypatch, app, mockfs_with_config):
