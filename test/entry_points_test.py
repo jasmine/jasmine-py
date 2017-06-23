@@ -83,6 +83,14 @@ def test_ci_config_check(mockfs, monkeypatch, mock_CI_run):
     assert not CIRunner.run.called
 
 
+def test_continuous_integration__set_config_path(monkeypatch, mockfs_with_config, mock_CI_run):
+    monkeypatch.setattr(sys, 'argv', ["test.py", "--config", "somwhere.yml"])
+    monkeypatch.setattr(jasmine.entry_points, 'JasmineApp', FakeApp)
+
+    continuous_integration()
+
+
+
 def test_continuous_integration__set_browser(monkeypatch, mockfs_with_config, mock_CI_run):
     monkeypatch.setattr(sys, 'argv', ["test.py", "--browser", "firefox"])
     monkeypatch.setattr(jasmine.entry_points, 'JasmineApp', FakeApp)

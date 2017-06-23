@@ -5,3 +5,4 @@ pytest-cov
 pytest-flakes
 pytest-pep8
 http://github.com/mockfs/mockfs/tarball/master#egg=mockfs
+requests
