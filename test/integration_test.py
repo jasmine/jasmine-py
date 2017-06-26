@@ -9,7 +9,7 @@ def get_with_retries(url):
         try:
             return requests.get(url)
         except requests.ConnectionError:
-            if n < 5:
+            if n < 20:
                 n += 1
                 sleep(0.1)
             else:
