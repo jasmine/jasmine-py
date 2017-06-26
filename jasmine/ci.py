@@ -23,6 +23,7 @@ class TestServerThread(threading.Thread):
         self.app = app
 
     def run(self):
+        exit(1)
         ports = self._possible_ports()
 
         for port in ports:
@@ -30,6 +31,7 @@ class TestServerThread(threading.Thread):
                 self._attempt_server_start(port)
                 break
             except socket.error:
+                print("Failed to start on port " + str(port))
                 continue
 
     def join(self, timeout=None):

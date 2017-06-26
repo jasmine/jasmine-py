@@ -9,6 +9,7 @@ install:
 - pip install -r requirements_dev.txt
 before_script:
 - sh -e /etc/init.d/xvfb start
+- sleep 3 # give xvfb some time to start
 script:
 - py.test
 python:
