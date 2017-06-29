@@ -11,7 +11,7 @@ before_script:
 - sh -e /etc/init.d/xvfb start
 - sleep 3 # give xvfb some time to start
 script:
-- py.test
+- py.test -s
 python:
   - "2.6"
   - "2.7"

@@ -16,35 +16,22 @@ from jasmine.url_builder import JasmineUrlBuilder
 
 class TestServerThread(threading.Thread):
 
-    def __init__(self, app=None, *args, **kwargs):
+    def __init__(self, port, app=None, *args, **kwargs):
         super(TestServerThread, self).__init__(*args, **kwargs)
         self.server = None
-        self.port = None
+        self.port = port
         self.app = app
 
     def run(self):
-        exit(1)
-        ports = self._possible_ports()
-
-        for port in ports:
-            try:
-                self._attempt_server_start(port)
-                break
-            except socket.error:
-                print("Failed to start on port " + str(port))
-                continue
-
-    def join(self, timeout=None):
-        self.server.stop()
-
-    def _attempt_server_start(self, port):
         self.server = wsgiserver.CherryPyWSGIServer(
-            ('localhost', port),
+            ('localhost', self.port),
             self.app,
             request_queue_size=2048
         )
-        self.port = port
         self.server.start()
+
+    def join(self, timeout=None):
+        self.server.stop()
 
     def _possible_ports(self):
         return itertools.chain(range(80, 81, 1), range(8889, 10000))
@@ -57,10 +44,11 @@ class CIRunner(object):
 
     def run(self, browser=None, show_logs=False, app=None, seed=None):
         try:
-            test_server = self._start_test_server(app, browser)
+            port = self._find_unused_port()
+            test_server = self._start_test_server(app, browser, port)
 
             url_builder = JasmineUrlBuilder(jasmine_config=self.jasmine_config)
-            jasmine_url = url_builder.build_url(test_server.port, seed)
+            jasmine_url = url_builder.build_url(port, seed)
             self.browser.get(jasmine_url)
 
             WebDriverWait(self.browser, 100).until(
@@ -90,8 +78,15 @@ class CIRunner(object):
             if hasattr(self, 'test_server'):
                 self.test_server.join()
 
-    def _start_test_server(self, app, browser):
-        test_server = TestServerThread(app=app)
+    def _find_unused_port(self):
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.bind(('0.0.0.0', 0))
+        addr, port = s.getsockname()
+        s.close()
+        return port
+
+    def _start_test_server(self, app, browser, port):
+        test_server = TestServerThread(port, app=app)
         test_server.start()
         driver = browser if browser \
             else os.environ.get('JASMINE_BROWSER', 'firefox')

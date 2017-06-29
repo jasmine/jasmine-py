@@ -2,7 +2,6 @@ import datetime
 import sys
 import time
 
-import mock
 import pytest
 from mock import MagicMock
 
@@ -20,16 +19,19 @@ def sysexit(monkeypatch):
 @pytest.fixture
 def test_server(monkeypatch):
     import jasmine.ci
-
-    server = MagicMock()
-    setattr(server, 'port', 80)
+    instance = [None]
 
     class FakeTestServerThread(object):
-        def __new__(cls, *args, **kwargs):
-            return server
+        def __init__(self, port, app=None, *args, **kwargs):
+            self.port = port
+            instance[0] = self
+        def start(arg):
+            pass
+        def join(self):
+            pass
 
     monkeypatch.setattr(jasmine.ci, 'TestServerThread', FakeTestServerThread)
-    return server
+    return lambda: instance[0]
 
 
 @pytest.fixture
@@ -175,33 +177,14 @@ def jasmine_config():
         spec_dir='spec',
     )
 
-@pytest.fixture
-def url_builder(request):
-    patcher = mock.patch('jasmine.ci.JasmineUrlBuilder')
-    mock_builder_class = patcher.start()
-    mock_builder = mock.Mock()
-    mock_builder_class.return_value = mock_builder
-
-    def teardown():
-        patcher.stop()
-    request.addfinalizer(teardown)
-
-    return mock_builder
-
-
-def test_run_builds_url(suites, results, run_details, capsys, sysexit, firefox_driver, test_server, jasmine_config, url_builder):
-    url_builder.build_url.return_value = 'http://localhost:80?seed=1234'
+def test_run_builds_url(suites, results, run_details, capsys, sysexit, firefox_driver, test_server, jasmine_config):
     CIRunner(jasmine_config=jasmine_config).run()
+    firefox_driver.get.assert_called_with('http://localhost:%s' % test_server().port)
 
-    firefox_driver.get.assert_called_with('http://localhost:80?seed=1234')
 
-
-def test_run_with_random_seed(suites, results, run_details, capsys, sysexit, firefox_driver, test_server, jasmine_config, url_builder):
-    url_builder.build_url.return_value = 'http://localhost:80?seed=1234'
+def test_run_with_random_seed(suites, results, run_details, capsys, sysexit, firefox_driver, test_server, jasmine_config):
     CIRunner(jasmine_config=jasmine_config).run(seed="1234")
-    url_builder.build_url.assert_called_with(80, '1234')
-
-    firefox_driver.get.assert_called_with('http://localhost:80?seed=1234')
+    firefox_driver.get.assert_called_with('http://localhost:%s?seed=1234' % test_server().port)
 
 
 def test_run_exits_with_zero_on_success(suites, results, run_details, capsys, sysexit, firefox_driver, test_server, jasmine_config):
