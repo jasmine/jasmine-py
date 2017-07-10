@@ -45,7 +45,7 @@ class CIRunner(object):
     def run(self, browser=None, show_logs=False, app=None, seed=None):
         try:
             port = self._find_unused_port()
-            test_server = self._start_test_server(app, browser, port)
+            self.test_server = self._start_test_server(app, browser, port)
 
             url_builder = JasmineUrlBuilder(jasmine_config=self.jasmine_config)
             jasmine_url = url_builder.build_url(port, seed)
