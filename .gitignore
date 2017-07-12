@@ -1,4 +1,5 @@
 *.py[cod]
+geckodriver.log
 
 # C extensions
 *.so
