@@ -62,7 +62,12 @@ class CIRunner(object):
                 browser_logs=show_logs,
                 seed=actual_seed
             )
-            sys.stdout.write(formatter.format().encode('UTF8'))
+            str_output = fomatter.format()
+            if sys.version_info[0] < 3:
+              sys.stdout.write(str_output.encode('UTF8'))
+            else:
+              sys.stdout.write(str_output)
+
             if len(spec_results.failed()) or len(suite_results.failed()):
                 sys.exit(1)
         finally:
