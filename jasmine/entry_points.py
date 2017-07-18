@@ -24,7 +24,7 @@ def standalone():
         jasmine_config = _load_config(args.config)
         try:
             jasmine_app = JasmineApp(jasmine_config=jasmine_config)
-            jasmine_app.app.run(host=args.host, port=args.port)
+            jasmine_app.run(host=args.host, port=args.port, blocking=True)
         except socket.error:
             sys.stdout.write('Socket unavailable')
 
@@ -48,7 +48,7 @@ def continuous_integration():
             browser=args.browser,
             show_logs=args.logs,
             seed=args.seed,
-            app=jasmine_app.app,
+            app=jasmine_app,
         )
 
 

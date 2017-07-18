@@ -1,1 +1,1 @@
-ã
+window.weirdEncoding = 'ã';

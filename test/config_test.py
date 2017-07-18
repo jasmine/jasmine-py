@@ -131,17 +131,17 @@ def test_script_urls(config, monkeypatch):
     script_urls = config.script_urls()
 
     assert script_urls[:5] == [
-        "__jasmine__/jasmine.js",
-        "__jasmine__/jasmine-html.js",
-        "__jasmine__/json2.js",
-        "__jasmine__/boot.js",
-        "__src__/src/player.js"
+        "/__jasmine__/jasmine.js",
+        "/__jasmine__/jasmine-html.js",
+        "/__jasmine__/json2.js",
+        "/__jasmine__/boot.js",
+        "/__src__/src/player.js"
     ]
 
     assert 'http://cdn.jquery.com/jquery.js' in script_urls
-    assert '__src__/src/mixer/mixer.js' in script_urls
-    assert '__src__/src/tuner/fm/fm_tuner.js' in script_urls
-    assert '__src__/vendor/pants.coffee' in script_urls
+    assert '/__src__/src/mixer/mixer.js' in script_urls
+    assert '/__src__/src/tuner/fm/fm_tuner.js' in script_urls
+    assert '/__src__/vendor/pants.coffee' in script_urls
 
 
 def test_stylesheet_urls(fs, config, monkeypatch):
@@ -171,8 +171,8 @@ def test_stylesheet_urls(fs, config, monkeypatch):
     stylesheet_urls = config.stylesheet_urls()
 
     assert stylesheet_urls == [
-        "__jasmine__/jasmine.css",
-        "__src__/main.css"
+        "/__jasmine__/jasmine.css",
+        "/__src__/main.css"
     ]
 
 @pytest.mark.usefixtures("fs")

@@ -3,3 +3,9 @@ describe('Something', function() {
     expect(thingUnderTest.something).toBeTruthy();
   });
 });
+
+describe('weird encodings', function() {
+  it('works', function() {
+    expect(weirdEncoding).toEqual('ã');
+  });
+});

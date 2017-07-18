@@ -5,7 +5,6 @@ import sys
 import threading
 
 from six.moves import range
-from cherrypy import wsgiserver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.support.wait import WebDriverWait
 
@@ -18,20 +17,14 @@ class TestServerThread(threading.Thread):
 
     def __init__(self, port, app=None, *args, **kwargs):
         super(TestServerThread, self).__init__(*args, **kwargs)
-        self.server = None
         self.port = port
         self.app = app
 
     def run(self):
-        self.server = wsgiserver.CherryPyWSGIServer(
-            ('localhost', self.port),
-            self.app,
-            request_queue_size=2048
-        )
-        self.server.start()
+        self.app.run('127.0.0.1', self.port, blocking=False)
 
     def join(self, timeout=None):
-        self.server.stop()
+        self.app.stop()
 
     def _possible_ports(self):
         return itertools.chain(range(80, 81, 1), range(8889, 10000))
@@ -69,7 +62,7 @@ class CIRunner(object):
                 browser_logs=show_logs,
                 seed=actual_seed
             )
-            sys.stdout.write(formatter.format())
+            sys.stdout.write(formatter.format().encode('UTF8'))
             if len(spec_results.failed()) or len(suite_results.failed()):
                 sys.exit(1)
         finally:
