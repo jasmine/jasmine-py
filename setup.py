@@ -1,4 +1,8 @@
 from setuptools import setup, find_packages
+from re import sub
+import sys
+
+cherrypy_version = '8.9.1 ' if (sys.version_info[0] == 2 and sys.version_info[1] < 7) else '11'
 
 setup(
     name="jasmine",
@@ -48,5 +52,14 @@ setup(
         ]
     },
 
-    install_requires=[line for line in open('requirements.txt')],
+    install_requires=[
+        'PyYAML==3.10',
+        'argparse>=1.0, <2.0',
+        'Jinja2>=2.0, <3.0',
+        'six>=1.0, <2.0',
+        'jasmine-core>=2.6, <3.0',
+        'CherryPy>=%s' % cherrypy_version,
+        'selenium>=3.0',
+        'Werkzeug==0.11.1'
+    ],
 )

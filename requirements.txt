@@ -1,8 +1,1 @@
-PyYAML==3.10
-argparse>=1.0, <2.0
-Jinja2>=2.0, <3.0
-six>=1.0, <2.0
-jasmine-core>=2.6, <3.0
-CherryPy>=11
-selenium>=3.0
-Werkzeug==0.11.1
+-e .
