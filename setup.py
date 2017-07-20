@@ -1,8 +1,7 @@
 from setuptools import setup, find_packages
-from re import sub
 import sys
 
-cherrypy_version = '8.9.1 ' if (sys.version_info[0] == 2 and sys.version_info[1] < 7) else '11'
+cherrypy_version = '10.2.2' if (sys.version_info[0] == 2 and sys.version_info[1] < 7) else '11'
 
 setup(
     name="jasmine",
