@@ -1,7 +1,14 @@
 from setuptools import setup, find_packages
 import sys
 
-cherrypy_version = '10.2.2' if (sys.version_info[0] == 2 and sys.version_info[1] < 7) else '11'
+old_python = sys.version_info[0] == 2 and sys.version_info[1] < 7 
+cherrypy_version = '10.2.2' if old_python else '11'
+
+def extra_dependencies():
+    if old_python:
+        return ['portend<2.1']
+    else:
+        return []
 
 setup(
     name="jasmine",
@@ -60,5 +67,5 @@ setup(
         'CherryPy>=%s' % cherrypy_version,
         'selenium>=3.0',
         'Werkzeug==0.11.1'
-    ],
+    ] + extra_dependencies(),
 )
