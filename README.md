@@ -68,6 +68,7 @@ For a full list of commands, type `jasmine-ci -h`
 
 ## Support
 
+Documentation: [jasmine.github.io](https://jasmine.github.io)
 Jasmine Mailing list: [jasmine-js@googlegroups.com](mailto:jasmine-js@googlegroups.com)
 Twitter: [@jasminebdd](http://twitter.com/jasminebdd)
 
