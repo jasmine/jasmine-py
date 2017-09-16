@@ -29,6 +29,15 @@ def test_standalone_serves_html():
     finally:
         process.terminate()
 
+def test_standalone_supports_query_strings():
+    process = Popen([sys.executable, '-c', 'from jasmine.entry_points import standalone; standalone()', '--config', 'test/fixture_files/jasmine.yml'])
+    try:
+        req = get_with_retries('http://localhost:8888/?random=true')
+
+        assert req.status_code == 200
+    finally:
+        process.terminate()
+
 def test_standalone_serves_jasmine_files():
     process = Popen([sys.executable, '-c', 'from jasmine.entry_points import standalone; standalone()', '--config', 'test/fixture_files/jasmine.yml'])
     try:

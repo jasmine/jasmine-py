@@ -13,7 +13,7 @@ class JasmineApp(object):
         self.jasmine_file = JasmineFile()
 
     @cherrypy.expose
-    def index(self):
+    def index(self, **kwargs):
         self.jasmine_config.reload()
         context = {
             'css_files': self.jasmine_config.stylesheet_urls(),
