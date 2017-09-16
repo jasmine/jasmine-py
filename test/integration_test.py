@@ -32,8 +32,19 @@ def test_standalone_serves_html():
 def test_standalone_serves_jasmine_files():
     process = Popen([sys.executable, '-c', 'from jasmine.entry_points import standalone; standalone()', '--config', 'test/fixture_files/jasmine.yml'])
     try:
+        req = get_with_retries('http://localhost:8888/__jasmine__/jasmine.css')
+
+        assert 'text/css' in req.headers['content-type']
+        assert req.status_code == 200
+    finally:
+        process.terminate()
+
+def test_standalone_serves_jasmine_css_files():
+    process = Popen([sys.executable, '-c', 'from jasmine.entry_points import standalone; standalone()', '--config', 'test/fixture_files/jasmine.yml'])
+    try:
         req = get_with_retries('http://localhost:8888/__jasmine__/jasmine.js')
 
+        assert 'application/javascript' in req.headers['content-type']
         assert req.status_code == 200
     finally:
         process.terminate()
@@ -43,6 +54,7 @@ def test_standalone_serves_jasmine_favicon():
     try:
         req = get_with_retries('http://localhost:8888/__jasmine__/jasmine_favicon.png')
 
+        assert 'image/png' in req.headers['content-type']
         assert req.status_code == 200
     finally:
         process.terminate()
@@ -52,6 +64,7 @@ def test_standalone_serves_js():
     try:
         req = get_with_retries('http://localhost:8888/__src__/main.js')
 
+        assert 'application/javascript' in req.headers['content-type']
         assert req.status_code == 200
         assert "thingUnderTest" in req.text
     finally:
@@ -62,6 +75,7 @@ def test_standalone_serves_css():
     try:
         req = get_with_retries('http://localhost:8888/__src__/main.css')
 
+        assert 'text/css' in req.headers['content-type']
         assert req.status_code == 200
         assert "CSS" in req.text
     finally:
