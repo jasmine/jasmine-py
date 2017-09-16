@@ -1,3 +1,4 @@
+import mimetypes
 import os
 import cherrypy
 from jinja2 import Environment
@@ -77,5 +78,8 @@ class JasmineFile(object):
                 ),
                 content_type='image/png'
             )
-
-        return cherrypy.lib.static.serve_fileobj(pkg_resources.resource_stream('jasmine_core', path))
+        mime_type, _ = mimetypes.guess_type(path)
+        return cherrypy.lib.static.serve_fileobj(
+            pkg_resources.resource_stream('jasmine_core', path),
+            content_type=mime_type
+        )
