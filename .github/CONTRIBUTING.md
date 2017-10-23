@@ -13,7 +13,7 @@ We welcome your contributions! Thanks for helping make Jasmine a better project 
 The Jasmine python package tests itself against multiple versions of Python. However, in most cases you can contribute successfully even if you only have one version installed. To get started:
 
 1. Make sure you have Python installed.
-1. Get pip: http://www.pip-installer.org/en/latest/installing.html
+1. Get pip: https://pip.pypa.io/en/stable/installing/
 1. Get virtualenvwrapper: http://virtualenvwrapper.readthedocs.org/en/latest/
 1. `source /usr/local/bin/virtualenvwrapper.sh`
 1. `git clone` this repo
