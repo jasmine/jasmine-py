@@ -66,6 +66,6 @@ setup(
         'six>=1.0, <2.0',
         'jasmine-core>=2.8, <3.0',
         'CherryPy>=%s' % cherrypy_version,
-        'selenium>=3.0'
+        'selenium>=3.0 < 3.7'
     ] + extra_dependencies(),
 )
