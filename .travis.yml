@@ -42,7 +42,6 @@ before_script:
 script:
 - py.test -s
 python:
-  - "2.6"
   - "2.7"
   - "3.4"
   - "3.5"

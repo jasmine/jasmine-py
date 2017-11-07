@@ -1,15 +1,6 @@
 from setuptools import setup, find_packages
-import sys
 
-old_python = sys.version_info[0] == 2 and sys.version_info[1] < 7
-cherrypy_version = '10.2.2' if old_python else '11'
-
-
-def extra_dependencies():
-    if old_python:
-        return ['portend<2.1']
-    else:
-        return []
+cherrypy_version = '11'
 
 setup(
     name="jasmine",
@@ -34,7 +25,6 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.2',
@@ -66,6 +56,6 @@ setup(
         'six>=1.0, <2.0',
         'jasmine-core>=2.8, <3.0',
         'CherryPy>=%s' % cherrypy_version,
-        'selenium>=3.0, < 3.7'
-    ] + extra_dependencies(),
+        'selenium>=3.0',
+    ],
 )
