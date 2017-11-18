@@ -124,6 +124,7 @@ def suite_results():
 @pytest.fixture
 def run_details():
     return {
+        "overallStatus": "passed",
         "failedExpectations": [],
         "order": {
             "random": False,
@@ -135,6 +136,7 @@ def run_details():
 @pytest.fixture
 def run_details_with_failures():
     return {
+        "overallResult": "failed",
         "failedExpectations": [
             {
                 "matcherName": "toEqual",
@@ -187,15 +189,12 @@ def test_run_with_random_seed(suites, results, run_details, capsys, sysexit, fir
     firefox_driver.get.assert_called_with('http://localhost:%s?seed=1234' % test_server().port)
 
 
-def test_run_exits_with_zero_on_success(suites, results, run_details, capsys, sysexit, firefox_driver, test_server, jasmine_config):
-    results[0] = results[1]
-    del results[1]
-
+def test_run_exits_with_zero_on_success(suites, run_details, capsys, sysexit, firefox_driver, test_server, jasmine_config):
     def execute_script(js):
         if 'jsApiReporter.finished' in js:
             return True
         if 'jsApiReporter.specResults' in js:
-            return results
+            return []
         if 'jsApiReporter.suiteResults' in js:
             return []
         if 'jsApiReporter.runDetails' in js:
@@ -218,12 +217,13 @@ def test_run_exits_with_zero_on_success(suites, results, run_details, capsys, sy
     assert '[{0} - INFO] hello\n'.format(dt) not in stdout
 
 
-def test_run_exits_with_nonzero_on_failure(suites, results, run_details, capsys, sysexit, firefox_driver, test_server, jasmine_config):
+def test_run_exits_with_nonzero_on_failure(suites, run_details, capsys, sysexit, firefox_driver, test_server, jasmine_config):
+    run_details['overallStatus'] = 'something other than passed'
     def execute_script(js):
         if 'jsApiReporter.finished' in js:
             return True
         if 'jsApiReporter.specResults' in js:
-            return results
+            return []
         if 'jsApiReporter.suiteResults' in js:
             return []
         if 'jsApiReporter.runDetails' in js:
@@ -308,7 +308,29 @@ def test_displays_afterall_errors(suite_results, suites, results, run_details, c
     stdout, _ = capsys.readouterr()
 
     assert 'something went wrong' in stdout
-    sysexit.assert_called_with(1)
+
+
+def test_displays_incomplete_reason(suite_results, suites, run_details, capsys, sysexit, firefox_driver, test_server, jasmine_config):
+    run_details['overallStatus'] = 'incomplete'
+    run_details['incompleteReason'] = 'out of cheese'
+
+    def execute_script(js):
+        if 'jsApiReporter.finished' in js:
+            return True
+        if 'jsApiReporter.specResults' in js:
+            return []
+        if 'jsApiReporter.suiteResults' in js:
+            return suite_results
+        if 'jsApiReporter.runDetails' in js:
+            return run_details
+        return None
+
+    firefox_driver.execute_script = execute_script
+
+    CIRunner(jasmine_config=jasmine_config).run()
+    stdout, _ = capsys.readouterr()
+
+    assert 'Incomplete: out of cheese' in stdout
 
 
 def test_displays_top_suite_errors(suite_results, suites, results, run_details_with_failures, capsys, sysexit, firefox_driver, test_server, jasmine_config):

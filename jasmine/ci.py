@@ -68,7 +68,12 @@ class CIRunner(object):
             else:
                 sys.stdout.write(str_output)
 
-            if len(spec_results.failed()) or len(suite_results.failed()):
+            overall_status = self._get_overall_status()
+
+            if overall_status == 'incomplete':
+                sys.stdout.write('Incomplete: %s\n' % self._get_incomplete_reason())
+
+            if overall_status != 'passed':
                 sys.exit(1)
         finally:
             if hasattr(self, 'browser'):
@@ -137,6 +142,12 @@ class CIRunner(object):
                 break
 
         return parser.parse(suite_results)
+
+    def _get_overall_status(self):
+        return self.browser.execute_script('return jsApiReporter.runDetails').get('overallStatus')
+
+    def _get_incomplete_reason(self):
+        return self.browser.execute_script('return jsApiReporter.runDetails').get('incompleteReason')
 
     def _get_top_suite_results(self, parser):
         failed_expectations = self.browser.execute_script("return jsApiReporter.runDetails").get('failedExpectations')
