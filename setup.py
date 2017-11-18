@@ -4,7 +4,7 @@ cherrypy_version = '11'
 
 setup(
     name="jasmine",
-    version="2.8.0",
+    version="3.0.0-pre",
     url="http://jasmine.github.io",
     author="Pivotal Labs",
     author_email="jasmine-js@googlegroups.com",
@@ -54,8 +54,11 @@ setup(
         'argparse>=1.0, <2.0',
         'Jinja2>=2.0, <3.0',
         'six>=1.0, <2.0',
-        'jasmine-core>=2.8, <3.0',
+        'jasmine-core==3.0.0-pre',
         'CherryPy>=%s' % cherrypy_version,
         'selenium>=3.0',
     ],
+    dependency_links=[
+        "git+https://github.com/jasmine/jasmine.git@3.0-features#egg=jasmine-core-3.0.0-pre"
+    ]
 )
