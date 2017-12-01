@@ -1,6 +1,6 @@
 detox
 mock
-pytest==3.2.5
+pytest
 pytest-cov
 pytest-flakes
 pytest-pep8
