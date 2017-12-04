@@ -15,11 +15,11 @@ class JasmineUrlBuilder(object):
     def _build_query_params(self, seed):
         query_params = {
             "throwFailures": self.jasmine_config.stop_spec_on_expectation_failure(),
-            "random": self.jasmine_config.random(),
+            "random": str(self.jasmine_config.random()).lower(),
             "seed": seed
         }
         query_params = self._remove_empty_params(query_params)
         return urllib.parse.urlencode(query_params)
 
     def _remove_empty_params(self, query_params):
-        return dict(((k, v) for k, v in query_params.items() if v))
+        return dict(((k, v) for k, v in query_params.items() if k == "random" or v))
