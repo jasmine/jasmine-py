@@ -201,7 +201,7 @@ def test_random_default():
     with in_temp_dir():
         create_files()
         config = Config("jasmine.yml")
-    assert config.random() is False
+    assert config.random() is True
 
 
 def test_random_invalid():
@@ -210,17 +210,16 @@ def test_random_invalid():
             random: pants
             """)
         config = Config("jasmine.yml")
-        assert config.random() is False
-
-
-def test_random_set():
-    with in_temp_dir():
-        create_files("""
-            random: true
-            """)
-        config = Config("jasmine.yml")
         assert config.random() is True
 
+
+def test_random_set_false():
+    with in_temp_dir():
+        create_files("""
+            random: false
+            """)
+        config = Config("jasmine.yml")
+        assert config.random() is False
 
 def test_reload():
     with in_temp_dir():

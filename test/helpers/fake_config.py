@@ -6,7 +6,7 @@ class FakeConfig(object):
             stylesheet_urls=None,
             script_urls=None,
             stop_spec_on_expectation_failure=False,
-            random=False
+            random=True
     ):
         self._src_dir = src_dir
         self._spec_dir = spec_dir

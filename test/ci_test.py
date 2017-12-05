@@ -182,7 +182,7 @@ def jasmine_config():
 
 def test_run_builds_url(suites, results, run_details, capsys, sysexit, firefox_driver, test_server, jasmine_config):
     CIRunner(jasmine_config=jasmine_config).run()
-    firefox_driver.get.assert_called_with('http://localhost:%s?random=false' % test_server().port)
+    firefox_driver.get.assert_called_with('http://localhost:%s?random=true' % test_server().port)
 
 
 def test_run_with_random_seed(suites, results, run_details, capsys, sysexit, firefox_driver, test_server, jasmine_config):
@@ -192,6 +192,7 @@ def test_run_with_random_seed(suites, results, run_details, capsys, sysexit, fir
     uri_tuple = urllib.parse.urlparse(str(url))
     params = urllib.parse.parse_qs(uri_tuple[4])
     assert params['seed'] == ['1234']
+    assert params['random'] == ['true']
 
 
 def test_run_exits_with_zero_on_success(suites, run_details, capsys, sysexit, firefox_driver, test_server, jasmine_config):

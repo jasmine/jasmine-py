@@ -240,11 +240,11 @@ stop_spec_on_expectation_failure:
 # random
 #
 # Run specs in semi-random order.
-# Default: false
+# Default: true
 #
 # EXAMPLE:
 #
-# random: true
+# random: false
 #
 random:
 """

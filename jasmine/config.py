@@ -66,7 +66,7 @@ class Config(object):
         return self._yaml.get("stop_spec_on_expectation_failure") is True
 
     def random(self):
-        return self._yaml.get("random") is True
+        return self._yaml.get("random", True) is not False
 
     def _prefix_src_underscored(self, path):
         return (
