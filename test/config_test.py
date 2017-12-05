@@ -203,9 +203,8 @@ def test_stop_spec_on_expectation_failure_set(fs, config):
 
 
 @pytest.mark.usefixtures("fs")
-def test_random_default(config):
-    assert config.random() is False
-
+def test_random_defaut(config):
+    assert config.random() is True
 
 def test_random_invalid(fs, config):
     fs.add_entries({
@@ -215,10 +214,10 @@ def test_random_invalid(fs, config):
     })
     config.reload()
 
-    assert config.random() is False
+    assert config.random() is True
 
 
-def test_random_set(fs, config):
+def test_random_set_true(fs, config):
     fs.add_entries({
         "jasmine.yml": """
             random: true
@@ -227,6 +226,16 @@ def test_random_set(fs, config):
     config.reload()
 
     assert config.random() is True
+
+def test_random_set_false(fs, config):
+    fs.add_entries({
+        "jasmine.yml": """
+            random: false
+        """
+    })
+    config.reload()
+
+    assert config.random() is False
 
 
 def test_reload(fs, config):
