@@ -53,7 +53,6 @@ setup(
         'PyYAML==3.10',
         'argparse>=1.0, <2.0',
         'Jinja2>=2.0, <3.0',
-        'six>=1.0, <2.0',
         'jasmine-core==3.0.0-pre',
         'CherryPy>=%s' % cherrypy_version,
         'selenium>=3.0',

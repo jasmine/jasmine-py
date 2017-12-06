@@ -7,9 +7,9 @@ from jasmine.utils import iglob
 
 
 class Config(object):
-    def __init__(self, yaml_file, project_path=os.getcwd()):
+    def __init__(self, yaml_file, project_path=None):
         self.yaml_file = yaml_file
-        self.project_path = project_path
+        self.project_path = project_path or os.getcwd()
         self._load()
 
     def script_urls(self):

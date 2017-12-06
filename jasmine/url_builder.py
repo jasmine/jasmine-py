@@ -1,4 +1,4 @@
-import six.moves.urllib as urllib
+import urllib
 
 
 class JasmineUrlBuilder(object):

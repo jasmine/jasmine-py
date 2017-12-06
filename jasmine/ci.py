@@ -4,7 +4,6 @@ import socket
 import sys
 import threading
 
-from six.moves import range
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.support.wait import WebDriverWait
 

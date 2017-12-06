@@ -1,6 +1,6 @@
 import pytest
 
-import six.moves.urllib as urllib
+import urllib
 
 from jasmine.url_builder import JasmineUrlBuilder
 from test.helpers.fake_config import FakeConfig
