@@ -23,8 +23,10 @@ def test_defaults(jasmine_config):
 def test_stop_spec_on_expectation_failure(jasmine_config):
     jasmine_config._stop_spec_on_expectation_failure = True
     url = JasmineUrlBuilder(jasmine_config=jasmine_config).build_url(port=80)
-
-    assert url == 'http://localhost:80?random=false&throwFailures=True'
+    uri_tuple = urllib.parse.urlparse(url)
+    assert uri_tuple[0] == 'http'
+    assert uri_tuple[1] == 'localhost:80'
+    assert urllib.parse.parse_qs(uri_tuple[4]) == {"random": ['false'], "throwFailures": ['True']}
 
 
 def test_random(jasmine_config):
