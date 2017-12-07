@@ -1,6 +1,7 @@
 import datetime
 import sys
 import time
+import urllib
 
 import pytest
 from mock import MagicMock
@@ -186,7 +187,11 @@ def test_run_builds_url(suites, results, run_details, capsys, sysexit, firefox_d
 
 def test_run_with_random_seed(suites, results, run_details, capsys, sysexit, firefox_driver, test_server, jasmine_config):
     CIRunner(jasmine_config=jasmine_config).run(seed="1234")
-    firefox_driver.get.assert_called_with('http://localhost:%s?random=false&seed=1234' % test_server().port)
+    firefox_driver.get.assert_called()
+    url = firefox_driver.get.call_args[0][0]
+    uri_tuple = urllib.parse.urlparse(str(url))
+    params = urllib.parse.parse_qs(uri_tuple[4])
+    assert params['seed'] == ['1234']
 
 
 def test_run_exits_with_zero_on_success(suites, run_details, capsys, sysexit, firefox_driver, test_server, jasmine_config):
