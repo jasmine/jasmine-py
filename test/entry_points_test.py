@@ -262,21 +262,22 @@ def input_string(monkeypatch, string=""):
 
 
 def test_install__yes(monkeypatch):
-    # Should create spec/javascripts/support
-    # Should create a spec/javascripts/support/jasmine.yml
-    spec_dir = "spec/javascripts/support"
-    yaml_file = os.path.join(spec_dir, "jasmine.yml")
+    with in_temp_dir():
+        # Should create spec/javascripts/support
+        # Should create a spec/javascripts/support/jasmine.yml
+        spec_dir = "spec/javascripts/support"
+        yaml_file = os.path.join(spec_dir, "jasmine.yml")
 
-    input_string(monkeypatch, "Y")
+        input_string(monkeypatch, "Y")
 
-    install()
+        install()
 
-    assert os.path.isdir(spec_dir)
-    assert os.path.isfile(yaml_file)
+        assert os.path.isdir(spec_dir)
+        assert os.path.isfile(yaml_file)
 
-    yaml = load(open(yaml_file))
+        yaml = load(open(yaml_file))
 
-    assert yaml['spec_files'] == ["**/*[Ss]pec.js"]
+        assert yaml['spec_files'] == ["**/*[Ss]pec.js"]
 
 
 def test_install__yes__existing_yaml(monkeypatch):
