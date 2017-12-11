@@ -60,7 +60,7 @@ class ConsoleFormatter(object):
             output += ", {0} pending".format(len(self.results.pending()))
 
         if self.seed:
-            output += "\nRandomized with seed {0}".format(self.seed)
+            output += "\nRandomized with seed {0} (jasmine-ci --seed {0})".format(self.seed)
         return output
 
     def _enabled_spec_count(self):

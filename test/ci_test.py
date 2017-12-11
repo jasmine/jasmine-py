@@ -383,7 +383,7 @@ def test_displays_random_seed(results, suite_results, run_details_random, firefo
 
     CIRunner(jasmine_config=jasmine_config).run()
     stdout, _ = capsys.readouterr()
-    assert 'Randomized with seed 12345' in stdout
+    assert 'Randomized with seed 12345 (jasmine-ci --seed 12345)' in stdout
 
 
 def test_doesnt_displays_random_seed_if_not_random(results, suite_results, run_details, firefox_driver, capsys, test_server, jasmine_config, sysexit):
@@ -402,5 +402,5 @@ def test_doesnt_displays_random_seed_if_not_random(results, suite_results, run_d
 
     CIRunner(jasmine_config=jasmine_config).run()
     stdout, _ = capsys.readouterr()
-    assert 'Randomized with seed 54321' not in stdout
+    assert 'Randomized with seed' not in stdout
 

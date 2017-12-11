@@ -67,7 +67,7 @@ def test_format_summary(results):
 def test_format_summary_with_seed(results):
     formatter = _create_console_formatter(spec_results=results, seed=1234, colors=False)
 
-    assert formatter.format_summary() == "4 specs, 1 failed, 1 pending\nRandomized with seed 1234"
+    assert formatter.format_summary() == "4 specs, 1 failed, 1 pending\nRandomized with seed 1234 (jasmine-ci --seed 1234)"
 
 
 def test_format_suite_errors_empty():
