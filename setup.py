@@ -13,7 +13,7 @@ def extra_dependencies():
 
 setup(
     name="jasmine",
-    version="2.8.0",
+    version="2.9.0",
     url="http://jasmine.github.io",
     author="Pivotal Labs",
     author_email="jasmine-js@googlegroups.com",
@@ -64,7 +64,7 @@ setup(
         'argparse>=1.0, <2.0',
         'Jinja2>=2.0, <3.0',
         'six>=1.0, <2.0',
-        'jasmine-core>=2.8, <3.0',
+        'jasmine-core>=2.9, <3.0',
         'CherryPy>=%s' % cherrypy_version,
         'selenium>=3.0, < 3.7'
     ] + extra_dependencies(),
