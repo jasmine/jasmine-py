@@ -95,7 +95,7 @@ def test_format_suite_errors():
 
     formatter = _create_console_formatter(suite_results=suite_results)
     assert formatter.format_suite_failure() == \
-           "After All Failures:\n" \
+           "Suite Failures:\n" \
            + "  ahhh\n" \
            + "  stack1\n" \
            + "  oh no!\n" \
