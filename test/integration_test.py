@@ -19,7 +19,7 @@ def get_with_retries(url):
                 raise
 
 def test_standalone_serves_html():
-    process = Popen([sys.executable, '-c', 'from jasmine.entry_points import standalone; standalone()', '--config', 'test/fixture_files/jasmine.yml'])
+    process = Popen([sys.executable, '-c', 'from jasmine.entry_points import begin; begin()', 'server', '--config', 'test/fixture_files/jasmine.yml'])
     try:
         req = get_with_retries('http://localhost:8888/')
 
@@ -32,7 +32,7 @@ def test_standalone_serves_html():
         process.terminate()
 
 def test_standalone_supports_query_strings():
-    process = Popen([sys.executable, '-c', 'from jasmine.entry_points import standalone; standalone()', '--config', 'test/fixture_files/jasmine.yml'])
+    process = Popen([sys.executable, '-c', 'from jasmine.entry_points import begin; begin()', 'server', '--config', 'test/fixture_files/jasmine.yml'])
     try:
         req = get_with_retries('http://localhost:8888/?random=true')
 
@@ -41,7 +41,7 @@ def test_standalone_supports_query_strings():
         process.terminate()
 
 def test_standalone_serves_jasmine_files():
-    process = Popen([sys.executable, '-c', 'from jasmine.entry_points import standalone; standalone()', '--config', 'test/fixture_files/jasmine.yml'])
+    process = Popen([sys.executable, '-c', 'from jasmine.entry_points import begin; begin()', 'server', '--config', 'test/fixture_files/jasmine.yml'])
     try:
         req = get_with_retries('http://localhost:8888/__jasmine__/jasmine.css')
 
@@ -51,7 +51,7 @@ def test_standalone_serves_jasmine_files():
         process.terminate()
 
 def test_standalone_serves_jasmine_css_files():
-    process = Popen([sys.executable, '-c', 'from jasmine.entry_points import standalone; standalone()', '--config', 'test/fixture_files/jasmine.yml'])
+    process = Popen([sys.executable, '-c', 'from jasmine.entry_points import begin; begin()', 'server', '--config', 'test/fixture_files/jasmine.yml'])
     try:
         req = get_with_retries('http://localhost:8888/__jasmine__/jasmine.js')
 
@@ -61,7 +61,7 @@ def test_standalone_serves_jasmine_css_files():
         process.terminate()
 
 def test_standalone_serves_jasmine_favicon():
-    process = Popen([sys.executable, '-c', 'from jasmine.entry_points import standalone; standalone()', '--config', 'test/fixture_files/jasmine.yml'])
+    process = Popen([sys.executable, '-c', 'from jasmine.entry_points import begin; begin()', 'server', '--config', 'test/fixture_files/jasmine.yml'])
     try:
         req = get_with_retries('http://localhost:8888/__jasmine__/jasmine_favicon.png')
 
@@ -71,7 +71,7 @@ def test_standalone_serves_jasmine_favicon():
         process.terminate()
 
 def test_standalone_serves_js():
-    process = Popen([sys.executable, '-c', 'from jasmine.entry_points import standalone; standalone()', '--config', 'test/fixture_files/jasmine.yml'])
+    process = Popen([sys.executable, '-c', 'from jasmine.entry_points import begin; begin()', 'server', '--config', 'test/fixture_files/jasmine.yml'])
     try:
         req = get_with_retries('http://localhost:8888/__src__/main.js')
 
@@ -82,7 +82,7 @@ def test_standalone_serves_js():
         process.terminate()
 
 def test_standalone_serves_css():
-    process = Popen([sys.executable, '-c', 'from jasmine.entry_points import standalone; standalone()', '--config', 'test/fixture_files/jasmine.yml'])
+    process = Popen([sys.executable, '-c', 'from jasmine.entry_points import begin; begin()', 'server', '--config', 'test/fixture_files/jasmine.yml'])
     try:
         req = get_with_retries('http://localhost:8888/__src__/main.css')
 
@@ -93,7 +93,7 @@ def test_standalone_serves_css():
         process.terminate()
 
 def test_standalone_serves_weird_encodings():
-    process = Popen([sys.executable, '-c', 'from jasmine.entry_points import standalone; standalone()', '--config', 'test/fixture_files/jasmine.yml'])
+    process = Popen([sys.executable, '-c', 'from jasmine.entry_points import begin; begin()', 'server', '--config', 'test/fixture_files/jasmine.yml'])
     try:
         req = get_with_retries('http://localhost:8888/__src__/weird_encoding.js')
 
@@ -108,7 +108,7 @@ def test_ci():
     if subprocess.call('which geckodriver > /dev/null', shell=True) != 0:
         fail('Geckodriver was not found in $PATH')
 
-    process = Popen([sys.executable, '-c', 'from jasmine.entry_points import continuous_integration; continuous_integration()', '--config', 'test/fixture_files/jasmine.yml'], stdout=PIPE)
+    process = Popen([sys.executable, '-c', 'from jasmine.entry_points import begin; begin()', 'ci', '--config', 'test/fixture_files/jasmine.yml'], stdout=PIPE)
     output = process.communicate()[0]
     process.wait()
 
