@@ -197,6 +197,30 @@ def test_stop_spec_on_expectation_failure_set():
         assert config.stop_spec_on_expectation_failure() is True
 
 
+def test_stop_on_spec_failure_default():
+    with in_temp_dir():
+        create_files()
+        config = Config("jasmine.yml")
+        assert config.stop_on_spec_failure() is False
+
+
+def test_stop_on_spec_failure_invalid():
+    with in_temp_dir():
+        create_files("""
+                stop_on_spec_failure: pants
+            """)
+        config = Config("jasmine.yml")
+        assert config.stop_on_spec_failure() is False
+
+
+def test_stop_on_spec_failure_set():
+    with in_temp_dir():
+        create_files("""
+                stop_on_spec_failure: true
+            """)
+        config = Config("jasmine.yml")
+        assert config.stop_on_spec_failure() is True
+
 def test_random_default():
     with in_temp_dir():
         create_files()

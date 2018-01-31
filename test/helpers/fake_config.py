@@ -6,6 +6,7 @@ class FakeConfig(object):
             stylesheet_urls=None,
             script_urls=None,
             stop_spec_on_expectation_failure=False,
+            stop_on_spec_failure=False,
             random=True
     ):
         self._src_dir = src_dir
@@ -13,6 +14,7 @@ class FakeConfig(object):
         self._stylesheet_urls = stylesheet_urls
         self._script_urls = script_urls
         self._stop_spec_on_expectation_failure = stop_spec_on_expectation_failure
+        self._stop_on_spec_failure = stop_on_spec_failure
         self._random = random
 
         self.reload_call_count = 0
@@ -31,6 +33,9 @@ class FakeConfig(object):
 
     def stop_spec_on_expectation_failure(self):
         return self._stop_spec_on_expectation_failure
+
+    def stop_on_spec_failure(self):
+        return self._stop_on_spec_failure
 
     def random(self):
         return self._random

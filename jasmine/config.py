@@ -65,6 +65,9 @@ class Config(object):
     def stop_spec_on_expectation_failure(self):
         return self._yaml.get("stop_spec_on_expectation_failure") is True
 
+    def stop_on_spec_failure(self):
+        return self._yaml.get("stop_on_spec_failure") is True
+
     def random(self):
         return self._yaml.get("random", True) is not False
 

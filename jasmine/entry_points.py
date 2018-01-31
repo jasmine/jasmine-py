@@ -237,6 +237,17 @@ spec_dir: spec/javascripts
 #
 stop_spec_on_expectation_failure:
 
+# stop_on_spec_failure
+#
+# Stop executing Jasmine after the first spec fails
+# Default: false
+#
+# EXAMPLE:
+#
+# stop_on_spec_failure: true
+#
+stop_on_spec_failure:
+
 # random
 #
 # Run specs in semi-random order.
