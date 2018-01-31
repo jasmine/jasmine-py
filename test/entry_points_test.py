@@ -1,5 +1,4 @@
 import os
-import sys
 import tempfile
 
 from mock import Mock, MagicMock
