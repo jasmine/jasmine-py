@@ -1,7 +1,5 @@
 from setuptools import setup, find_packages
 
-cherrypy_version = '11'
-
 setup(
     name="jasmine",
     version="3.0.0-pre",
@@ -43,18 +41,15 @@ setup(
 
     entry_points={
         'console_scripts': [
-            'jasmine = jasmine.entry_points:standalone',
-            'jasmine-ci = jasmine.entry_points:continuous_integration',
-            'jasmine-install = jasmine.entry_points:install'
+            'jasmine = jasmine.entry_points:begin'
         ]
     },
 
     install_requires=[
         'PyYAML==3.10',
-        'argparse>=1.0, <2.0',
         'Jinja2>=2.0, <3.0',
         'jasmine-core==3.0.0-pre',
-        'CherryPy>=%s' % cherrypy_version,
+        'CherryPy>=11',
         'selenium>=3.0',
     ],
     dependency_links=[
