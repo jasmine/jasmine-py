@@ -19,7 +19,7 @@ The Jasmine python package tests itself against multiple versions of Python. How
 1. `git clone` this repo
 1. Make an environment: `mkvirtualenv jasminePy`
 1. Use that environment: `workon jasminePy`
-1. Install dependencies: `pip install --process-dependency-links -r requirements.txt && pip install -r requirements_dev.txt`
+1. Install dependencies: `pip install -r requirements.txt && pip install -r requirements_dev.txt`
 1. Run specs: `py.test`
 
 If you want to run the tests against all supported versions of Python:

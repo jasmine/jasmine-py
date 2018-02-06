@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="jasmine",
-    version="3.0.0-pre",
+    version="3.0.0",
     url="http://jasmine.github.io",
     author="Pivotal Labs",
     author_email="jasmine-js@googlegroups.com",
@@ -46,11 +46,8 @@ setup(
     install_requires=[
         'PyYAML==3.10',
         'Jinja2>=2.0, <3.0',
-        'jasmine-core==3.0.0-pre',
+        'jasmine-core==3.0.0',
         'CherryPy>=11',
         'selenium>=3.0',
     ],
-    dependency_links=[
-        "git+https://github.com/jasmine/jasmine.git@3.0-features#egg=jasmine-core-3.0.0-pre"
-    ]
 )
