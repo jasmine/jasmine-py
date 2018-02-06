@@ -11,8 +11,8 @@ from jasmine.ci import CIRunner
 
 
 def _new_command_msg():
-    print("The command line interface for Jasmine is changing for 3.0\n" + \
-            "The current executables will become subcommands of a combined `jasmine` command")
+    print("The command line interface for Jasmine is changing for 3.0\n" +
+          "The current executables will become subcommands of a combined `jasmine` command")
 
 
 def standalone():
