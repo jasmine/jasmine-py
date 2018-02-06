@@ -196,3 +196,46 @@ def test_pending_with_message():
     formatter = _create_console_formatter(spec_results=results, colors=False)
     assert formatter.format_pending() == "pending\n  Reason: the reason\n"
 
+def test_deprecation_warning():
+    parser = Parser()
+
+    specs = parser.parse(
+        [
+            {
+                u'status': u'passed',
+                u'fullName': u'Speccy',
+                u'deprecationWarnings': [
+                    {
+                        u'message': u'spec deprecated',
+                        u'stack': None
+                    }
+                ]
+            }
+        ]
+    )
+
+    suites = parser.parse(
+        [
+            {
+                u'status': u'passed',
+                u'fullName': u'Sweet',
+                u'deprecationWarnings': [
+                    {
+                        u'message': u'suite deprecated',
+                        u'stack': None
+                    }
+                ]
+            }
+        ]
+    )
+
+    formatter = _create_console_formatter(spec_results=specs, suite_results=suites, colors=False)
+    assert formatter.format_deprecations() == \
+            "Deprecations:\n" + \
+            "Speccy\n" + \
+            "  spec deprecated\n" + \
+            "  \n" + \
+            "Sweet\n" + \
+            "  suite deprecated\n" +\
+            "  \n"
+

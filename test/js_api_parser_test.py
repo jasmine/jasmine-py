@@ -29,6 +29,12 @@ def test_parser_should_return_a_correct_results_list():
                     u'passed': True
                 }
             ],
+            u'deprecationWarnings': [
+                {
+                    u'message': u'old and busted',
+                    u'stack': u'snacky stack'
+                }
+            ],
             u'id': 0,
             u'description': u'refer to the most holy',
             u'pendingReason': u'pending reason'
@@ -42,6 +48,9 @@ def test_parser_should_return_a_correct_results_list():
     assert results[0].failed_expectations[0]['stack'] == "stack\n    stack\n    stack"
     assert results[0].failed_expectations[0]['message'] == "Expected 'Batman' to equal 'PANTS'."
     assert results[0].pending_reason == u'pending reason'
+    assert len(results[0].deprecation_warnings) == 1
+    assert results[0].deprecation_warnings[0]['message'] == "old and busted"
+    assert results[0].deprecation_warnings[0]['stack'] == "snacky stack"
 
 
 def test_parser_returns_an_empty_results_list_with_no_runnables():

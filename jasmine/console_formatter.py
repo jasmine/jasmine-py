@@ -34,7 +34,8 @@ class ConsoleFormatter(object):
             self.format_suite_failure() +
             self.format_browser_logs() +
             self.format_spec_failures() +
-            self.format_pending()
+            self.format_pending() +
+            self.format_deprecations()
         )
 
     def format_progress(self):
@@ -116,6 +117,23 @@ class ConsoleFormatter(object):
             output += self._colorize('yellow', pending.full_name + "\n")
             if pending.pending_reason:
                 output += "  Reason: {0}\n".format(pending.pending_reason)
+
+        return output
+
+    def format_deprecations(self):
+        output = ""
+        spec_deprecations = [result for result in self.results if result.deprecation_warnings]
+        for deprecation in spec_deprecations:
+            output += self._colorize('yellow', deprecation.full_name + "\n")
+            for warning in deprecation.deprecation_warnings:
+                output += self._format_expectation_failure(warning)
+        suite_deprecations = [result for result in self.suite_results if result.deprecation_warnings]
+        for deprecation in suite_deprecations:
+            output += self._colorize('yellow', deprecation.full_name + "\n")
+            for warning in deprecation.deprecation_warnings:
+                output += self._format_expectation_failure(warning)
+        if output:
+            output = 'Deprecations:\n' + output
 
         return output
 
