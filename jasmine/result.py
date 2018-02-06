@@ -4,6 +4,7 @@ class Result():
             status=None,
             full_name=None,
             failed_expectations=None,
+            deprecation_warnings=None,
             runnable_id=None,
             description=None,
             pending_reason=None
@@ -14,6 +15,7 @@ class Result():
         self._status = status
         self._full_name = full_name
         self._failed_expectations = failed_expectations
+        self._deprecation_warnings = deprecation_warnings
         self._runnable_id = runnable_id
         self._description = description
         self._pending_reason = pending_reason
@@ -29,6 +31,10 @@ class Result():
     @property
     def failed_expectations(self):
         return self._failed_expectations
+
+    @property
+    def deprecation_warnings(self):
+        return self._deprecation_warnings
 
     @property
     def runnable_id(self):

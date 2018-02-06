@@ -8,6 +8,7 @@ def test_result():
     runnable_id = 'id'
     description = 'description'
     pending_reason = 'pendingReason'
+    deprecation_warnings = 'deprecationWarnings'
 
     result = Result(
         status=status,
@@ -15,7 +16,8 @@ def test_result():
         failed_expectations=failed_expectations,
         runnable_id=runnable_id,
         description=description,
-        pending_reason=pending_reason
+        pending_reason=pending_reason,
+        deprecation_warnings=deprecation_warnings
     )
 
     assert result.status == status
@@ -24,3 +26,4 @@ def test_result():
     assert result.runnable_id == runnable_id
     assert result.description == description
     assert result.pending_reason == pending_reason
+    assert result.deprecation_warnings == deprecation_warnings

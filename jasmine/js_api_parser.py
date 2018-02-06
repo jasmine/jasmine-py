@@ -6,6 +6,7 @@ class Parser(object):
         'status': 'status',
         'fullName': 'full_name',
         'failedExpectations': 'failed_expectations',
+        'deprecationWarnings': 'deprecation_warnings',
         'id': 'runnable_id',
         'description': 'description',
         'pendingReason': 'pending_reason'
