@@ -10,7 +10,13 @@ from jasmine.standalone import JasmineApp
 from jasmine.ci import CIRunner
 
 
+def _new_command_msg():
+    print("The command line interface for Jasmine is changing for 3.0\n" + \
+            "The current executables will become subcommands of a combined `jasmine` command")
+
+
 def standalone():
+    _new_command_msg()
     parser = argparse.ArgumentParser(description='Jasmine Standalone')
     parser.add_argument('-p', '--port', type=int, default=8888,
                         help='The port of the Jasmine html runner')
@@ -30,6 +36,7 @@ def standalone():
 
 
 def continuous_integration():
+    _new_command_msg()
     parser = argparse.ArgumentParser(description='Jasmine-CI')
     parser.add_argument('-b', '--browser', type=str,
                         help='The selenium driver to utilize')
@@ -101,6 +108,7 @@ def query(question):
 
 
 def install():
+    _new_command_msg()
     from jasmine.console_formatter import ConsoleFormatter
 
     spec_dir = os.path.join(os.getcwd(), 'spec/javascripts/')
