@@ -23,7 +23,7 @@ You can get all of this by: `pip install jasmine` or by adding `jasmine` to your
 
 To initialize a project for Jasmine:
 
-	$ jasmine-install
+	$ jasmine init
 
 This will create a spec directory and configuration yaml template for you.
 
@@ -37,13 +37,13 @@ You may use dir glob strings.
 #### Standalone Server
 Start the Jasmine server:
 
-	$ jasmine
+	$ jasmine server
 
 Point your browser to `localhost:8888`. The suite will run every time this page is re-loaded.
 
 Start Jasmine on a different port:
 
-	$ jasmine -p 1337
+	$ jasmine server -p 1337
 
 Point your browser to `localhost:1337`.
 
@@ -53,18 +53,18 @@ For a full list of commands, type `jasmine -h`
 
 For Continuous Integration environments, add this task to the project build steps:
 
-	$ jasmine-ci
+	$ jasmine ci
 
 The browser used by selenium can be changed by exporting `JASMINE_BROWSER`
 
     $ export JASMINE_BROWSER=phantomjs
-    $ jasmine-ci
+    $ jasmine ci
 
 or adding `--browser` to `jasmine-ci`
 
-	$ jasmine-ci --browser phantomjs
+	$ jasmine ci --browser phantomjs
 
-For a full list of commands, type `jasmine-ci -h`
+For a full list of commands, type `jasmine ci -h`
 
 ## Support
 
