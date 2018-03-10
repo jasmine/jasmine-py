@@ -129,7 +129,7 @@ class Command(object):
             elif choice in valid:
                 return valid[choice]
 
-    def init(self):
+    def init(self, args):
         from jasmine.console_formatter import ConsoleFormatter
 
         spec_dir = os.path.join(os.getcwd(), 'spec/javascripts/')

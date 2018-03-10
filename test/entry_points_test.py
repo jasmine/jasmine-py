@@ -245,7 +245,7 @@ def test_init__yes(monkeypatch):
 
         input_string(monkeypatch, "Y")
 
-        Command(None, None).init()
+        Command(None, None).init(None)
 
         assert os.path.isdir(spec_dir)
         assert os.path.isfile(yaml_file)
@@ -269,7 +269,7 @@ def test_init__yes__existing_yaml(monkeypatch):
     
         input_string(monkeypatch, "Y")
     
-        Command(None, None).init()
+        Command(None, None).init(None)
     
         assert os.path.isdir(spec_dir)
         assert os.path.isfile(yaml_file)
@@ -288,7 +288,15 @@ def test_init__no(monkeypatch):
     
         input_string(monkeypatch, "N")
     
-        Command(None, None).init()
+        Command(None, None).init(None)
     
         assert not os.path.isdir(spec_dir)
         assert not os.path.isfile(yaml_file)
+
+
+def test_init__run(monkeypatch):
+    with in_temp_dir():
+        cmd = Command(FakeApp, FakeCI)
+        input_string(monkeypatch, "N")
+
+        cmd.run(['init'])
