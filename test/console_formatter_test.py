@@ -90,6 +90,12 @@ def test_format_suite_errors():
             u'failedExpectations': [
                 {"message": "boom", "stack": "stack3"},
             ]
+        },
+        {
+            u'status': u'failed',
+            u'failedExpectations': [
+                {"message": "nope"},
+            ]
         }
     ])
 
@@ -101,7 +107,8 @@ def test_format_suite_errors():
            + "  oh no!\n" \
            + "  stack2\n" \
            + "  boom\n" \
-           + "  stack3\n"
+           + "  stack3\n" \
+           + "  nope\n"
 
 
 def test_format_browser_logs(results, browser_logs):
