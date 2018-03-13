@@ -138,10 +138,10 @@ class ConsoleFormatter(object):
         return output
 
     def _format_expectation_failure(self, expectation):
-        return (
-            "  " + expectation['message'] + "\n" +
-            "  " + self.clean_stack(expectation['stack']) + "\n"
-        )
+            output = "  " + expectation['message'] + "\n"
+            if 'stack' in expectation:
+                output += "  " + self.clean_stack(expectation['stack']) + "\n"
+            return output
 
     def _colorize(self, color, text):
         if not self.colors:
