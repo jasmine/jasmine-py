@@ -99,7 +99,7 @@ class CIRunner(object):
             )
 
             self.browser = webdriver.WebDriver()
-        except ImportError as e:
+        except ImportError:
             print("Browser {0} not found".format(driver))
         return test_server
 
