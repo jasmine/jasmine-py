@@ -60,10 +60,11 @@ class Command(object):
 
     def run(self, argv):
         args = self.parser.parse_args(argv)
-        try:
+        if 'func' in args and callable(args.func):
             args.func(args)
-        except AttributeError:
+        else:
             self.parser.print_help()
+            self.parser.exit(1)
 
     def server(self, args):
         if self._check_for_config(args.config):

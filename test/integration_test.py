@@ -114,3 +114,12 @@ def test_ci():
 
     assert '2 specs, 0 failed' in str(output)
     assert process.returncode == 0
+
+def test_help_fallback():
+    process = Popen([sys.executable, '-c', 'from jasmine.entry_points import begin; begin()'], stdout=PIPE)
+    output = process.communicate()[0]
+    process.wait()
+
+    assert 'usage:' in str(output)
+    assert 'Jasmine command line' in str(output)
+    assert process.returncode != 0
