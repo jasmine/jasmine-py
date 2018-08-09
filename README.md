@@ -1,4 +1,6 @@
 # Jasmine... For Python!
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fjasmine%2Fjasmine-py.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fjasmine%2Fjasmine-py?ref=badge_shield)
+
 
 <a title="Build at Travis CI" href="https://travis-ci.org/jasmine/jasmine-py"><img src="https://api.travis-ci.org/jasmine/jasmine-py.png" /></a>
 
@@ -75,3 +77,7 @@ Twitter: [@jasminebdd](http://twitter.com/jasminebdd)
 Please file issues here at Github
 
 Copyright (c) 2008-2017 Pivotal Labs. This software is licensed under the MIT License.
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fjasmine%2Fjasmine-py.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fjasmine%2Fjasmine-py?ref=badge_large)
