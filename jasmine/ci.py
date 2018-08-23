@@ -37,7 +37,8 @@ class CIRunner(object):
     def run(self, browser=None, show_logs=False, app=None, seed=None):
         try:
             port = self._find_unused_port()
-            self.test_server = self._start_test_server(app, browser, port)
+            self.browser = self._get_browser(browser)
+            self.test_server = self._start_test_server(app, port)
 
             url_builder = JasmineUrlBuilder(jasmine_config=self.jasmine_config)
             jasmine_url = url_builder.build_url(port, seed)
@@ -87,9 +88,12 @@ class CIRunner(object):
         s.close()
         return port
 
-    def _start_test_server(self, app, browser, port):
+    def _start_test_server(self, app, port):
         test_server = TestServerThread(port, app=app)
         test_server.start()
+        return test_server
+
+    def _get_browser(self, browser):
         driver = browser if browser \
             else os.environ.get('JASMINE_BROWSER', 'firefox')
         try:
@@ -98,10 +102,9 @@ class CIRunner(object):
                 globals(), locals(), ['object'], 0
             )
 
-            self.browser = webdriver.WebDriver()
+            return webdriver.WebDriver()
         except ImportError:
             print("Browser {0} not found".format(driver))
-        return test_server
 
     def _get_spec_results(self, parser):
         spec_results = []
