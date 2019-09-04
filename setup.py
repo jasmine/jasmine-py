@@ -44,7 +44,7 @@ setup(
     },
 
     install_requires=[
-        'PyYAML>=3.10, <4.0',
+        'PyYAML>=4.2b1',
         'Jinja2>=2.0, <3.0',
         'jasmine-core>=3.4.0, <4.0',
         'CherryPy>=11',
