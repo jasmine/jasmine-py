@@ -1,5 +1,0 @@
-include requirements.txt LICENSE README.md
-recursive-include . *.py
-recursive-include jasmine/templates *
-recursive-exclude * __pycache__
-recursive-exclude * *.py[co]

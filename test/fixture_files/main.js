@@ -1,1 +1,0 @@
-window.thingUnderTest = { something: true };
