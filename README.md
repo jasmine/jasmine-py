@@ -10,7 +10,7 @@ For documentation on writing Jasmine tests, check out the [Jasmine Documentation
 
 ## Contributing
 
-Please read the [contributor's guide](https://github.com/jasmine/jasmine-py/blob/master/.github/CONTRIBUTING.md).
+Please read the [contributor's guide](https://github.com/jasmine/jasmine-py/blob/main/.github/CONTRIBUTING.md).
 
 
 ## Contents
