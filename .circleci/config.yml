@@ -1,0 +1,57 @@
+version: 2.1
+
+orbs:
+  python: circleci/python@0.2.1
+
+executors:
+  python_3_8:
+    docker:
+      - image: circleci/python:3.8-browsers
+  python_3_7:
+    docker:
+      - image: circleci/python:3.7-browsers
+  python_3_6:
+    docker:
+      - image: circleci/python:3.6-browsers
+  python_3_5:
+    docker:
+      - image: circleci/python:3.5-browsers
+
+jobs:
+  test:
+    parameters:
+      executor:
+        type: executor
+    executor: << parameters.executor >>
+    steps:
+      - checkout
+      - run:
+          name: Report Python and Pip versions
+          command: python --version && pip --version
+      - run:
+          name: Install dependencies
+          command: pip install -U -r requirements.txt
+      - run:
+          name: Install dev dependencies
+          command: pip install -U -r requirements_dev.txt
+      - run:
+          name: Test
+          command: py.test -s
+
+workflows:
+  push: &push_workflow
+    jobs:
+      - test:
+          matrix:
+              parameters:
+                executor: ["python_3_8", "python_3_7", "python_3_6", "python_3_5"]
+  cron:
+    <<: *push_workflow
+    triggers:
+      - schedule:
+          # Times are UTC.
+          cron: "0 10 * * *"
+          filters:
+            branches:
+               only:
+                 - main

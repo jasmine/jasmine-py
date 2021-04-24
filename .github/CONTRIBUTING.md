@@ -43,5 +43,5 @@ git push origin my-new-feature                                    # Push to the 
 
 Once you've pushed a feature branch to your forked repo, you're ready to open a pull request. We favor pull requests with very small, single commits with a single purpose.
 
-Note that we use Travis for Continuous Integration. We only accept green pull requests.
+Note that we use Circle for Continuous Integration. We only accept green pull requests.
 
