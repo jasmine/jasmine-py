@@ -8,6 +8,31 @@ The [Jasmine](http://github.com/jasmine/jasmine) Python package contains helper 
 
 For documentation on writing Jasmine tests, check out the [Jasmine Documentation site](http://jasmine.github.io/).
 
+
+## Deprecated
+
+The Jasmine packages for Python are deprecated. There will be no further
+releases after the end of the Jasmine 3.x series. We recommend migrating to the
+following options:
+
+* [jasmine-browser-runner](https://github.com/jasmine/jasmine-browser)
+  (`npm install jasmine-browser-runner`) to run specs in browsers, including
+  headless Chrome and Saucelabs. This is the most direct replacement for the
+  jasmine server` and `jasmine ci` commands provided by the `jasmine` Python
+  package.
+* The [jasmine npm package](https://github.com/jasmine/jasmine-npm)
+  (`npm install jasmine`) to run specs under Node.js.
+* The standalone distribution from the
+  [latest Jasmine release](https://github.com/jasmine/jasmine/releases) to run
+  specs in browsers with no additional tools.
+* The jasmine-core npm package (`npm install jasmine-core`) if all you need is
+  the Jasmine assets. This is the direct equivalent of the jasmine-core Python
+  package.
+
+Except for the standalone distribution, all of the above are distributed through
+npm.
+
+
 ## Contributing
 
 Please read the [contributor's guide](https://github.com/jasmine/jasmine-py/blob/main/.github/CONTRIBUTING.md).
