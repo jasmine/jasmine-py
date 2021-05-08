@@ -14,8 +14,9 @@ The Jasmine python package tests itself against multiple versions of Python. How
 
 1. Make sure you have Python installed.
 1. Get pip: https://pip.pypa.io/en/stable/installing/
-1. Get virtualenvwrapper: http://virtualenvwrapper.readthedocs.org/en/latest/
+1. Get virtualenvwrapper: `pip3 install virtualenvwrapper`
 1. `source /usr/local/bin/virtualenvwrapper.sh`
+  1. If the file doesn't exist, run `pip3 uninstall virtualenvwrapper` and say no when prompted. The prompt will include the path to virtualenvwrapper.sh.
 1. `git clone` this repo
 1. Make an environment: `mkvirtualenv jasminePy`
 1. Use that environment: `workon jasminePy`
@@ -24,7 +25,7 @@ The Jasmine python package tests itself against multiple versions of Python. How
 
 If you want to run the tests against all supported versions of Python:
 
-1. Install Python 2.6, 2.7, 3.4, 3.5, and pypy.
+1. Install the Python versions that are mentioned in `.circleci/config.yml`.
 1. Run specs: `detox -n 1`
 
 ## Submitting a Pull Request
