@@ -5,7 +5,7 @@
 3. Generate release notes in `release_notes` using the Anchorman gem and edit
 them.
 4. Update the version and jasmine-core version in `setup.py`.
-5. Commit the release notes and `package.json` change.
+5. Commit the release notes and `setup.py` change.
 6. Tag the commit.
 7. `git push`
 8. `git push --tags`
