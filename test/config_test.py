@@ -130,6 +130,8 @@ def test_script_urls(monkeypatch):
             'json2.js',
             'jasmine.js',
             'boot.js',
+            'boot0.js',
+            'boot1.js',
             'node_boot.js',
             'jasmine-html.js',
             'jasmine.css'
