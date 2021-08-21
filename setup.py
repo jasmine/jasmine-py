@@ -28,7 +28,7 @@ long_description = short_description + '\n\n' + deprecation
 
 setup(
     name="jasmine",
-    version="3.8.1",
+    version="3.9.0",
     url="http://jasmine.github.io",
     author="Pivotal Labs",
     author_email="jasmine-js@googlegroups.com",
@@ -70,7 +70,7 @@ setup(
     install_requires=[
         'PyYAML>=4.2b1',
         'Jinja2>=2.0, <3.0',
-        'jasmine-core>=3.8.0, <4.0',
+        'jasmine-core>=3.9.0, <4.0',
         'CherryPy>=11',
         'selenium>=3.0',
     ],
