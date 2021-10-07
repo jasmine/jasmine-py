@@ -3,7 +3,7 @@ import tempfile
 
 from mock import Mock, MagicMock
 import pytest
-from yaml import load
+from yaml import load, Loader
 from contextlib import contextmanager
 
 import builtins
@@ -250,7 +250,7 @@ def test_init__yes(monkeypatch):
         assert os.path.isdir(spec_dir)
         assert os.path.isfile(yaml_file)
 
-        yaml = load(open(yaml_file))
+        yaml = load(open(yaml_file), Loader=Loader)
 
         assert yaml['spec_files'] == ["**/*[Ss]pec.js"]
 
@@ -274,7 +274,7 @@ def test_init__yes__existing_yaml(monkeypatch):
         assert os.path.isdir(spec_dir)
         assert os.path.isfile(yaml_file)
     
-        yaml = load(open(yaml_file))
+        yaml = load(open(yaml_file), Loader=Loader)
     
         assert yaml['spec_files'] == ["**/pants.*"]
 
