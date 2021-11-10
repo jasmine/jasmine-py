@@ -16,9 +16,6 @@ executors:
   python_3_6:
     docker:
       - image: circleci/python:3.6-browsers
-  python_3_5:
-    docker:
-      - image: circleci/python:3.5-browsers
 
 jobs:
   test:
@@ -47,7 +44,7 @@ workflows:
       - test:
           matrix:
               parameters:
-                executor: ["python_3_9", "python_3_8", "python_3_7", "python_3_6", "python_3_5"]
+                executor: ["python_3_9", "python_3_8", "python_3_7", "python_3_6"]
   cron:
     <<: *push_workflow
     triggers:
