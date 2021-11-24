@@ -143,14 +143,15 @@ def test_script_urls(monkeypatch):
         config = Config("jasmine.yml")
         script_urls = config.script_urls()
 
-        assert script_urls[:5] == [
+        assert script_urls[:6] == [
             "/__jasmine__/jasmine.js",
             "/__jasmine__/jasmine-html.js",
             "/__jasmine__/json2.js",
-            "/__jasmine__/boot.js",
+            "/__jasmine__/boot0.js",
+            "/__jasmine__/boot1.js",
             "/__src__/src/player.js"
         ]
-    
+
         assert 'http://cdn.jquery.com/jquery.js' in script_urls
         assert '/__src__/src/mixer/mixer.js' in script_urls
         assert '/__src__/src/tuner/fm/fm_tuner.js' in script_urls
