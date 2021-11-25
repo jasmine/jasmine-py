@@ -37,7 +37,7 @@ setup(
     long_description_content_type='text/plain',
     license='MIT',
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 7 - Inactive',
         'Environment :: Console',
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
