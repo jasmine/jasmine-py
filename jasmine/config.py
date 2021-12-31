@@ -16,9 +16,6 @@ class Config(object):
         core_js_files = Core.js_files()
         if 'node_boot.js' in core_js_files:
             core_js_files.remove('node_boot.js')
-        core_js_files.remove('boot.js')
-        core_js_files.append('boot0.js')
-        core_js_files.append('boot1.js')
         return [
                    "/__jasmine__/{0}".format(core_js) for core_js in core_js_files
                ] + [
