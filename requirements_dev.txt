@@ -4,4 +4,3 @@ pytest<6
 pytest-cov
 pytest-flakes
 requests
-jasmine-core @ git+git://github.com/jasmine/jasmine.git@main

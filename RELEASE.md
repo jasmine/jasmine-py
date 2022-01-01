@@ -1,8 +1,5 @@
 # Releasing jasmine-py
 
-1. Special step for 3.99: After merging to main, remove the jasmine-core
-dependency from requirements_dev.txt.
-
 1.  Install [twine](https://github.com/pypa/twine)
 2. Make sure that all specs are green on CI.
 3. Generate release notes in `release_notes` using the Anchorman gem and edit
