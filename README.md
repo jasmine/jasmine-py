@@ -1,42 +1,27 @@
 # Jasmine... For Python!
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fjasmine%2Fjasmine-py.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fjasmine%2Fjasmine-py?ref=badge_shield)
 
-
-[![Build Status](https://circleci.com/gh/jasmine/jasmine-py.svg?style=shield)](https://circleci.com/gh/jasmine/jasmine-py)
-
 The [Jasmine](http://github.com/jasmine/jasmine) Python package contains helper code for developing Jasmine projects for Python-based web projects (Django, Flask, etc.) or for JavaScript projects where Python is a welcome partner. It serves up a project's Jasmine suite in a browser so you can focus on your code instead of manually editing script tags in the Jasmine runner HTML file.
 
 For documentation on writing Jasmine tests, check out the [Jasmine Documentation site](http://jasmine.github.io/).
 
 
-## Deprecated
+## Discontinued
 
-The Jasmine packages for Python are deprecated. There will be no further
-releases after the end of the Jasmine 3.x series. We recommend migrating to the
-following options:
+The Jasmine packages for Python are discontinued. There will be no further
+releases. We recommend migrating that most users migrate to the
+[jasmine-browser-runner](https://github.com/jasmine/jasmine-browser) NPM package,
+which is the direct replacement for the `jasmine` Python pacage.
 
-* [jasmine-browser-runner](https://github.com/jasmine/jasmine-browser)
-  (`npm install jasmine-browser-runner`) to run specs in browsers, including
-  headless Chrome and Saucelabs. This is the most direct replacement for the
-  jasmine server` and `jasmine ci` commands provided by the `jasmine` Python
-  package.
-* The [jasmine npm package](https://github.com/jasmine/jasmine-npm)
-  (`npm install jasmine`) to run specs under Node.js.
-* The standalone distribution from the
-  [latest Jasmine release](https://github.com/jasmine/jasmine/releases) to run
-  specs in browsers with no additional tools.
-* The jasmine-core npm package (`npm install jasmine-core`) if all you need is
-  the Jasmine assets. This is the direct equivalent of the jasmine-core Python
-  package.
+If `jasmine-browser-runner` doesn't meet your needs, one of these might:
 
-Except for the standalone distribution, all of the above are distributed through
-npm.
-
-
-## Contributing
-
-Please read the [contributor's guide](https://github.com/jasmine/jasmine-py/blob/main/.github/CONTRIBUTING.md).
-
+* The [jasmine](https://github.com/jasmine/jasmine-npm) npm package to run
+  specs in Node.js.
+* The [standalone distribution](https://github.com/jasmine/jasmine#installation)
+  to run specs in browsers with no additional tools.
+* The [jasmine-core](https://github.com/jasmine/jasmine) npm package if all
+  you need is the Jasmine assets. This is the direct equivalent of the
+  `jasmine-core` Python package.
 
 ## Contents
 This package contains:
